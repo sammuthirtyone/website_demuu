@@ -2,62 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Animation</title>
+    <title>Will You Be My GF?</title>
+    <link rel="stylesheet" href="./styles.css">
     <style>
         body {
+            background-color: #fff0f5;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            overflow: hidden;
+            flex-direction: column;
         }
-        canvas {
-            display: block;
-            background-color: #222;
+
+        .header_text {
+            text-align: center;
+            font-size: 24px;
+            color: #ff69b4;
+        }
+
+        .gif_container img {
+            max-width: 300px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #yesButton {
+            background-color: #32cd32;
+            color: white;
+        }
+
+        #noButton {
+            background-color: #ff6347;
+            color: white;
+            position: absolute;
         }
     </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+    <div class="container">
+        <div>
+            <h1 class="header_text">Will you be my GF?</h1>
+            <h1 class="header_text">Are you ready now?</h1>
+        </div>
 
-<script src="heart-animation.js"></script>
-<script>
-    var canvas = document.getElementById('canvas');
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+        <div class="gif_container">
+            <img src="https://media.giphy.com/media/3oz8xKaR836UJOYeOc/giphy.gif" alt="Cute animated illustration">
+        </div>
 
-    canvas.width = width;
-    canvas.height = height;
+        <div class="buttons">
+            <button class="btn" id="yesButton" onclick="nextPage()">Yes</button>
+            <button class="btn" id="noButton" onmouseover="moveButton()" onclick="moveButton()">No</button>
+        </div>
+    </div>
 
-    var tree = new Tree(canvas, width, height, {
-        seed: {
-            x: width / 2,
-            y: height / 2,
-            color: '#FF0000',
-            scale: 1
-        },
-        footer: {
-            width: width,
-            height: 5,
-            speed: 2
-        },
-        bloom: {
-            num: 500,
-            width: width,
-            height: height
+    <script>
+        let noTexts = [
+            "Are you sure?",
+            "U sure girl?",
+            "Do you wanna break my heart?",
+            "You're not sure, right?",
+            "Think again, I'll treat you like no one did 🥺"
+        ];
+        let noClickCount = 0;
+        let yesButton = document.getElementById("yesButton");
+
+        function nextPage() {
+            window.location.href = "yes.html";
         }
-    });
 
-    function animate() {
-        tree.ctx.clearRect(0, 0, canvas.width, canvas.height);
-        tree.draw();
-        tree.grow();
-        tree.flower(5);
-        requestAnimationFrame(animate);
-    }
+        function moveButton() {
+            let noBtn = document.getElementById("noButton");
 
-    animate();
-</script>
+            if (noClickCount < noTexts.length) {
+                noBtn.innerText = noTexts[noClickCount];
+                noClickCount++;
+            }
+
+            let x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            let y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        // Yes button grows when clicked
+        let yesSize = 16;
+        yesButton.addEventListener("click", function () {
+            yesSize += 5;
+            yesButton.style.fontSize = `${yesSize}px`;
+        });
+    </script>
 
 </body>
 </html>
