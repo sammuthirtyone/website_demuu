@@ -1,112 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Will You Be My GF?</title>
-    <link rel="stylesheet" href="./styles.css">
-    <style>
-        body {
-            background-color: #fff0f5;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-        }
-
-        .header_text {
-            text-align: center;
-            font-size: 24px;
-            color: #ff69b4;
-        }
-
-        .gif_container img {
-            max-width: 300px;
-        }
-
-        .buttons {
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #yesButton {
-            background-color: #32cd32;
-            color: white;
-        }
-
-        #noButton {
-            background-color: #ff6347;
-            color: white;
-            position: absolute;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>For My Love 💖</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <div>
-            <h1 class="header_text">Will you be my GF?</h1>
-            <h1 class="header_text">Are you ready now?</h1>
-        </div>
-
-        <div class="gif_container">
-            <img src="https://media.giphy.com/media/3oz8xKaR836UJOYeOc/giphy.gif" alt="Cute animated illustration">
-        </div>
-
-        <div class="buttons">
-            <button class="btn" id="yesButton" onclick="nextPage()">Yes</button>
-            <button class="btn" id="noButton" onmouseover="moveButton()" onclick="moveButton()">No</button>
-        </div>
-    </div>
-
-    <script>
-        let noTexts = [
-            "Are you sure?",
-            "U sure girl?",
-            "Do you wanna break my heart?",
-            "You're not sure, right?",
-            "Think again, I'll treat you like no one did 🥺"
-        ];
-        let noClickCount = 0;
-        let yesButton = document.getElementById("yesButton");
-
-        function nextPage() {
-            window.location.href = "yes.html";
-        }
-
-        function moveButton() {
-            let noBtn = document.getElementById("noButton");
-
-            if (noClickCount < noTexts.length) {
-                noBtn.innerText = noTexts[noClickCount];
-                noClickCount++;
-            }
-
-            let x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            let y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
-        }
-
-        // Yes button grows when clicked
-        let yesSize = 16;
-        yesButton.addEventListener("click", function () {
-            yesSize += 5;
-            yesButton.style.fontSize = `${yesSize}px`;
-        });
-    </script>
-
+  <div class="container">
+    <h1>Hi Cupcake! 🧁</h1>
+    <p>You’re the sunshine that brightens my day 🌞<br>I made this tiny site just to say…</p>
+    <h2>I Love You So So Much! 💖</h2>
+    <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnEyaHhjenk3bXBza3NvdGpkM2EzbzlmNjdleGV5cnh4eG5heThsZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lv2VhwHrt6ljhvZ6LF/giphy.gif" alt="Cute love gif">
+    <p class="footer">Made with 💕 by your baby</p>
+  </div>
+  <div class="hearts"></div>
 </body>
 </html>
+                 
