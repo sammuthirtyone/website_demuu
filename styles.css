@@ -1,71 +1,54 @@
-/* General page style */
 body {
-  background-color: #ffeef8;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  text-align: center;
   margin: 0;
-  padding: 0;
+  font-family: 'Comic Sans MS', cursive;
+  background: #ffe4ec;
+  color: #ff2d55;
+  text-align: center;
+  overflow: hidden;
 }
 
-/* Container holding all content */
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  padding: 50px 20px;
 }
 
-/* Text styling */
-.header_text {
+h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.3rem;
+  margin: 10px 0;
+}
+
+h2 {
   font-size: 2rem;
-  color: #ff5c8d;
-  margin: 10px;
+  margin: 20px 0;
 }
 
-/* GIF container */
-.gif_container img {
+img {
   width: 250px;
-  height: auto;
-  margin: 20px;
-  border-radius: 20px;
-}
-
-/* Button styles */
-.buttons {
-  display: flex;
-  gap: 20px;
   margin-top: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.btn {
-  background-color: #fff0f5;
-  color: #ff1493;
-  border: 2px solid #ff69b4;
-  padding: 12px 20px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+.footer {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
-.btn:hover {
-  background-color: #ffe4ec;
-  transform: scale(1.1);
+.hearts::before {
+  content: "💖 💕 💗 💓 💞";
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  animation: float 5s infinite linear;
+  font-size: 2rem;
 }
 
-/* Special Yes Button */
-#yesButton {
-  transition: transform 0.2s ease;
-  z-index: 2;
-}
-
-/* No Button (so it floats freely) */
-#noButton {
-  position: absolute;
-  z-index: 3;
+@keyframes float {
+  0% { bottom: 0; opacity: 1; }
+  100% { bottom: 100%; opacity: 0; }
 }
