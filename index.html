@@ -1,28 +1,60 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffe4ec">
-  <title>For My Love 💖</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Safe Space, Prashu 💗</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <div id="hearts"></div>
+
   <div class="container">
-    <h1>Hi Cupcake! 🧁</h1>
-    <p>You’re the sunshine that brightens my day 🌞<br>I made this tiny site just to say…</p>
-    <h2>I Love You So So Much! 💖</h2>
-    <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnEyaHhjenk3bXBza3NvdGpkM2EzbzlmNjdleGV5cnh4eG5heThsZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lv2VhwHrt6ljhvZ6LF/giphy.gif" alt="Cute love gif">
-    
-    <button onclick="alert('I love you more than words can ever say, Cupcake 💖')">Click Me!</button>
-    
-    <p class="footer">Made with 💕 by your baby</p>
+    <h1>Hey Prashu 💖</h1>
+    <p>This is your safe space. About love, trust and our cute kitkat 🥺</p>
+    <button onclick="showNextMessage()">Click Me 💗</button>
+    <p class="small">Your feelings matter the most to me.</p>
+    <div class="popup-overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <p id="popupText"></p>
+      <button onclick="closePopup()">Okay baby 💞</button>
+    </div>
+    <a href="safety2.html" class="next-link">Need more love? ➡️</a>
   </div>
 
-  <!-- Floating Hearts -->
-  <div class="hearts"></div>
-  <div class="heart">💖</div>
-  <div class="heart">💕</div>
-  <div class="heart">💗</div>
+  <script src="hearts.js"></script>
+  <script>
+    const messages = [
+      "I will never treat our kitkat moments lightly. They're sacred. 💗",
+      "After kitkat, I'll hold you even closer — not further away. 🫂",
+      "Your comfort and consent are always more important than anything.",
+      "Kitkat or not, my love and attention won't change. Ever. 🥺",
+      "You're not just loved — you're treasured. ❤️",
+      "You’re my forever person, not a temporary feeling.",
+      "Every time we’re close, I’ll make sure you feel safe and respected.",
+      "You’re not just my girlfriend. You’re my everything. 💫",
+      "Even the idea of hurting you breaks me. I won't let that happen.",
+      "You are more than enough — with or without kitkat. 💞",
+      "We’ll always talk about feelings before and after. No assumptions.",
+      "You're not a body to me. You're a soul I love and protect.",
+      "Nothing can make me stop treating you like my queen 👑",
+      "I'll make sure you feel even more loved after kitkat.",
+      "I'm always here to listen, never judge. Always your safe home. 🏡"
+    ];
+
+    let current = 0;
+    function showNextMessage() {
+      document.getElementById('popupText').innerText = messages[current];
+      document.getElementById('popup').classList.add('show');
+      document.getElementById('overlay').classList.add('show');
+      current = (current + 1) % messages.length;
+    }
+
+    function closePopup() {
+      document.getElementById('popup').classList.remove('show');
+      document.getElementById('overlay').classList.remove('show');
+    }
+  </script>
 </body>
 </html>
