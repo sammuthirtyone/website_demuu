@@ -1,75 +1,92 @@
 body {
   margin: 0;
-  font-family: 'Comic Sans MS', cursive;
-  background: #ffe4ec;
-  color: #ff2d55;
-  text-align: center;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #ffeef2;
   overflow: hidden;
 }
 
 .container {
-  padding: 50px 20px;
+  text-align: center;
+  padding-top: 100px;
+  z-index: 10;
+  position: relative;
 }
 
 h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 2.5em;
+  color: #d63384;
 }
 
 p {
-  font-size: 1.3rem;
-  margin: 10px 0;
-}
-
-h2 {
-  font-size: 2rem;
-  margin: 20px 0;
-}
-
-img {
-  width: 250px;
-  margin-top: 20px;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-.footer {
-  margin-top: 30px;
-  font-size: 0.9rem;
-  opacity: 0.8;
+  font-size: 1.2em;
+  color: #5c5c5c;
 }
 
 button {
-  margin-top: 20px;
-  background-color: #ffb6c1;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 30px;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  background-color: #ff69b4;
   color: white;
-  font-size: 1rem;
-  font-family: 'Comic Sans MS', cursive;
+  border: none;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
 button:hover {
-  background-color: #ff69b4;
+  transform: scale(1.05);
 }
 
-/* Heart Float Animation */
-.heart {
+.small {
+  font-size: 0.9em;
+  color: #999;
+  margin-top: 10px;
+}
+
+.popup, .popup-overlay {
+  display: none;
+}
+
+.popup.show, .popup-overlay.show {
+  display: block;
+}
+
+.popup-overlay {
   position: fixed;
-  bottom: -50px;
-  font-size: 2rem;
-  animation: floatUp 5s infinite ease-in-out;
-  opacity: 0.8;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  z-index: 98;
 }
 
-.heart:nth-child(2) { left: 20%; animation-delay: 0s; }
-.heart:nth-child(3) { left: 50%; animation-delay: 2s; }
-.heart:nth-child(4) { left: 75%; animation-delay: 4s; }
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff0f5;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  z-index: 99;
+  text-align: center;
+}
 
-@keyframes floatUp {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
+.next-link {
+  margin-top: 40px;
+  display: inline-block;
+  font-size: 1em;
+  color: #e83e8c;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.final {
+  margin-top: 50px;
+  font-size: 1.2em;
+  color: #c71585;
+  font-weight: bold;
 }
