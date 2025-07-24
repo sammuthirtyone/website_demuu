@@ -3,38 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hemloo Racer - Ultimate Racing Game</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <title>Quantum Racer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="game-container">
-        <div id="start-menu" class="menu-screen active">
-            <h1>QUANTUM RACER</h1>
+    <div class="game-container">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <h1 class="title-glitch">QUANTUM RACER</h1>
             <div class="menu-options">
-                <button id="single-player">Single Player</button>
-                <button id="multiplayer">Local Multiplayer</button>
-                <button id="track-editor">Track Editor</button>
-                <button id="customize">Customize Car</button>
+                <button id="single-player" class="menu-btn pulse">Single Player</button>
+                <button id="multiplayer" class="menu-btn pulse">Local Multiplayer</button>
+                <button id="track-editor" class="menu-btn pulse">Track Editor</button>
+                <button id="customize" class="menu-btn pulse">Customize Car</button>
+            </div>
+            <div class="menu-footer">
+                <p>Use WASD or Arrow Keys to drive</p>
+                <p>SHIFT for nitro | R to rewind time</p>
             </div>
         </div>
-        
-        <div id="game-canvas-container">
-            <canvas id="game-canvas"></canvas>
-            <canvas id="ui-canvas"></canvas>
+
+        <!-- Single Player Screen -->
+        <div id="single-player-screen" class="screen">
+            <div class="back-btn">← Back</div>
+            <h2>SELECT TRACK</h2>
+            <div class="track-selection">
+                <div class="track-option selected" data-track="neo-tokyo">
+                    <img src="assets/tracks/neo-tokyo-preview.jpg" alt="Neo Tokyo">
+                    <h3>Neo Tokyo Reverse</h3>
+                </div>
+                <div class="track-option" data-track="quantum-loop">
+                    <img src="assets/tracks/quantum-loop-preview.jpg" alt="Quantum Loop">
+                    <h3>Quantum Loop</h3>
+                </div>
+                <div class="track-option" data-track="asteroid-belt">
+                    <img src="assets/tracks/asteroid-preview.jpg" alt="Asteroid Belt">
+                    <h3>Asteroid Belt</h3>
+                </div>
+            </div>
+            <button id="start-race" class="start-btn">START RACE</button>
         </div>
-        
-        <div id="pause-menu" class="menu-screen">
-            <!-- Pause menu content -->
-        </div>
+
+        <!-- Other screens would go here -->
     </div>
 
-    <script src="js/audio.js"></script>
-    <script src="js/car.js"></script>
-    <script src="js/track.js"></script>
-    <script src="js/powerups.js"></script>
-    <script src="js/ai.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
