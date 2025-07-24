@@ -1,0 +1,194 @@
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Audiowide', sans-serif;
+    background-color: #0a0a1a;
+    color: #00f7ff;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Screen System */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #0f0f2d 0%, #000000 100%);
+    padding: 20px;
+}
+
+.screen.active {
+    display: flex;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Main Menu Styles */
+.title-glitch {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff;
+    position: relative;
+    animation: glitch 2s infinite;
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.menu-btn {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background: linear-gradient(45deg, #0066ff, #00ccff);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-family: 'Audiowide', sans-serif;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ccff;
+}
+
+.menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: 0.5s;
+    z-index: -1;
+}
+
+.menu-btn:hover::before {
+    left: 100%;
+}
+
+.menu-footer {
+    position: absolute;
+    bottom: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Single Player Screen */
+.track-selection {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.track-option {
+    width: 200px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.track-option img {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.track-option h3 {
+    margin-top: 0.5rem;
+}
+
+.track-option.selected img {
+    border-color: #00f7ff;
+    box-shadow: 0 0 15px #00f7ff;
+}
+
+.start-btn {
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    background: linear-gradient(45deg, #ff00cc, #cc00ff);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes glitch {
+    0%, 100% { text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff; }
+    25% { text-shadow: 0 0 10px #ff00f7, 0 0 20px #ff00f7; }
+    50% { text-shadow: 0 0 10px #f7ff00, 0 0 20px #f7ff00; }
+    75% { text-shadow: 0 0 10px #00ff0d, 0 0 20px #00ff0d; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .title-glitch {
+        font-size: 3rem;
+    }
+    
+    .menu-options {
+        width: 90%;
+    }
+    
+    .menu-btn {
+        font-size: 1.2rem;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .track-selection {
+        flex-direction: column;
+    }
+}
