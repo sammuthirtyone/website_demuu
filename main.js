@@ -1,85 +1,194 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const mainMenu = document.getElementById('main-menu');
-    const singlePlayerBtn = document.getElementById('single-player');
-    const multiplayerBtn = document.getElementById('multiplayer');
-    const trackEditorBtn = document.getElementById('track-editor');
-    const customizeBtn = document.getElementById('customize');
-    const singlePlayerScreen = document.getElementById('single-player-screen');
-    const backBtn = document.querySelector('.back-btn');
-    const trackOptions = document.querySelectorAll('.track-option');
-    const startRaceBtn = document.getElementById('start-race');
+class QuantumRacer {
+    constructor() {
+        // Game state
+        this.currentScreen = 'main-menu';
+        this.selectedTrack = 'neo-tokyo';
+        this.audioEnabled = true;
+        
+        // DOM elements
+        this.screens = {
+            'main-menu': document.getElementById('main-menu'),
+            'single-player': document.getElementById('single-player-screen'),
+            'game': document.getElementById('game-wrapper')
+        };
+        
+        this.buttons = {
+            'single-player': document.getElementById('single-player'),
+            'multiplayer': document.getElementById('multiplayer'),
+            'track-editor': document.getElementById('track-editor'),
+            'customize': document.getElementById('customize'),
+            'back': document.querySelector('.back-btn'),
+            'start-race': document.getElementById('start-race')
+        };
+        
+        this.trackOptions = document.querySelectorAll('.track-option');
+        
+        // Audio elements
+        this.audio = {
+            'menu-music': document.getElementById('menu-music'),
+            'click': document.getElementById('click-sound'),
+            'hover': document.getElementById('hover-sound')
+        };
+        
+        // Initialize
+        this.initEventListeners();
+        this.playMenuMusic();
+    }
     
-    let selectedTrack = 'neo-tokyo';
-    
-    // Button click sounds
-    const clickSound = new Audio('assets/audio/click.wav');
-    clickSound.volume = 0.3;
-    
-    // Play sound on any button click
-    document.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            clickSound.currentTime = 0;
-            clickSound.play();
+    initEventListeners() {
+        // Menu navigation
+        this.buttons['single-player'].addEventListener('click', () => {
+            this.playSound('click');
+            this.switchScreen('single-player');
         });
-    });
-    
-    // Main menu button handlers
-    singlePlayerBtn.addEventListener('click', () => {
-        mainMenu.classList.remove('active');
-        singlePlayerScreen.classList.add('active');
-    });
-    
-    multiplayerBtn.addEventListener('click', () => {
-        alert('Local multiplayer mode coming soon!');
-    });
-    
-    trackEditorBtn.addEventListener('click', () => {
-        alert('Track editor mode coming soon!');
-    });
-    
-    customizeBtn.addEventListener('click', () => {
-        alert('Car customization coming soon!');
-    });
-    
-    // Back button
-    backBtn.addEventListener('click', () => {
-        singlePlayerScreen.classList.remove('active');
-        mainMenu.classList.add('active');
-    });
-    
-    // Track selection
-    trackOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            trackOptions.forEach(opt => opt.classList.remove('selected'));
-            option.classList.add('selected');
-            selectedTrack = option.dataset.track;
+        
+        this.buttons['multiplayer'].addEventListener('click', () => {
+            this.playSound('click');
+            this.showComingSoon('Local Multiplayer');
         });
-    });
+        
+        this.buttons['track-editor'].addEventListener('click', () => {
+            this.playSound('click');
+            this.showComingSoon('Track Editor');
+        });
+        
+        this.buttons['customize'].addEventListener('click', () => {
+            this.playSound('click');
+            this.showComingSoon('Car Customization');
+        });
+        
+        // Back button
+        this.buttons['back'].addEventListener('click', () => {
+            this.playSound('click');
+            this.switchScreen('main-menu');
+        });
+        
+        // Track selection
+        this.trackOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                this.playSound('click');
+                this.selectTrack(option);
+            });
+        });
+        
+        // Start race
+        this.buttons['start-race'].addEventListener('click', () => {
+            this.playSound('click');
+            this.startGame();
+        });
+        
+        // Button hover effects
+        const hoverElements = [
+            ...document.querySelectorAll('.menu-btn'),
+            ...document.querySelectorAll('.track-option'),
+            document.querySelector('.back-btn'),
+            document.querySelector('.start-btn')
+        ];
+        
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                this.playSound('hover');
+            });
+        });
+        
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.currentScreen !== 'main-menu') {
+                this.playSound('click');
+                this.switchScreen('main-menu');
+            }
+        });
+    }
     
-    // Start race
-    startRaceBtn.addEventListener('click', () => {
-        alert(`Starting race on ${selectedTrack.replace('-', ' ').toUpperCase()} track!`);
-        // In a full implementation, this would launch the game
-        // initGame(selectedTrack);
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && singlePlayerScreen.classList.contains('active')) {
-            singlePlayerScreen.classList.remove('active');
-            mainMenu.classList.add('active');
+    switchScreen(screenName) {
+        // Hide current screen
+        this.screens[this.currentScreen].classList.remove('active');
+        
+        // Show new screen
+        this.screens[screenName].classList.add('active');
+        this.currentScreen = screenName;
+        
+        // Pause menu music when in game
+        if (screenName === 'game') {
+            this.audio['menu-music'].pause();
+        } else {
+            this.playMenuMusic();
         }
-    });
+    }
     
-    // Preload hover sounds
-    const hoverSound = new Audio('assets/audio/hover.wav');
-    hoverSound.volume = 0.2;
-    
-    document.querySelectorAll('.menu-btn, .track-option, .start-btn').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            hoverSound.currentTime = 0;
-            hoverSound.play();
+    selectTrack(option) {
+        // Remove selection from all options
+        this.trackOptions.forEach(opt => {
+            opt.classList.remove('selected');
         });
-    });
+        
+        // Select clicked option
+        option.classList.add('selected');
+        this.selectedTrack = option.dataset.track;
+    }
+    
+    startGame() {
+        this.switchScreen('game');
+        
+        // Initialize game (would be more complex in full implementation)
+        const game = new GameEngine(this.selectedTrack);
+        game.start();
+    }
+    
+    showComingSoon(feature) {
+        alert(`${feature} mode will be available in the next update!`);
+    }
+    
+    playMenuMusic() {
+        if (this.audioEnabled) {
+            this.audio['menu-music'].volume = 0.3;
+            this.audio['menu-music'].play().catch(e => {
+                console.log('Autoplay prevented:', e);
+                this.audioEnabled = false;
+            });
+        }
+    }
+    
+    playSound(sound) {
+        if (this.audioEnabled) {
+            this.audio[sound].currentTime = 0;
+            this.audio[sound].play().catch(e => {
+                console.log('Sound playback prevented:', e);
+            });
+        }
+    }
+}
+
+// Game engine would be implemented in game.js
+class GameEngine {
+    constructor(track) {
+        this.track = track;
+        this.canvas = document.getElementById('game-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        
+        // Set canvas size
+        this.resize();
+        window.addEventListener('resize', this.resize.bind(this));
+    }
+    
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+    
+    start() {
+        // In a full implementation, this would initialize the game loop
+        console.log(`Starting race on ${this.track} track`);
+        
+        // For now, just show a message and return to menu after 3 seconds
+        setTimeout(() => {
+            alert(`Race on ${this.track.replace('-', ' ').toUpperCase()} completed!`);
+            new QuantumRacer().switchScreen('main-menu');
+        }, 3000);
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const game = new QuantumRacer();
 });
