@@ -3,142 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Racer | PC Racing Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <title>Quantum Racer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assetsimages/favicon.ico">
 </head>
 <body>
     <div class="stars"></div>
     <div class="twinkling"></div>
     
-    <div class="game-container">
-        <!-- Main Menu -->
-        <div id="main-menu" class="screen active">
-            <div class="title-container">
-                <h1 class="title-glitch" data-text="QUANTUM RACER">QUANTUM RACER</h1>
-                <div class="title-sub">CHRONO EDITION</div>
+    <div id="preloader-screen">
+        <div class="preloader-container">
+            <div class="logo-glitch">QUANTUM RACER</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <div class="progress-text">LOADING: 0%</div>
             </div>
-            
-            <div class="menu-options">
-                <button id="single-player" class="menu-btn">
-                    <span class="btn-icon">➤</span>
-                    <span class="btn-text">SINGLE PLAYER</span>
-                </button>
-                
-                <button id="multiplayer" class="menu-btn">
-                    <span class="btn-icon">👥</span>
-                    <span class="btn-text">LOCAL MULTIPLAYER</span>
-                </button>
-                
-                <button id="track-editor" class="menu-btn">
-                    <span class="btn-icon">✎</span>
-                    <span class="btn-text">TRACK EDITOR</span>
-                </button>
-                
-                <button id="customize" class="menu-btn">
-                    <span class="btn-icon">⚙</span>
-                    <span class="btn-text">CUSTOMIZE CAR</span>
-                </button>
-            </div>
-            
-            <div class="menu-footer">
-                <div class="controls-info">
-                    <div>WASD/ARROWS: DRIVE</div>
-                    <div>SPACE: HANDBRAKE | SHIFT: NITRO</div>
-                    <div>R: REWIND TIME | ESC: PAUSE</div>
-                </div>
-                <div class="version">v1.0 | PC EDITION</div>
-            </div>
-        </div>
-
-        <!-- Single Player Screen -->
-        <div id="single-player-screen" class="screen">
-            <button class="back-btn">◄ BACK TO MENU</button>
-            <h2 class="screen-title">SELECT TRACK</h2>
-            
-            <div class="track-selection">
-                <div class="track-option selected" data-track="neo-tokyo">
-                    <div class="track-preview" style="background-image: url('assets/ChatGPT Image Jul 24, 2025, 06_51_10 PM.png')"></div>
-                    <div class="track-info">
-                        <h3>NEO TOKYO REVERSE</h3>
-                        <div class="track-desc">Upside-down cityscape with gravity shifts</div>
-                        <div class="track-stats">
-                            <span>LAPS: 3</span>
-                            <span>LENGTH: 2.4km</span>
-                            <span>DIFFICULTY: ★★★★☆</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="track-option" data-track="quantum-loop">
-                    <div class="track-preview" style="background-image: url('assets/ChatGPT Image Jul 24, 2025, 07_13_57 PM.png')"></div>
-                    <div class="track-info">
-                        <h3>QUANTUM LOOP</h3>
-                        <div class="track-desc">360° corkscrew with time dilation zones</div>
-                        <div class="track-stats">
-                            <span>LAPS: 5</span>
-                            <span>LENGTH: 3.1km</span>
-                            <span>DIFFICULTY: ★★★★★</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="track-option" data-track="asteroid-belt">
-                    <div class="track-preview" style="background-image: url('assets/ChatGPT Image Jul 24, 2025, 07_17_34 PM.png')"></div>
-                    <div class="track-info">
-                        <h3>ASTEROID BELT</h3>
-                        <div class="track-desc">Low-gravity racing with floating obstacles</div>
-                        <div class="track-stats">
-                            <span>LAPS: 2</span>
-                            <span>LENGTH: 4.2km</span>
-                            <span>DIFFICULTY: ★★★☆☆</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <button id="start-race" class="start-btn">
-                <span>LAUNCH RACE</span>
-                <div class="loading-bar"></div>
-            </button>
-        </div>
-        
-        <!-- Game Canvas (Hidden until race starts) -->
-        <div id="game-wrapper" class="screen">
-            <canvas id="game-canvas"></canvas>
-            <div id="game-ui">
-                <div class="speedometer">
-                    <div class="speed-value">0</div>
-                    <div class="speed-unit">KM/H</div>
-                    <div class="nitro-indicator">
-                        <div class="nitro-bar"></div>
-                        <div class="nitro-label">NITRO</div>
-                    </div>
-                </div>
-                <div class="lap-counter">LAP <span>1</span>/3</div>
-                <div class="time-display">00:00.000</div>
-                <div class="rewind-indicator">
-                    <div class="rewind-bar"></div>
-                    <div class="rewind-label">CHRONO CHARGE</div>
-                </div>
-            </div>
+            <div class="asset-status">Initializing chrono drive...</div>
         </div>
     </div>
 
-    <!-- Audio Elements -->
-    <audio id="menu-music" loop>
-        <source src="assets/audio/menu_music.mp3" type="audio/mpeg">
-    </audio>
-    
-    <audio id="click-sound">
-        <source src="assets/audio/click.wav" type="audio/wav">
-    </audio>
-    
-    <audio id="hover-sound">
-        <source src="assets/audio/hover.wav" type="audio/wav">
-    </audio>
+    <div id="game-container" style="display:none">
+        <!-- Game content loaded by JavaScript -->
+    </div>
 
+    <script src="js/preload.js"></script>
     <script src="js/main.js"></script>
     <script src="js/game.js"></script>
 </body>
