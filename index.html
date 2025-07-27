@@ -3,74 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Hill Climb Racing</title>
+    <title>Working Hill Climb Game</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: linear-gradient(to bottom, #87CEEB 0%, #1E90FF 100%);
-            font-family: 'Arial', sans-serif;
+            background: #87CEEB;
         }
         #gameCanvas {
             display: block;
+            background: linear-gradient(to bottom, #87CEEB 0%, #1E90FF 100%);
         }
         #ui {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 10px;
+            left: 10px;
             color: white;
-            font-size: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            background: rgba(0,0,0,0.5);
-            padding: 10px 15px;
-            border-radius: 10px;
-        }
-        #gameOver {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 100;
-        }
-        #gameOver h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #e74c3c;
-        }
-        #gameOver button {
-            padding: 15px 30px;
-            margin-top: 30px;
-            font-size: 20px;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px #000;
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
     <div id="ui">
-        <div>Distance: <span id="distance">0</span>m</div>
-        <div>Score: <span id="score">0</span></div>
-    </div>
-    <div id="gameOver">
-        <h1>GAME OVER</h1>
-        <div>Final Score: <span id="finalScore">0</span></div>
-        <button id="restartBtn">PLAY AGAIN</button>
+        Distance: <span id="distance">0</span>m | 
+        Score: <span id="score">0</span>
     </div>
 
     <script>
-        // Game setup
+        // Basic setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -79,9 +43,6 @@
         // UI elements
         const distanceElement = document.getElementById('distance');
         const scoreElement = document.getElementById('score');
-        const gameOverScreen = document.getElementById('gameOver');
-        const finalScoreElement = document.getElementById('finalScore');
-        const restartBtn = document.getElementById('restartBtn');
 
         // Game settings
         const GRAVITY = 0.5;
@@ -92,32 +53,16 @@
         let gameOver = false;
         let terrain = [];
         let cameraOffset = 0;
-        let clouds = [];
 
         // Car properties
         const car = {
             x: 100,
             y: 0,
-            width: 80,
-            height: 40,
+            width: 60,
+            height: 30,
             speed: 0,
-            rotation: 0,
-            bodyColor: '#e74c3c',
-            wheelColor: '#2c3e50'
+            rotation: 0
         };
-
-        // Generate clouds
-        function generateClouds() {
-            clouds = [];
-            for (let i = 0; i < 8; i++) {
-                clouds.push({
-                    x: Math.random() * canvas.width * 3,
-                    y: Math.random() * canvas.height * 0.4,
-                    width: 100 + Math.random() * 100,
-                    speed: 0.2 + Math.random() * 0.3
-                });
-            }
-        }
 
         // Generate terrain
         function generateTerrain() {
@@ -125,139 +70,35 @@
             let lastY = canvas.height * 0.7;
             
             for (let x = 0; x < canvas.width * 3; x += TERRAIN_SEGMENT_LENGTH) {
-                // Smoother terrain generation
-                lastY = lastY + (Math.random() * 30 - 15);
+                // Simple terrain generation
+                lastY = lastY + (Math.random() * 40 - 20);
                 lastY = Math.max(canvas.height * 0.5, Math.min(canvas.height * 0.8, lastY));
-                
-                // Different colors for variety
-                const color = x % 200 < 100 ? '#27ae60' : '#2ecc71';
-                
-                terrain.push({ 
-                    x, 
-                    y: lastY,
-                    color
-                });
+                terrain.push({ x, y: lastY });
             }
         }
 
-        // Draw clouds
-        function drawClouds() {
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            clouds.forEach(cloud => {
-                // Only draw visible clouds
-                const cloudX = cloud.x - cameraOffset * 0.3;
-                if (cloudX < -cloud.width || cloudX > canvas.width + cloud.width) return;
-                
-                // Draw fluffy cloud
-                ctx.beginPath();
-                ctx.arc(cloudX, cloud.y, cloud.width * 0.3, 0, Math.PI * 2);
-                ctx.arc(cloudX + cloud.width * 0.25, cloud.y - cloud.width * 0.1, cloud.width * 0.25, 0, Math.PI * 2);
-                ctx.arc(cloudX + cloud.width * 0.5, cloud.y, cloud.width * 0.3, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Move cloud
-                cloud.x -= cloud.speed;
-                if (cloud.x < -cloud.width * 2) {
-                    cloud.x = canvas.width + cloud.width;
-                    cloud.y = Math.random() * canvas.height * 0.4;
-                }
-            });
-        }
-
-        // Draw terrain
-        function drawTerrain() {
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height);
-            
-            for (let i = 0; i < terrain.length; i++) {
-                const segment = terrain[i];
-                const x = segment.x - cameraOffset;
-                
-                // Only draw visible segments
-                if (x > canvas.width + TERRAIN_SEGMENT_LENGTH) break;
-                if (x < -TERRAIN_SEGMENT_LENGTH) continue;
-                
-                ctx.lineTo(x, segment.y);
-                
-                // Fill segments with different colors
-                if (i > 0) {
-                    ctx.fillStyle = terrain[i-1].color;
-                    ctx.lineTo(terrain[i-1].x - cameraOffset, canvas.height);
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.moveTo(x, segment.y);
-                }
+        // Get terrain height at x position
+        function getTerrainHeight(x) {
+            const segmentIndex = Math.floor(x / TERRAIN_SEGMENT_LENGTH);
+            if (segmentIndex < 0 || segmentIndex >= terrain.length - 1) {
+                return canvas.height;
             }
             
-            ctx.lineTo(canvas.width, canvas.height);
-            ctx.closePath();
-            ctx.fillStyle = terrain[terrain.length-1].color;
-            ctx.fill();
-        }
-
-        // Draw car with better graphics
-        function drawCar() {
-            ctx.save();
-            ctx.translate(car.x - cameraOffset, car.y);
-            ctx.rotate(car.rotation);
+            const segment = terrain[segmentIndex];
+            const nextSegment = terrain[segmentIndex + 1];
+            const localX = x % TERRAIN_SEGMENT_LENGTH;
+            const t = localX / TERRAIN_SEGMENT_LENGTH;
             
-            // Car body with gradient
-            const bodyGradient = ctx.createLinearGradient(
-                -car.width/2, -car.height/2, 
-                car.width/2, car.height/2
-            );
-            bodyGradient.addColorStop(0, car.bodyColor);
-            bodyGradient.addColorStop(1, '#c0392b');
-            ctx.fillStyle = bodyGradient;
-            
-            // Rounded car body
-            ctx.beginPath();
-            ctx.roundRect(-car.width/2, -car.height/2, car.width, car.height, 5);
-            ctx.fill();
-            
-            // Car details
-            ctx.fillStyle = '#3498db';
-            ctx.fillRect(-car.width/2 + 15, -car.height/2 + 5, 25, 15); // Window
-            ctx.fillRect(car.width/2 - 40, -car.height/2 + 5, 25, 15);  // Window
-            
-            // Wheels
-            ctx.fillStyle = car.wheelColor;
-            // Front wheel
-            ctx.beginPath();
-            ctx.arc(car.width/2 - 15, car.height/2, 12, 0, Math.PI * 2);
-            ctx.fill();
-            // Rear wheel
-            ctx.beginPath();
-            ctx.arc(-car.width/2 + 15, car.height/2, 12, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Wheel details
-            ctx.strokeStyle = '#7f8c8d';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(car.width/2 - 15, car.height/2, 8, 0, Math.PI * 2);
-            ctx.arc(-car.width/2 + 15, car.height/2, 8, 0, Math.PI * 2);
-            ctx.stroke();
-            
-            ctx.restore();
+            return segment.y + (nextSegment.y - segment.y) * t;
         }
 
         // Main game loop
         function gameLoop() {
             if (gameOver) return;
             
-            // Clear canvas with sky gradient
-            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            skyGradient.addColorStop(0, '#87CEEB');
-            skyGradient.addColorStop(1, '#1E90FF');
-            ctx.fillStyle = skyGradient;
+            // Clear canvas
+            ctx.fillStyle = '#16a085';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw game elements
-            drawClouds();
-            drawTerrain();
-            drawCar();
             
             // Update position
             position += speed;
@@ -279,12 +120,8 @@
             
             // Check if car flipped
             if (Math.abs(car.rotation) > Math.PI / 2) {
-                endGame();
-            }
-            
-            // Check if car fell off screen
-            if (car.y > canvas.height + 50) {
-                endGame();
+                gameOver = true;
+                alert('Game Over! Your score: ' + score);
             }
             
             // Update camera
@@ -295,35 +132,50 @@
             distanceElement.textContent = score;
             scoreElement.textContent = score;
             
-            // Generate more terrain if needed
-            if (car.x > terrain[terrain.length - 1].x - canvas.width) {
-                generateTerrain();
+            // Draw terrain
+            ctx.fillStyle = '#27AE60';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            
+            for (let i = 0; i < terrain.length; i++) {
+                const segment = terrain[i];
+                ctx.lineTo(segment.x - cameraOffset, segment.y);
             }
             
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw car
+            ctx.save();
+            ctx.translate(car.x - cameraOffset, car.y);
+            ctx.rotate(car.rotation);
+            ctx.fillStyle = '#E74C3C';
+            ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
+            
+            // Draw wheels
+            ctx.fillStyle = '#2C3E50';
+            ctx.beginPath();
+            ctx.arc(-car.width/2 + 15, car.height/2, 10, 0, Math.PI*2);
+            ctx.arc(car.width/2 - 15, car.height/2, 10, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.restore();
+            
+            // Continue the game loop
             requestAnimationFrame(gameLoop);
         }
 
-        // Get terrain height at x position
-        function getTerrainHeight(x) {
-            const segmentIndex = Math.floor(x / TERRAIN_SEGMENT_LENGTH);
-            if (segmentIndex < 0 || segmentIndex >= terrain.length - 1) {
-                return canvas.height;
+        // Handle keyboard input
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                car.speed = Math.min(car.speed + 0.2, 10);
+            } else if (e.key === 'ArrowLeft') {
+                car.speed = Math.max(car.speed - 0.3, -5);
+            } else if (e.key === 'r' && gameOver) {
+                resetGame();
             }
-            
-            const segment = terrain[segmentIndex];
-            const nextSegment = terrain[segmentIndex + 1];
-            const localX = x % TERRAIN_SEGMENT_LENGTH;
-            const t = localX / TERRAIN_SEGMENT_LENGTH;
-            
-            return segment.y + (nextSegment.y - segment.y) * t;
-        }
-
-        // End game
-        function endGame() {
-            gameOver = true;
-            finalScoreElement.textContent = score;
-            gameOverScreen.style.display = 'flex';
-        }
+        });
 
         // Reset game
         function resetGame() {
@@ -334,38 +186,19 @@
             car.y = 0;
             car.speed = 0;
             car.rotation = 0;
-            cameraOffset = 0;
             generateTerrain();
-            generateClouds();
-            gameOverScreen.style.display = 'none';
             gameLoop();
         }
-
-        // Handle keyboard input
-        window.addEventListener('keydown', (e) => {
-            if (gameOver) return;
-            
-            if (e.key === 'ArrowRight') {
-                car.speed = Math.min(car.speed + 0.2, 10);
-            } else if (e.key === 'ArrowLeft') {
-                car.speed = Math.max(car.speed - 0.3, -5);
-            }
-        });
-
-        // Restart button
-        restartBtn.addEventListener('click', resetGame);
 
         // Handle window resize
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             generateTerrain();
-            generateClouds();
         });
 
         // Start the game
         generateTerrain();
-        generateClouds();
         gameLoop();
     </script>
 </body>
