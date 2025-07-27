@@ -1,56 +1,43 @@
-/* Preloader Styles */
-#preloader-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #050510;
-    z-index: 9999;
+body {
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease;
-}
-
-.progress-container {
-    width: 300px;
-    height: 20px;
-    background: rgba(0, 247, 255, 0.1);
-    border-radius: 10px;
+    height: 100vh;
+    background: #222;
+    font-family: Arial, sans-serif;
     overflow: hidden;
-    margin: 20px 0;
 }
 
-.progress-bar {
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, #0066ff, #00ccff);
-    transition: width 0.3s ease;
+.game-container {
+    position: relative;
 }
 
-/* Starfield Background */
-.stars, .twinkling {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+canvas {
+    border: 2px solid #444;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-.stars {
-    background: #000 url('ChatGPT Image Jul 24, 2025, 06_07_59 PM.png') repeat;
-    z-index: -2;
+.score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 24px;
+    z-index: 100;
 }
 
-.twinkling {
-    background: transparent url('ChatGPT Image Jul 24, 2025, 06_13_39 PM.png') repeat;
-    z-index: -1;
-    animation: twinkle 200s linear infinite;
-}
-
-@keyframes twinkle {
-    from { background-position: 0 0; }
-    to { background-position: -10000px 5000px; }
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+    z-index: 100;
+    text-shadow: 2px 2px 4px black;
 }
