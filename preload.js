@@ -2,27 +2,27 @@ class AssetPreloader {
     constructor() {
         this.manifest = {
             audio: [
-                { id: 'menu-music', src: 'audio/menu.mp3' },
-                { id: 'click-sound', src: 'audio/click.mp3' },
-                { id: 'hover-sound', src: 'audio/hover.mp3' },
-                { id: 'engine-sound', src: 'audio/engine.mp3' },
-                { id: 'nitro-sound', src: 'audio/nitro.mp3' },
-                { id: 'rewind-sound', src: 'audio/time.mp3' }
+                { id: 'menu-music', src: 'sports-gym-fitness-synthwave-phonk-music-344934.mp3' },
+                { id: 'click-sound', src: 'ui-click-43196.mp3' },
+                { id: 'hover-sound', src: 'hover-button-287656.mp3' },
+                { id: 'engine-sound', src: 'vehicle-idle-start-190010.mp3' },
+                { id: 'nitro-sound', src: 'nitro-activation-48077.mp3' },
+                { id: 'rewind-sound', src: 'rewind-2-63931.mp3' }
             ],
             images: [
                 // Tracks
-                { id: 'track-1', src: 'assets/track1.png' },
-                { id: 'track-2', src: 'assets/track2.png' },
-                { id: 'track-3', src: 'assets/track3.png' },
+                { id: 'track-1', src: 'ChatGPT Image Jul 24, 2025, 06_51_10 PM.png' },
+                { id: 'track-2', src: 'ChatGPT Image Jul 24, 2025, 07_13_57 PM.png' },
+                { id: 'track-3', src: 'ChatGPT Image Jul 24, 2025, 07_17_34 PM.png' },
                 
                 // Backgrounds
-                { id: 'stars-bg', src: 'assetsimages/stars.png' },
-                { id: 'twinkling-bg', src: 'assetsimages/twinkling.png' },
+                { id: 'stars-bg', src: 'ChatGPT Image Jul 24, 2025, 06_07_59 PM.png' },
+                { id: 'twinkling-bg', src: 'ChatGPT Image Jul 24, 2025, 06_13_39 PM.png' },
                 
                 // Cars
-                { id: 'car-player', src: 'cars/player.png' },
-                { id: 'car-ai1', src: 'cars/ai1.png' },
-                { id: 'car-ai2', src: 'cars/ai2.png' }
+                { id: 'car-player', src: 'Screenshot_2025-07-25_074749-removebg-preview.png' },
+                { id: 'car-ai1', src: 'Screenshot_2025-07-25_074839-removebg-preview.png' },
+                { id: 'car-ai2', src: 'Screenshot_2025-07-25_074912-removebg-preview.png' }
             ]
         };
 
