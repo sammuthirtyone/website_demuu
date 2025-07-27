@@ -10,7 +10,7 @@
             padding: 0;
             overflow: hidden;
             background: #000;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
         }
         #gameCanvas {
             display: block;
@@ -21,6 +21,8 @@
             left: 10px;
             color: white;
             font-size: 18px;
+            text-shadow: 2px 2px 4px #000;
+            z-index: 100;
         }
         #startScreen {
             position: absolute;
@@ -28,50 +30,102 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 200;
             color: white;
         }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 18px;
-            background: #e74c3c;
+        #startScreen h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px #000;
+        }
+        .btn {
+            margin: 15px;
+            padding: 15px 40px;
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
             color: white;
             border: none;
             border-radius: 5px;
+            font-size: 20px;
             cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        #nitroBar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            height: 20px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        #nitroFill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            transition: width 0.1s;
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
     <div id="ui">
-        Score: <span id="score">0</span> | 
-        Speed: <span id="speed">0</span> | 
-        Nitro: <span id="nitro">100</span>%
+        <div>SPEED: <span id="speed">0</span> KM/H</div>
+        <div>SCORE: <span id="score">0</span></div>
+    </div>
+    <div id="nitroBar">
+        <div id="nitroFill"></div>
     </div>
     <div id="startScreen">
-        <h1>3D RACING GAME</h1>
-        <button id="startBtn">START GAME</button>
+        <h1>3D CAR RACER</h1>
+        <button class="btn" id="startBtn">START RACE</button>
     </div>
 
+    <!-- Audio Elements -->
+    <audio id="engineSound" loop></audio>
+    <audio id="uiSound"></audio>
+    <audio id="nitroSound"></audio>
+    <audio id="hoverSound"></audio>
+
     <script>
-        // Game setup
+        // Game Canvas Setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const speedElement = document.getElementById('speed');
-        const nitroElement = document.getElementById('nitro');
-        const startScreen = document.getElementById('startScreen');
-        const startBtn = document.getElementById('startBtn');
-
-        // Game settings
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+        // UI Elements
+        const scoreElement = document.getElementById('score');
+        const speedElement = document.getElementById('speed');
+        const startScreen = document.getElementById('startScreen');
+        const startBtn = document.getElementById('startBtn');
+        const nitroFill = document.getElementById('nitroFill');
+
+        // Audio Elements
+        const engineSound = document.getElementById('engineSound');
+        const uiSound = document.getElementById('uiSound');
+        const nitroSound = document.getElementById('nitroSound');
+        const hoverSound = document.getElementById('hoverSound');
+
+        // Set audio sources (using your links)
+        engineSound.src = "vehicle-idle-start-190010.mp3";
+        uiSound.src = "ui-click-43196.mp3";
+        nitroSound.src = "nitro-activation-48077.mp3";
+        hoverSound.src = "hover-button-287656.mp3";
+
+        // Game settings
         const playerWidth = 80;
         const playerHeight = 150;
         const roadWidth = 2000;
@@ -79,6 +133,7 @@
         const maxSpeed = 200;
         const acceleration = 0.1;
         const nitroBoost = 1.5;
+        const curveIntensity = 4;
 
         // Game state
         let score = 0;
@@ -91,11 +146,21 @@
         let gameOver = false;
         let animationId;
 
+        // Load images
+        const playerCarImg = new Image();
+        playerCarImg.src = "Screenshot_2025-07-25_074749-removebg-preview.png";
+        
+        const opponentCar1 = new Image();
+        opponentCar1.src = "Screenshot_2025-07-25_074839-removebg-preview.png";
+        
+        const opponentCar2 = new Image();
+        opponentCar2.src = "Screenshot_2025-07-25_074912-removebg-preview.png";
+
         // Track segments
         let segments = [];
         for (let i = 0; i < 500; i++) {
             segments.push({
-                curve: Math.sin(i/30) * 3,
+                curve: Math.sin(i/30) * curveIntensity,
                 y: Math.sin(i/20) * 1000,
                 color: i % 20 < 10 ? '#2c3e50' : '#34495e'
             });
@@ -103,10 +168,10 @@
 
         // Opponents
         let opponents = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 15; i++) {
             opponents.push({
                 z: Math.random() * 100000,
-                offset: (Math.random() - 0.5) * 1.5,
+                offset: (Math.random() - 0.5) * 1.8,
                 speed: 50 + Math.random() * 100,
                 type: Math.random() > 0.5 ? 1 : 2
             });
@@ -133,6 +198,28 @@
             ctx.closePath();
             ctx.fillStyle = color;
             ctx.fill();
+        }
+
+        // Draw opponent car
+        function drawOpponent(ctx, opponent, scale) {
+            const carImg = opponent.type === 1 ? opponentCar1 : opponentCar2;
+            const width = scale * 100 * canvas.width/2;
+            const height = width * (carImg.height / carImg.width);
+            
+            ctx.save();
+            ctx.translate(
+                canvas.width/2 + (scale * opponent.offset * roadWidth * canvas.width/2),
+                canvas.height/2 - (scale * segments[Math.floor(opponent.z/segmentLength) % segments.length].y * canvas.height/2)
+            );
+            ctx.scale(scale, scale);
+            ctx.drawImage(
+                carImg,
+                -width/2/scale,
+                -height/scale,
+                width/scale,
+                height/scale
+            );
+            ctx.restore();
         }
 
         // Main game loop
@@ -179,21 +266,37 @@
                     p2.screen.x, p2.screen.y, p2.screen.w,
                     segment.color
                 );
+
+                // Draw opponents on this segment
+                opponents.forEach(opponent => {
+                    if (Math.floor(opponent.z/segmentLength) % segments.length === (baseSegment + n) % segments.length) {
+                        const scale = 1000 / (z - segmentLength * currPos);
+                        drawOpponent(ctx, opponent, scale);
+                    }
+                });
             }
 
-            // Draw player car (simple rectangle for now)
-            ctx.fillStyle = '#3498db';
-            ctx.fillRect(
-                canvas.width/2 - playerWidth/2,
-                canvas.height - playerHeight - 20,
-                playerWidth,
-                playerHeight
+            // Draw player car
+            const playerScale = 1000 / segmentLength;
+            const playerImgWidth = playerScale * 100 * canvas.width/2;
+            const playerImgHeight = playerImgWidth * (playerCarImg.height / playerCarImg.width);
+            
+            ctx.save();
+            ctx.translate(canvas.width/2, canvas.height * 0.8);
+            ctx.scale(playerScale, playerScale);
+            ctx.drawImage(
+                playerCarImg,
+                -playerImgWidth/2/playerScale,
+                -playerImgHeight/playerScale,
+                playerImgWidth/playerScale,
+                playerImgHeight/playerScale
             );
+            ctx.restore();
 
             // Update UI
-            scoreElement.textContent = score;
             speedElement.textContent = Math.round(speed);
-            nitroElement.textContent = Math.round(nitro);
+            scoreElement.textContent = score;
+            nitroFill.style.width = `${nitro}%`;
 
             // Game logic
             if (!gameOver) {
@@ -201,6 +304,7 @@
                 if (usingNitro && nitro > 0) {
                     speed = Math.min(speed + acceleration * nitroBoost, maxSpeed * nitroBoost);
                     nitro -= 0.5;
+                    if (nitro < 0) nitro = 0;
                 } else {
                     speed = Math.min(speed + acceleration, maxSpeed);
                     if (nitro < 100) nitro += 0.1;
@@ -209,31 +313,73 @@
                 // Steering
                 playerX += segments[baseSegment % segments.length].curve * speed/100;
 
+                // Move opponents
+                opponents.forEach(opponent => {
+                    opponent.z += opponent.speed;
+                    if (opponent.z > position + 50000) opponent.z -= 100000;
+                    if (opponent.z < position - 50000) opponent.z += 100000;
+                    
+                    // Collision detection
+                    if (Math.abs(position - opponent.z) < 50 && 
+                        Math.abs(playerX - opponent.offset) < 0.3) {
+                        gameOver = true;
+                        ctx.fillStyle = 'rgba(255,0,0,0.5)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = 'white';
+                        ctx.font = '48px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('CRASH!', canvas.width/2, canvas.height/2);
+                        ctx.font = '24px Arial';
+                        ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 50);
+                        ctx.textAlign = 'left';
+                        engineSound.pause();
+                    }
+                });
+
                 // Scoring
                 score += Math.floor(speed/10);
 
                 animationId = requestAnimationFrame(gameLoop);
-            } else {
-                // Game over screen
-                ctx.fillStyle = 'rgba(0,0,0,0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'white';
-                ctx.font = '48px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
-                ctx.font = '24px Arial';
-                ctx.fillText('Final Score: ' + score, canvas.width/2, canvas.height/2 + 50);
-                ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 100);
-                ctx.textAlign = 'left';
             }
         }
 
+        // Start game function
+        function startGame() {
+            gameStarted = true;
+            gameOver = false;
+            score = 0;
+            speed = 0;
+            position = 0;
+            playerX = 0;
+            nitro = 100;
+            startScreen.style.display = 'none';
+            
+            // Start engine sound
+            engineSound.currentTime = 0;
+            engineSound.play();
+            
+            gameLoop();
+        }
+
         // Event listeners
-        startBtn.addEventListener('click', startGame);
+        startBtn.addEventListener('click', () => {
+            uiSound.currentTime = 0;
+            uiSound.play();
+            startGame();
+        });
+
+        startBtn.addEventListener('mouseenter', () => {
+            hoverSound.currentTime = 0;
+            hoverSound.play();
+        });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === ' ' && gameStarted && !gameOver) {
-                usingNitro = true;
+                if (!usingNitro && nitro > 20) {
+                    usingNitro = true;
+                    nitroSound.currentTime = 0;
+                    nitroSound.play();
+                }
             }
             if (e.key.toLowerCase() === 'r' && gameOver) {
                 startGame();
@@ -251,18 +397,10 @@
             canvas.height = window.innerHeight;
         });
 
-        // Start game function
-        function startGame() {
-            gameStarted = true;
-            gameOver = false;
-            score = 0;
-            speed = 0;
-            position = 0;
-            playerX = 0;
-            nitro = 100;
-            startScreen.style.display = 'none';
-            gameLoop();
-        }
+        // Preload images
+        window.onload = () => {
+            // This ensures images are loaded before game starts
+        };
     </script>
 </body>
 </html>
