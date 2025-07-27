@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Racing Game</title>
+    <title>Enhanced Hill Climb Racing</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: #000;
+            background: linear-gradient(to bottom, #87CEEB 0%, #1E90FF 100%);
             font-family: 'Arial', sans-serif;
         }
         #gameCanvas {
@@ -17,390 +17,356 @@
         }
         #ui {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 20px;
+            left: 20px;
             color: white;
-            font-size: 18px;
-            text-shadow: 2px 2px 4px #000;
-            z-index: 100;
+            font-size: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            border-radius: 10px;
         }
-        #startScreen {
+        #gameOver {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.8);
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 200;
             color: white;
+            z-index: 100;
         }
-        #startScreen h1 {
+        #gameOver h1 {
             font-size: 48px;
-            margin-bottom: 30px;
-            text-shadow: 3px 3px 6px #000;
+            margin-bottom: 20px;
+            color: #e74c3c;
         }
-        .btn {
-            margin: 15px;
-            padding: 15px 40px;
-            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+        #gameOver button {
+            padding: 15px 30px;
+            margin-top: 30px;
+            font-size: 20px;
+            background: #2ecc71;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 20px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-        }
-        #nitroBar {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 200px;
-            height: 20px;
-            background: rgba(0,0,0,0.5);
-            border: 2px solid #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 100;
-        }
-        #nitroFill {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(to right, #3498db, #2980b9);
-            transition: width 0.1s;
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
     <div id="ui">
-        <div>SPEED: <span id="speed">0</span> KM/H</div>
-        <div>SCORE: <span id="score">0</span></div>
+        <div>Distance: <span id="distance">0</span>m</div>
+        <div>Score: <span id="score">0</span></div>
     </div>
-    <div id="nitroBar">
-        <div id="nitroFill"></div>
+    <div id="gameOver">
+        <h1>GAME OVER</h1>
+        <div>Final Score: <span id="finalScore">0</span></div>
+        <button id="restartBtn">PLAY AGAIN</button>
     </div>
-    <div id="startScreen">
-        <h1>3D CAR RACER</h1>
-        <button class="btn" id="startBtn">START RACE</button>
-    </div>
-
-    <!-- Audio Elements -->
-    <audio id="engineSound" loop></audio>
-    <audio id="uiSound"></audio>
-    <audio id="nitroSound"></audio>
-    <audio id="hoverSound"></audio>
 
     <script>
-        // Game Canvas Setup
+        // Game setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // UI Elements
+        // UI elements
+        const distanceElement = document.getElementById('distance');
         const scoreElement = document.getElementById('score');
-        const speedElement = document.getElementById('speed');
-        const startScreen = document.getElementById('startScreen');
-        const startBtn = document.getElementById('startBtn');
-        const nitroFill = document.getElementById('nitroFill');
-
-        // Audio Elements
-        const engineSound = document.getElementById('engineSound');
-        const uiSound = document.getElementById('uiSound');
-        const nitroSound = document.getElementById('nitroSound');
-        const hoverSound = document.getElementById('hoverSound');
-
-        // Set audio sources (using your links)
-        engineSound.src = "vehicle-idle-start-190010.mp3";
-        uiSound.src = "ui-click-43196.mp3";
-        nitroSound.src = "nitro-activation-48077.mp3";
-        hoverSound.src = "hover-button-287656.mp3";
+        const gameOverScreen = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
 
         // Game settings
-        const playerWidth = 80;
-        const playerHeight = 150;
-        const roadWidth = 2000;
-        const segmentLength = 200;
-        const maxSpeed = 200;
-        const acceleration = 0.1;
-        const nitroBoost = 1.5;
-        const curveIntensity = 4;
-
-        // Game state
-        let score = 0;
-        let speed = 0;
+        const GRAVITY = 0.5;
+        const TERRAIN_SEGMENT_LENGTH = 50;
         let position = 0;
-        let playerX = 0;
-        let nitro = 100;
-        let usingNitro = false;
-        let gameStarted = false;
+        let speed = 0;
+        let score = 0;
         let gameOver = false;
-        let animationId;
+        let terrain = [];
+        let cameraOffset = 0;
+        let clouds = [];
 
-        // Load images
-        const playerCarImg = new Image();
-        playerCarImg.src = "Screenshot_2025-07-25_074749-removebg-preview.png";
-        
-        const opponentCar1 = new Image();
-        opponentCar1.src = "Screenshot_2025-07-25_074839-removebg-preview.png";
-        
-        const opponentCar2 = new Image();
-        opponentCar2.src = "Screenshot_2025-07-25_074912-removebg-preview.png";
+        // Car properties
+        const car = {
+            x: 100,
+            y: 0,
+            width: 80,
+            height: 40,
+            speed: 0,
+            rotation: 0,
+            bodyColor: '#e74c3c',
+            wheelColor: '#2c3e50'
+        };
 
-        // Track segments
-        let segments = [];
-        for (let i = 0; i < 500; i++) {
-            segments.push({
-                curve: Math.sin(i/30) * curveIntensity,
-                y: Math.sin(i/20) * 1000,
-                color: i % 20 < 10 ? '#2c3e50' : '#34495e'
+        // Generate clouds
+        function generateClouds() {
+            clouds = [];
+            for (let i = 0; i < 8; i++) {
+                clouds.push({
+                    x: Math.random() * canvas.width * 3,
+                    y: Math.random() * canvas.height * 0.4,
+                    width: 100 + Math.random() * 100,
+                    speed: 0.2 + Math.random() * 0.3
+                });
+            }
+        }
+
+        // Generate terrain
+        function generateTerrain() {
+            terrain = [];
+            let lastY = canvas.height * 0.7;
+            
+            for (let x = 0; x < canvas.width * 3; x += TERRAIN_SEGMENT_LENGTH) {
+                // Smoother terrain generation
+                lastY = lastY + (Math.random() * 30 - 15);
+                lastY = Math.max(canvas.height * 0.5, Math.min(canvas.height * 0.8, lastY));
+                
+                // Different colors for variety
+                const color = x % 200 < 100 ? '#27ae60' : '#2ecc71';
+                
+                terrain.push({ 
+                    x, 
+                    y: lastY,
+                    color
+                });
+            }
+        }
+
+        // Draw clouds
+        function drawClouds() {
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            clouds.forEach(cloud => {
+                // Only draw visible clouds
+                const cloudX = cloud.x - cameraOffset * 0.3;
+                if (cloudX < -cloud.width || cloudX > canvas.width + cloud.width) return;
+                
+                // Draw fluffy cloud
+                ctx.beginPath();
+                ctx.arc(cloudX, cloud.y, cloud.width * 0.3, 0, Math.PI * 2);
+                ctx.arc(cloudX + cloud.width * 0.25, cloud.y - cloud.width * 0.1, cloud.width * 0.25, 0, Math.PI * 2);
+                ctx.arc(cloudX + cloud.width * 0.5, cloud.y, cloud.width * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Move cloud
+                cloud.x -= cloud.speed;
+                if (cloud.x < -cloud.width * 2) {
+                    cloud.x = canvas.width + cloud.width;
+                    cloud.y = Math.random() * canvas.height * 0.4;
+                }
             });
         }
 
-        // Opponents
-        let opponents = [];
-        for (let i = 0; i < 15; i++) {
-            opponents.push({
-                z: Math.random() * 100000,
-                offset: (Math.random() - 0.5) * 1.8,
-                speed: 50 + Math.random() * 100,
-                type: Math.random() > 0.5 ? 1 : 2
-            });
-        }
-
-        // Project 3D to 2D
-        function project(p, cameraX, cameraY, cameraZ) {
-            p.camera.x = p.world.x - cameraX;
-            p.camera.y = p.world.y - cameraY;
-            p.camera.z = p.world.z - cameraZ;
-            p.screen.scale = 1000 / p.camera.z;
-            p.screen.x = canvas.width/2 + (p.screen.scale * p.camera.x * canvas.width/2);
-            p.screen.y = canvas.height/2 - (p.screen.scale * p.camera.y * canvas.height/2);
-            p.screen.w = p.screen.scale * p.world.w * canvas.width/2;
-        }
-
-        // Draw segment
-        function drawSegment(ctx, x1, y1, w1, x2, y2, w2, color) {
+        // Draw terrain
+        function drawTerrain() {
             ctx.beginPath();
-            ctx.moveTo(x1 - w1, y1);
-            ctx.lineTo(x1 + w1, y1);
-            ctx.lineTo(x2 + w2, y2);
-            ctx.lineTo(x2 - w2, y2);
+            ctx.moveTo(0, canvas.height);
+            
+            for (let i = 0; i < terrain.length; i++) {
+                const segment = terrain[i];
+                const x = segment.x - cameraOffset;
+                
+                // Only draw visible segments
+                if (x > canvas.width + TERRAIN_SEGMENT_LENGTH) break;
+                if (x < -TERRAIN_SEGMENT_LENGTH) continue;
+                
+                ctx.lineTo(x, segment.y);
+                
+                // Fill segments with different colors
+                if (i > 0) {
+                    ctx.fillStyle = terrain[i-1].color;
+                    ctx.lineTo(terrain[i-1].x - cameraOffset, canvas.height);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(x, segment.y);
+                }
+            }
+            
+            ctx.lineTo(canvas.width, canvas.height);
             ctx.closePath();
-            ctx.fillStyle = color;
+            ctx.fillStyle = terrain[terrain.length-1].color;
             ctx.fill();
         }
 
-        // Draw opponent car
-        function drawOpponent(ctx, opponent, scale) {
-            const carImg = opponent.type === 1 ? opponentCar1 : opponentCar2;
-            const width = scale * 100 * canvas.width/2;
-            const height = width * (carImg.height / carImg.width);
-            
+        // Draw car with better graphics
+        function drawCar() {
             ctx.save();
-            ctx.translate(
-                canvas.width/2 + (scale * opponent.offset * roadWidth * canvas.width/2),
-                canvas.height/2 - (scale * segments[Math.floor(opponent.z/segmentLength) % segments.length].y * canvas.height/2)
+            ctx.translate(car.x - cameraOffset, car.y);
+            ctx.rotate(car.rotation);
+            
+            // Car body with gradient
+            const bodyGradient = ctx.createLinearGradient(
+                -car.width/2, -car.height/2, 
+                car.width/2, car.height/2
             );
-            ctx.scale(scale, scale);
-            ctx.drawImage(
-                carImg,
-                -width/2/scale,
-                -height/scale,
-                width/scale,
-                height/scale
-            );
+            bodyGradient.addColorStop(0, car.bodyColor);
+            bodyGradient.addColorStop(1, '#c0392b');
+            ctx.fillStyle = bodyGradient;
+            
+            // Rounded car body
+            ctx.beginPath();
+            ctx.roundRect(-car.width/2, -car.height/2, car.width, car.height, 5);
+            ctx.fill();
+            
+            // Car details
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(-car.width/2 + 15, -car.height/2 + 5, 25, 15); // Window
+            ctx.fillRect(car.width/2 - 40, -car.height/2 + 5, 25, 15);  // Window
+            
+            // Wheels
+            ctx.fillStyle = car.wheelColor;
+            // Front wheel
+            ctx.beginPath();
+            ctx.arc(car.width/2 - 15, car.height/2, 12, 0, Math.PI * 2);
+            ctx.fill();
+            // Rear wheel
+            ctx.beginPath();
+            ctx.arc(-car.width/2 + 15, car.height/2, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Wheel details
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(car.width/2 - 15, car.height/2, 8, 0, Math.PI * 2);
+            ctx.arc(-car.width/2 + 15, car.height/2, 8, 0, Math.PI * 2);
+            ctx.stroke();
+            
             ctx.restore();
         }
 
         // Main game loop
         function gameLoop() {
-            // Clear canvas
-            ctx.fillStyle = '#16a085';
+            if (gameOver) return;
+            
+            // Clear canvas with sky gradient
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            skyGradient.addColorStop(0, '#87CEEB');
+            skyGradient.addColorStop(1, '#1E90FF');
+            ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            
+            // Draw game elements
+            drawClouds();
+            drawTerrain();
+            drawCar();
+            
             // Update position
             position += speed;
-            while (position >= 100000) position -= 100000;
-            while (position < 0) position += 100000;
-
-            // Find base segment
-            let baseSegment = Math.floor(position/segmentLength);
-
-            // Draw road
-            let maxy = canvas.height;
-            for (let n = 0; n < 100; n++) {
-                let segment = segments[(baseSegment + n) % segments.length];
-                let currPos = (position % segmentLength)/segmentLength;
-                let z = (segmentLength * n) - (segmentLength * currPos);
-
-                let p1 = {
-                    world: { x: 0, y: segment.y, z: z, w: roadWidth },
-                    camera: { x: 0, y: 0, z: 0 },
-                    screen: { x: 0, y: 0, w: 0, scale: 0 }
-                };
-
-                let p2 = {
-                    world: { x: 0, y: segments[(baseSegment + n + 1) % segments.length].y, z: z - segmentLength, w: roadWidth },
-                    camera: { x: 0, y: 0, z: 0 },
-                    screen: { x: 0, y: 0, w: 0, scale: 0 }
-                };
-
-                project(p1, playerX, 0, 0);
-                project(p2, playerX, 0, 0);
-
-                if (p1.screen.y >= maxy) continue;
-                maxy = p1.screen.y;
-
-                drawSegment(ctx, 
-                    p1.screen.x, p1.screen.y, p1.screen.w,
-                    p2.screen.x, p2.screen.y, p2.screen.w,
-                    segment.color
-                );
-
-                // Draw opponents on this segment
-                opponents.forEach(opponent => {
-                    if (Math.floor(opponent.z/segmentLength) % segments.length === (baseSegment + n) % segments.length) {
-                        const scale = 1000 / (z - segmentLength * currPos);
-                        drawOpponent(ctx, opponent, scale);
-                    }
-                });
-            }
-
-            // Draw player car
-            const playerScale = 1000 / segmentLength;
-            const playerImgWidth = playerScale * 100 * canvas.width/2;
-            const playerImgHeight = playerImgWidth * (playerCarImg.height / playerCarImg.width);
+            car.x += speed;
             
-            ctx.save();
-            ctx.translate(canvas.width/2, canvas.height * 0.8);
-            ctx.scale(playerScale, playerScale);
-            ctx.drawImage(
-                playerCarImg,
-                -playerImgWidth/2/playerScale,
-                -playerImgHeight/playerScale,
-                playerImgWidth/playerScale,
-                playerImgHeight/playerScale
+            // Get terrain under car
+            const terrainHeight = getTerrainHeight(car.x);
+            const terrainAngle = Math.atan2(
+                getTerrainHeight(car.x + 5) - getTerrainHeight(car.x - 5),
+                10
             );
-            ctx.restore();
-
-            // Update UI
-            speedElement.textContent = Math.round(speed);
-            scoreElement.textContent = score;
-            nitroFill.style.width = `${nitro}%`;
-
-            // Game logic
-            if (!gameOver) {
-                // Speed control
-                if (usingNitro && nitro > 0) {
-                    speed = Math.min(speed + acceleration * nitroBoost, maxSpeed * nitroBoost);
-                    nitro -= 0.5;
-                    if (nitro < 0) nitro = 0;
-                } else {
-                    speed = Math.min(speed + acceleration, maxSpeed);
-                    if (nitro < 100) nitro += 0.1;
-                }
-
-                // Steering
-                playerX += segments[baseSegment % segments.length].curve * speed/100;
-
-                // Move opponents
-                opponents.forEach(opponent => {
-                    opponent.z += opponent.speed;
-                    if (opponent.z > position + 50000) opponent.z -= 100000;
-                    if (opponent.z < position - 50000) opponent.z += 100000;
-                    
-                    // Collision detection
-                    if (Math.abs(position - opponent.z) < 50 && 
-                        Math.abs(playerX - opponent.offset) < 0.3) {
-                        gameOver = true;
-                        ctx.fillStyle = 'rgba(255,0,0,0.5)';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.fillStyle = 'white';
-                        ctx.font = '48px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('CRASH!', canvas.width/2, canvas.height/2);
-                        ctx.font = '24px Arial';
-                        ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 50);
-                        ctx.textAlign = 'left';
-                        engineSound.pause();
-                    }
-                });
-
-                // Scoring
-                score += Math.floor(speed/10);
-
-                animationId = requestAnimationFrame(gameLoop);
+            
+            // Position car
+            car.y = terrainHeight - car.height;
+            car.rotation = terrainAngle;
+            
+            // Apply gravity
+            car.speed += GRAVITY * Math.sin(car.rotation);
+            
+            // Check if car flipped
+            if (Math.abs(car.rotation) > Math.PI / 2) {
+                endGame();
             }
+            
+            // Check if car fell off screen
+            if (car.y > canvas.height + 50) {
+                endGame();
+            }
+            
+            // Update camera
+            cameraOffset = car.x - 100;
+            
+            // Update score
+            score = Math.floor(car.x / 10);
+            distanceElement.textContent = score;
+            scoreElement.textContent = score;
+            
+            // Generate more terrain if needed
+            if (car.x > terrain[terrain.length - 1].x - canvas.width) {
+                generateTerrain();
+            }
+            
+            requestAnimationFrame(gameLoop);
         }
 
-        // Start game function
-        function startGame() {
-            gameStarted = true;
-            gameOver = false;
-            score = 0;
-            speed = 0;
+        // Get terrain height at x position
+        function getTerrainHeight(x) {
+            const segmentIndex = Math.floor(x / TERRAIN_SEGMENT_LENGTH);
+            if (segmentIndex < 0 || segmentIndex >= terrain.length - 1) {
+                return canvas.height;
+            }
+            
+            const segment = terrain[segmentIndex];
+            const nextSegment = terrain[segmentIndex + 1];
+            const localX = x % TERRAIN_SEGMENT_LENGTH;
+            const t = localX / TERRAIN_SEGMENT_LENGTH;
+            
+            return segment.y + (nextSegment.y - segment.y) * t;
+        }
+
+        // End game
+        function endGame() {
+            gameOver = true;
+            finalScoreElement.textContent = score;
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Reset game
+        function resetGame() {
             position = 0;
-            playerX = 0;
-            nitro = 100;
-            startScreen.style.display = 'none';
-            
-            // Start engine sound
-            engineSound.currentTime = 0;
-            engineSound.play();
-            
+            score = 0;
+            gameOver = false;
+            car.x = 100;
+            car.y = 0;
+            car.speed = 0;
+            car.rotation = 0;
+            cameraOffset = 0;
+            generateTerrain();
+            generateClouds();
+            gameOverScreen.style.display = 'none';
             gameLoop();
         }
 
-        // Event listeners
-        startBtn.addEventListener('click', () => {
-            uiSound.currentTime = 0;
-            uiSound.play();
-            startGame();
-        });
-
-        startBtn.addEventListener('mouseenter', () => {
-            hoverSound.currentTime = 0;
-            hoverSound.play();
-        });
-
+        // Handle keyboard input
         window.addEventListener('keydown', (e) => {
-            if (e.key === ' ' && gameStarted && !gameOver) {
-                if (!usingNitro && nitro > 20) {
-                    usingNitro = true;
-                    nitroSound.currentTime = 0;
-                    nitroSound.play();
-                }
-            }
-            if (e.key.toLowerCase() === 'r' && gameOver) {
-                startGame();
+            if (gameOver) return;
+            
+            if (e.key === 'ArrowRight') {
+                car.speed = Math.min(car.speed + 0.2, 10);
+            } else if (e.key === 'ArrowLeft') {
+                car.speed = Math.max(car.speed - 0.3, -5);
             }
         });
 
-        window.addEventListener('keyup', (e) => {
-            if (e.key === ' ') {
-                usingNitro = false;
-            }
-        });
+        // Restart button
+        restartBtn.addEventListener('click', resetGame);
 
+        // Handle window resize
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            generateTerrain();
+            generateClouds();
         });
 
-        // Preload images
-        window.onload = () => {
-            // This ensures images are loaded before game starts
-        };
+        // Start the game
+        generateTerrain();
+        generateClouds();
+        gameLoop();
     </script>
 </body>
 </html>
