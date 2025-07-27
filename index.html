@@ -10,18 +10,17 @@
             padding: 0;
             overflow: hidden;
             background: #000;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
         }
         #gameCanvas {
             display: block;
         }
-        #score {
+        #ui {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 10px;
+            left: 10px;
             color: white;
-            font-size: 24px;
-            z-index: 100;
+            font-size: 18px;
         }
         #startScreen {
             position: absolute;
@@ -34,106 +33,90 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 200;
             color: white;
         }
-        .btn {
+        button {
+            padding: 10px 20px;
             margin: 10px;
-            padding: 15px 30px;
+            font-size: 18px;
             background: #e74c3c;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 18px;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #c0392b;
-            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
-    <div id="score">Score: 0</div>
+    <div id="ui">
+        Score: <span id="score">0</span> | 
+        Speed: <span id="speed">0</span> | 
+        Nitro: <span id="nitro">100</span>%
+    </div>
     <div id="startScreen">
         <h1>3D RACING GAME</h1>
-        <button class="btn" id="startBtn">START RACE</button>
+        <button id="startBtn">START GAME</button>
     </div>
 
-    <audio id="engineSound" src="vehicle-idle-start-190010.mp3" loop></audio>
-    <audio id="uiSound" src="ui-click-43196.mp3"></audio>
-    <audio id="nitroSound" src="nitro-activation-48077.mp3"></audio>
-    <audio id="hoverSound" src="hover-button-287656.mp3"></audio>
-
     <script>
-        // Game Canvas Setup
+        // Game setup
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const speedElement = document.getElementById('speed');
+        const nitroElement = document.getElementById('nitro');
+        const startScreen = document.getElementById('startScreen');
+        const startBtn = document.getElementById('startBtn');
+
+        // Game settings
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        const playerWidth = 80;
+        const playerHeight = 150;
+        const roadWidth = 2000;
+        const segmentLength = 200;
+        const maxSpeed = 200;
+        const acceleration = 0.1;
+        const nitroBoost = 1.5;
 
-        // Game State
+        // Game state
         let score = 0;
+        let speed = 0;
+        let position = 0;
+        let playerX = 0;
+        let nitro = 100;
+        let usingNitro = false;
         let gameStarted = false;
         let gameOver = false;
         let animationId;
-        let roadWidth = 2000;
+
+        // Track segments
         let segments = [];
-        let playerZ = 0;
-        let speed = 0;
-        let maxSpeed = 300;
-        let acceleration = 0.2;
-        let deceleration = 0.3;
-        let nitro = 100;
-        let usingNitro = false;
-        let nitroBoost = 1.5;
-        let segmentLength = 200;
-        let rumbleLength = 3;
-        let trackLength;
-        let playerX = 0;
-        let position = 0;
-        let startScreen = document.getElementById('startScreen');
-        let scoreElement = document.getElementById('score');
-        let startBtn = document.getElementById('startBtn');
-        let engineSound = document.getElementById('engineSound');
-        let uiSound = document.getElementById('uiSound');
-        let nitroSound = document.getElementById('nitroSound');
-        let hoverSound = document.getElementById('hoverSound');
-
-        // Load images
-        const playerCarImg = new Image();
-        playerCarImg.src = 'Screenshot_2025-07-25_074749-removebg-preview.png';
-        
-        const opponentCar1 = new Image();
-        opponentCar1.src = 'Screenshot_2025-07-25_074839-removebg-preview.png';
-        
-        const opponentCar2 = new Image();
-        opponentCar2.src = 'Screenshot_2025-07-25_074912-removebg-preview.png';
-
-        // Opponent cars
-        let opponents = [];
-        
-        // Initialize track
-        function initTrack() {
-            segments = [];
-            for(let i = 0; i < 500; i++) {
-                segments.push({
-                    curve: Math.sin(i/30) * 3,
-                    y: Math.sin(i/20) * 1000,
-                    color: i % 20 < 10 ? '#2c3e50' : '#34495e'
-                });
-            }
-            trackLength = segments.length * segmentLength;
+        for (let i = 0; i < 500; i++) {
+            segments.push({
+                curve: Math.sin(i/30) * 3,
+                y: Math.sin(i/20) * 1000,
+                color: i % 20 < 10 ? '#2c3e50' : '#34495e'
+            });
         }
 
-        // Project 3D position to 2D screen
+        // Opponents
+        let opponents = [];
+        for (let i = 0; i < 10; i++) {
+            opponents.push({
+                z: Math.random() * 100000,
+                offset: (Math.random() - 0.5) * 1.5,
+                speed: 50 + Math.random() * 100,
+                type: Math.random() > 0.5 ? 1 : 2
+            });
+        }
+
+        // Project 3D to 2D
         function project(p, cameraX, cameraY, cameraZ) {
             p.camera.x = p.world.x - cameraX;
             p.camera.y = p.world.y - cameraY;
             p.camera.z = p.world.z - cameraZ;
-            
             p.screen.scale = 1000 / p.camera.z;
             p.screen.x = canvas.width/2 + (p.screen.scale * p.camera.x * canvas.width/2);
             p.screen.y = canvas.height/2 - (p.screen.scale * p.camera.y * canvas.height/2);
@@ -152,224 +135,134 @@
             ctx.fill();
         }
 
-        // Draw opponents
-        function drawOpponents(ctx, segment) {
-            opponents.forEach(opponent => {
-                if(opponent.segment === segment) {
-                    const scale = 1000 / (segmentLength * segment);
-                    const x = canvas.width/2 + (scale * opponent.offset * roadWidth * canvas.width/2);
-                    const y = canvas.height/2 - (scale * segment.y * canvas.height/2);
-                    const width = scale * 100 * canvas.width/2;
-                    const height = width * 1.5;
-                    
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.scale(scale, scale);
-                    ctx.drawImage(
-                        opponent.type === 1 ? opponentCar1 : opponentCar2,
-                        -width/2/scale, -height/scale,
-                        width/scale, height/scale
-                    );
-                    ctx.restore();
-                }
-            });
-        }
-
-        // Draw player car
-        function drawPlayerCar(ctx) {
-            const scale = 1000 / (segmentLength * 1);
-            const width = scale * 100 * canvas.width/2;
-            const height = width * 1.5;
-            
-            ctx.save();
-            ctx.translate(canvas.width/2, canvas.height * 0.8);
-            ctx.scale(scale, scale);
-            ctx.drawImage(
-                playerCarImg,
-                -width/2/scale, -height/scale,
-                width/scale, height/scale
-            );
-            ctx.restore();
-        }
-
-        // Game loop
+        // Main game loop
         function gameLoop() {
             // Clear canvas
             ctx.fillStyle = '#16a085';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+
             // Update position
-            position = position + speed;
-            while(position >= trackLength) position -= trackLength;
-            while(position < 0) position += trackLength;
-            
-            // Find current segment
-            let segment = segments[Math.floor(position/segmentLength) % segments.length];
-            
-            // Draw road
+            position += speed;
+            while (position >= 100000) position -= 100000;
+            while (position < 0) position += 100000;
+
+            // Find base segment
             let baseSegment = Math.floor(position/segmentLength);
+
+            // Draw road
             let maxy = canvas.height;
-            
-            for(let n = 0; n < 100; n++) {
-                let currSeg = segments[(baseSegment + n) % segments.length];
+            for (let n = 0; n < 100; n++) {
+                let segment = segments[(baseSegment + n) % segments.length];
                 let currPos = (position % segmentLength)/segmentLength;
                 let z = (segmentLength * n) - (segmentLength * currPos);
-                
+
                 let p1 = {
-                    world: { x: 0, y: currSeg.y, z: z, w: roadWidth },
+                    world: { x: 0, y: segment.y, z: z, w: roadWidth },
                     camera: { x: 0, y: 0, z: 0 },
                     screen: { x: 0, y: 0, w: 0, scale: 0 }
                 };
-                
+
                 let p2 = {
                     world: { x: 0, y: segments[(baseSegment + n + 1) % segments.length].y, z: z - segmentLength, w: roadWidth },
                     camera: { x: 0, y: 0, z: 0 },
                     screen: { x: 0, y: 0, w: 0, scale: 0 }
                 };
-                
+
                 project(p1, playerX, 0, 0);
                 project(p2, playerX, 0, 0);
-                
-                if(p1.screen.y >= maxy) continue;
+
+                if (p1.screen.y >= maxy) continue;
                 maxy = p1.screen.y;
-                
+
                 drawSegment(ctx, 
                     p1.screen.x, p1.screen.y, p1.screen.w,
                     p2.screen.x, p2.screen.y, p2.screen.w,
-                    currSeg.color
+                    segment.color
                 );
-                
-                // Draw opponents on this segment
-                drawOpponents(ctx, (baseSegment + n) % segments.length);
             }
-            
-            // Draw player car
-            drawPlayerCar(ctx);
-            
-            // Draw HUD
-            ctx.fillStyle = 'white';
-            ctx.font = '20px Arial';
-            ctx.fillText(`Speed: ${Math.round(speed)} km/h`, 20, 40);
-            ctx.fillText(`Score: ${score}`, 20, 70);
-            
-            // Nitro bar
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(20, 100, 200, 20);
+
+            // Draw player car (simple rectangle for now)
             ctx.fillStyle = '#3498db';
-            ctx.fillRect(20, 100, 200 * (nitro/100), 20);
-            ctx.strokeStyle = 'white';
-            ctx.strokeRect(20, 100, 200, 20);
-            ctx.fillStyle = 'white';
-            ctx.fillText('NITRO', 25, 117);
-            
-            // Update game state
-            if(!gameOver) {
+            ctx.fillRect(
+                canvas.width/2 - playerWidth/2,
+                canvas.height - playerHeight - 20,
+                playerWidth,
+                playerHeight
+            );
+
+            // Update UI
+            scoreElement.textContent = score;
+            speedElement.textContent = Math.round(speed);
+            nitroElement.textContent = Math.round(nitro);
+
+            // Game logic
+            if (!gameOver) {
                 // Speed control
-                if(usingNitro && nitro > 0) {
+                if (usingNitro && nitro > 0) {
                     speed = Math.min(speed + acceleration * nitroBoost, maxSpeed * nitroBoost);
-                    nitro -= 0.2;
+                    nitro -= 0.5;
                 } else {
                     speed = Math.min(speed + acceleration, maxSpeed);
-                    if(nitro < 100) nitro += 0.05;
+                    if (nitro < 100) nitro += 0.1;
                 }
-                
+
                 // Steering
-                playerX = playerX + (segment.curve * speed/100);
-                
-                // Collision detection
-                opponents.forEach(opponent => {
-                    if(Math.abs(position - opponent.z) < 50 && 
-                       Math.abs(playerX - opponent.offset) < 0.3) {
-                        gameOver = true;
-                        ctx.fillStyle = 'rgba(255,0,0,0.5)';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.fillStyle = 'white';
-                        ctx.font = '48px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
-                        ctx.font = '24px Arial';
-                        ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 50);
-                        ctx.textAlign = 'left';
-                    }
-                });
-                
+                playerX += segments[baseSegment % segments.length].curve * speed/100;
+
                 // Scoring
                 score += Math.floor(speed/10);
-                scoreElement.textContent = score;
-                
+
                 animationId = requestAnimationFrame(gameLoop);
+            } else {
+                // Game over screen
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '48px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
+                ctx.font = '24px Arial';
+                ctx.fillText('Final Score: ' + score, canvas.width/2, canvas.height/2 + 50);
+                ctx.fillText('Press R to restart', canvas.width/2, canvas.height/2 + 100);
+                ctx.textAlign = 'left';
             }
-        }
-
-        // Initialize opponents
-        function initOpponents() {
-            opponents = [];
-            for(let i = 0; i < 20; i++) {
-                opponents.push({
-                    z: Math.random() * trackLength,
-                    offset: (Math.random() - 0.5) * 1.8,
-                    speed: 100 + Math.random() * 100,
-                    segment: Math.floor((Math.random() * segments.length)),
-                    type: Math.random() > 0.5 ? 1 : 2
-                });
-            }
-        }
-
-        // Start game
-        function startGame() {
-            gameStarted = true;
-            gameOver = false;
-            score = 0;
-            speed = 0;
-            playerX = 0;
-            position = 0;
-            nitro = 100;
-            startScreen.style.display = 'none';
-            engineSound.currentTime = 0;
-            engineSound.play();
-            initTrack();
-            initOpponents();
-            gameLoop();
         }
 
         // Event listeners
-        startBtn.addEventListener('click', () => {
-            uiSound.play();
-            startGame();
-        });
-
-        startBtn.addEventListener('mouseenter', () => {
-            hoverSound.play();
-        });
+        startBtn.addEventListener('click', startGame);
 
         window.addEventListener('keydown', (e) => {
-            if(e.key === ' ' && gameStarted && !gameOver) {
-                if(!usingNitro && nitro > 20) {
-                    usingNitro = true;
-                    nitroSound.currentTime = 0;
-                    nitroSound.play();
-                }
+            if (e.key === ' ' && gameStarted && !gameOver) {
+                usingNitro = true;
             }
-            
-            if(e.key.toLowerCase() === 'r' && gameOver) {
+            if (e.key.toLowerCase() === 'r' && gameOver) {
                 startGame();
             }
         });
 
         window.addEventListener('keyup', (e) => {
-            if(e.key === ' ') {
+            if (e.key === ' ') {
                 usingNitro = false;
             }
         });
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
 
-        // Initialize game
-        initTrack();
+        // Start game function
+        function startGame() {
+            gameStarted = true;
+            gameOver = false;
+            score = 0;
+            speed = 0;
+            position = 0;
+            playerX = 0;
+            nitro = 100;
+            startScreen.style.display = 'none';
+            gameLoop();
+        }
     </script>
 </body>
 </html>
