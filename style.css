@@ -40,12 +40,12 @@
 }
 
 .stars {
-    background: #000 url('assetsimages/stars.png') repeat;
+    background: #000 url('ChatGPT Image Jul 24, 2025, 06_07_59 PM.png') repeat;
     z-index: -2;
 }
 
 .twinkling {
-    background: transparent url('assetsimages/twinkling.png') repeat;
+    background: transparent url('ChatGPT Image Jul 24, 2025, 06_13_39 PM.png') repeat;
     z-index: -1;
     animation: twinkle 200s linear infinite;
 }
