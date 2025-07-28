@@ -3,38 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emoji Ninja</title>
+    <title>Fruit Ninja</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="menu-screen" class="screen">
-        <h1>🍉 Emoji Ninja 🍍</h1>
-        <button id="start-btn" class="btn">🎮 Start Game</button>
-        <button id="instructions-btn" class="btn">📖 Instructions</button>
+        <div class="logo-container">
+            <h1 class="logo">Fruit Ninja</h1>
+            <div class="fruit-decoration">🍎🍊🍋🍉🍓🍍</div>
+        </div>
+        <div class="button-group">
+            <button id="start-btn" class="btn">🍴 Start Slicing</button>
+            <button id="instructions-btn" class="btn">📖 How to Play</button>
+        </div>
     </div>
 
     <div id="instructions-screen" class="screen hidden">
-        <h2>How to Play</h2>
-        <p>Slice the emojis by moving your cursor over them!</p>
-        <p>Don't let them fall off the screen.</p>
-        <p>Some emojis give bonus points!</p>
-        <button id="back-to-menu-btn" class="btn">🔙 Back to Menu</button>
+        <div class="card">
+            <h2>How to Play</h2>
+            <div class="instructions-content">
+                <p>🍉 Slice the fruits by moving your finger/mouse over them</p>
+                <p>💥 Avoid bombs - they cost you lives!</p>
+                <p>🌟 Special fruits give bonus points</p>
+                <p>⏱ You have 60 seconds to score as much as possible</p>
+            </div>
+            <button id="back-to-menu-btn" class="btn">🔙 Main Menu</button>
+        </div>
     </div>
 
     <div id="game-screen" class="screen hidden">
-        <div id="game-info">
-            <span id="score">Score: 0</span>
-            <span id="lives">❤️❤️❤️</span>
-            <span id="time">Time: 60</span>
+        <div id="game-header">
+            <div class="score-box">
+                <span>Score</span>
+                <span id="score">0</span>
+            </div>
+            <div class="lives-box">
+                <span>Lives</span>
+                <span id="lives">❤️❤️❤️</span>
+            </div>
+            <div class="time-box">
+                <span>Time</span>
+                <span id="time">60</span>
+            </div>
         </div>
         <canvas id="game-canvas"></canvas>
     </div>
 
     <div id="game-over-screen" class="screen hidden">
-        <h2>Game Over!</h2>
-        <p id="final-score">Your score: 0</p>
-        <button id="restart-btn" class="btn">🔄 Play Again</button>
-        <button id="menu-btn" class="btn">🏠 Main Menu</button>
+        <div class="card">
+            <h2>Game Over!</h2>
+            <div class="result-container">
+                <p>Your final score:</p>
+                <p id="final-score" class="final-score">0</p>
+                <div class="fruit-celebration">🍉🍎🍊🍋🍓🍍</div>
+            </div>
+            <div class="button-group">
+                <button id="restart-btn" class="btn">🔄 Play Again</button>
+                <button id="menu-btn" class="btn">🏠 Main Menu</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
