@@ -27,18 +27,18 @@ let spawnRate = 1000; // milliseconds
 let trail = [];
 let maxTrailLength = 10;
 
-// Emojis to slice
-const emojis = ['🍎', '🍌', '🍒', '🍓', '🍊', '🍋', '🍍', '🥝', '🍉', '🍇', '🥥', '🍑', '💣', '💎'];
-const specialEmojis = ['💎', '🌟', '✨']; // These give bonus points
+// Fruit emojis
+const fruits = ['🍎', '🍊', '🍋', '🍉', '🍓', '🍍', '🍌', '🍒', '🥝', '🍑', '🥭', '🍈'];
+const specialFruits = ['🍒', '🍓', '🌟']; // These give bonus points
 const bombEmojis = ['💣', '☠️']; // These deduct lives
 
-// Emoji objects
-let activeEmojis = [];
+// Fruit objects
+let activeFruits = [];
 
 // Set canvas size
 function resizeCanvas() {
-    gameCanvas.width = window.innerWidth * 0.8;
-    gameCanvas.height = window.innerHeight * 0.7;
+    gameCanvas.width = Math.min(window.innerWidth * 0.9, 800);
+    gameCanvas.height = Math.min(window.innerHeight * 0.7, 500);
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -73,7 +73,7 @@ function showGameScreen() {
 function showGameOver() {
     gameScreen.classList.add('hidden');
     gameOverScreen.classList.remove('hidden');
-    finalScoreElement.textContent = `Your score: ${score}`;
+    finalScoreElement.textContent = score;
 }
 
 // Game functions
@@ -82,13 +82,13 @@ function startGame() {
     score = 0;
     lives = 3;
     gameTime = 60;
-    activeEmojis = [];
+    activeFruits = [];
     trail = [];
     
     // Update UI
-    scoreElement.textContent = `Score: ${score}`;
+    scoreElement.textContent = score;
     livesElement.textContent = '❤️'.repeat(lives);
-    timeElement.textContent = `Time: ${gameTime}`;
+    timeElement.textContent = gameTime;
     
     // Show game screen
     showGameScreen();
@@ -104,13 +104,13 @@ function startGame() {
     timeInterval = setInterval(updateTime, 1000);
     
     // Initial spawn
-    spawnEmoji();
+    spawnFruit();
     lastSpawnTime = Date.now();
 }
 
 function updateTime() {
     gameTime--;
-    timeElement.textContent = `Time: ${gameTime}`;
+    timeElement.textContent = gameTime;
     
     if (gameTime <= 0) {
         endGame();
@@ -121,45 +121,48 @@ function updateGame() {
     // Clear canvas
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
     
-    // Spawn new emojis
+    // Spawn new fruits
     const currentTime = Date.now();
     if (currentTime - lastSpawnTime > spawnRate) {
-        spawnEmoji();
+        spawnFruit();
         lastSpawnTime = currentTime;
+        
+        // Increase difficulty as score increases
+        spawnRate = Math.max(300, 1000 - score * 2);
     }
     
-    // Update and draw emojis
-    for (let i = activeEmojis.length - 1; i >= 0; i--) {
-        const emoji = activeEmojis[i];
+    // Update and draw fruits
+    for (let i = activeFruits.length - 1; i >= 0; i--) {
+        const fruit = activeFruits[i];
         
         // Update position
-        emoji.y += emoji.speed;
-        emoji.rotation += emoji.rotationSpeed;
+        fruit.y += fruit.speed;
+        fruit.rotation += fruit.rotationSpeed;
         
-        // Check if emoji is out of bounds
-        if (emoji.y > gameCanvas.height) {
-            if (!emoji.isSliced && !bombEmojis.includes(emoji.text)) {
+        // Check if fruit is out of bounds
+        if (fruit.y > gameCanvas.height) {
+            if (!fruit.isSliced && !bombEmojis.includes(fruit.text)) {
                 loseLife();
             }
-            activeEmojis.splice(i, 1);
+            activeFruits.splice(i, 1);
             continue;
         }
         
-        // Draw emoji
-        drawEmoji(emoji);
+        // Draw fruit
+        drawFruit(fruit);
     }
     
     // Draw trail
     drawTrail();
 }
 
-function spawnEmoji() {
-    const emojiText = getRandomEmoji();
-    const isBomb = bombEmojis.includes(emojiText);
-    const isSpecial = specialEmojis.includes(emojiText);
+function spawnFruit() {
+    const fruitText = getRandomFruit();
+    const isBomb = bombEmojis.includes(fruitText);
+    const isSpecial = specialFruits.includes(fruitText);
     
-    const emoji = {
-        text: emojiText,
+    const fruit = {
+        text: fruitText,
         x: Math.random() * (gameCanvas.width - 50),
         y: -50,
         size: isSpecial ? 40 : isBomb ? 35 : 30,
@@ -169,48 +172,97 @@ function spawnEmoji() {
         isSliced: false,
         isBomb: isBomb,
         isSpecial: isSpecial,
-        slices: []
+        slices: [],
+        slicedParts: []
     };
     
-    activeEmojis.push(emoji);
+    activeFruits.push(fruit);
 }
 
-function getRandomEmoji() {
-    // 10% chance for special emoji, 15% for bomb, 75% for regular fruit
+function getRandomFruit() {
+    // 10% chance for special fruit, 15% for bomb, 75% for regular fruit
     const rand = Math.random();
     if (rand < 0.1) {
-        return specialEmojis[Math.floor(Math.random() * specialEmojis.length)];
+        return specialFruits[Math.floor(Math.random() * specialFruits.length)];
     } else if (rand < 0.25) {
         return bombEmojis[Math.floor(Math.random() * bombEmojis.length)];
     } else {
-        return emojis[Math.floor(Math.random() * (emojis.length - bombEmojis.length - specialEmojis.length))];
+        return fruits[Math.floor(Math.random() * fruits.length)];
     }
 }
 
-function drawEmoji(emoji) {
+function drawFruit(fruit) {
     ctx.save();
-    ctx.translate(emoji.x + emoji.size / 2, emoji.y + emoji.size / 2);
-    ctx.rotate(emoji.rotation);
+    ctx.translate(fruit.x + fruit.size / 2, fruit.y + fruit.size / 2);
+    ctx.rotate(fruit.rotation);
     
-    if (emoji.isSliced) {
+    if (fruit.isSliced) {
         // Draw sliced parts
-        ctx.font = `${emoji.size}px Arial`;
-        ctx.fillText(emoji.text, -emoji.size / 2 - 10, 0);
-        ctx.fillText(emoji.text, emoji.size / 2 + 10, 0);
+        ctx.font = `${fruit.size}px Arial`;
         
-        // Draw slice effect
-        if (emoji.slices.length > 0) {
-            const lastSlice = emoji.slices[emoji.slices.length - 1];
-            ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(lastSlice.x - emoji.x - emoji.size / 2, lastSlice.y - emoji.y - emoji.size / 2);
-            ctx.lineTo(lastSlice.x - emoji.x - emoji.size / 2 + 30, lastSlice.y - emoji.y - emoji.size / 2 - 30);
-            ctx.stroke();
+        // Create juice splash
+        if (fruit.slices.length > 0 && !fruit.juiceDrawn) {
+            const lastSlice = fruit.slices[fruit.slices.length - 1];
+            drawJuiceSplash(lastSlice.x, lastSlice.y, fruit);
+            fruit.juiceDrawn = true;
         }
+        
+        // Draw two halves of the fruit flying apart
+        const timeSinceSliced = Date.now() - fruit.slicedTime;
+        const separation = Math.min(30, timeSinceSliced / 10);
+        
+        // Left half
+        ctx.save();
+        ctx.rotate(-0.2);
+        ctx.fillText(fruit.text, -fruit.size / 2 - separation, 0);
+        ctx.restore();
+        
+        // Right half
+        ctx.save();
+        ctx.rotate(0.2);
+        ctx.fillText(fruit.text, fruit.size / 2 + separation, 0);
+        ctx.restore();
+        
     } else {
-        ctx.font = `${emoji.size}px Arial`;
-        ctx.fillText(emoji.text, -emoji.size / 2, 0);
+        // Draw whole fruit
+        ctx.font = `${fruit.size}px Arial`;
+        ctx.fillText(fruit.text, -fruit.size / 2, 0);
+    }
+    
+    ctx.restore();
+}
+
+function drawJuiceSplash(x, y, fruit) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // Juice color based on fruit type
+    let juiceColor;
+    switch(fruit.text) {
+        case '🍎': juiceColor = 'rgba(237, 41, 57, 0.7)'; break;
+        case '🍊': juiceColor = 'rgba(255, 165, 0, 0.7)'; break;
+        case '🍋': juiceColor = 'rgba(255, 234, 0, 0.7)'; break;
+        case '🍉': juiceColor = 'rgba(255, 71, 87, 0.7)'; break;
+        case '🍓': juiceColor = 'rgba(255, 71, 87, 0.7)'; break;
+        case '🍍': juiceColor = 'rgba(255, 204, 0, 0.7)'; break;
+        case '🍌': juiceColor = 'rgba(255, 225, 53, 0.7)'; break;
+        default: juiceColor = 'rgba(255, 87, 34, 0.7)';
+    }
+    
+    // Draw juice droplets
+    for (let i = 0; i < 8; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 10 + Math.random() * 20;
+        const size = 3 + Math.random() * 5;
+        
+        ctx.beginPath();
+        ctx.arc(
+            Math.cos(angle) * distance,
+            Math.sin(angle) * distance,
+            size, 0, Math.PI * 2
+        );
+        ctx.fillStyle = juiceColor;
+        ctx.fill();
     }
     
     ctx.restore();
@@ -221,6 +273,8 @@ function drawTrail() {
     
     ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
     ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.moveTo(trail[0].x, trail[0].y);
     
@@ -231,37 +285,38 @@ function drawTrail() {
     ctx.stroke();
 }
 
-function sliceEmoji(x, y) {
+function sliceFruit(x, y) {
     let sliced = false;
     
-    for (let i = 0; i < activeEmojis.length; i++) {
-        const emoji = activeEmojis[i];
+    for (let i = 0; i < activeFruits.length; i++) {
+        const fruit = activeFruits[i];
         
-        if (emoji.isSliced) continue;
+        if (fruit.isSliced) continue;
         
         // Simple collision detection
         const distance = Math.sqrt(
-            Math.pow(x - (emoji.x + emoji.size / 2), 2) + 
-            Math.pow(y - (emoji.y + emoji.size / 2), 2)
+            Math.pow(x - (fruit.x + fruit.size / 2), 2) + 
+            Math.pow(y - (fruit.y + fruit.size / 2), 2)
         );
         
-        if (distance < emoji.size) {
-            emoji.isSliced = true;
-            emoji.slices.push({ x, y });
+        if (distance < fruit.size) {
+            fruit.isSliced = true;
+            fruit.slicedTime = Date.now();
+            fruit.slices.push({ x, y });
             
-            if (emoji.isBomb) {
+            if (fruit.isBomb) {
                 loseLife();
             } else {
                 // Add score
-                const points = emoji.isSpecial ? 5 : 1;
+                const points = fruit.isSpecial ? 5 : 1;
                 score += points;
-                scoreElement.textContent = `Score: ${score}`;
+                scoreElement.textContent = score;
                 
-                // Create floating text
+                // Remove fruit after a delay
                 setTimeout(() => {
-                    const index = activeEmojis.indexOf(emoji);
+                    const index = activeFruits.indexOf(fruit);
                     if (index !== -1) {
-                        activeEmojis.splice(index, 1);
+                        activeFruits.splice(index, 1);
                     }
                 }, 300);
             }
@@ -275,7 +330,13 @@ function sliceEmoji(x, y) {
 
 function loseLife() {
     lives--;
-    livesElement.textContent = '❤️'.repeat(lives);
+    livesElement.textContent = '❤️'.repeat(Math.max(0, lives));
+    
+    // Shake effect when losing life
+    gameScreen.style.animation = 'shake 0.5s';
+    setTimeout(() => {
+        gameScreen.style.animation = '';
+    }, 500);
     
     if (lives <= 0) {
         endGame();
@@ -300,7 +361,7 @@ gameCanvas.addEventListener('mousemove', (e) => {
         trail.shift();
     }
     
-    sliceEmoji(x, y);
+    sliceFruit(x, y);
 });
 
 gameCanvas.addEventListener('touchmove', (e) => {
@@ -315,8 +376,19 @@ gameCanvas.addEventListener('touchmove', (e) => {
         trail.shift();
     }
     
-    sliceEmoji(x, y);
+    sliceFruit(x, y);
 });
+
+// Add shake animation to CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+`;
+document.head.appendChild(style);
 
 // Initialize game
 showMenu();
