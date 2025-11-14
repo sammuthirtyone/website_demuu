@@ -3,23 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sammu's Space | Creative Portfolio</title>
+    <title>Sammu's Space | Professional Creative Services</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6c63ff;
-            --secondary: #ff6584;
-            --dark: #1a1a2e;
+            --primary: #4a6cf7;
+            --primary-dark: #3a5ce5;
+            --secondary: #6c63ff;
+            --accent: #ff6b6b;
+            --dark: #0f1425;
+            --dark-light: #1a2238;
             --light: #f8f9fa;
-            --gray: #6c757d;
+            --gray: #8c98b6;
+            --gray-light: #c5cee0;
             --transition: all 0.3s ease;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -27,6 +33,7 @@
             color: var(--light);
             line-height: 1.6;
             overflow-x: hidden;
+            font-weight: 400;
         }
 
         .container {
@@ -43,15 +50,16 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            background-color: rgba(26, 26, 46, 0.9);
+            background-color: rgba(15, 20, 37, 0.95);
             backdrop-filter: blur(10px);
             padding: 20px 0;
             transition: var(--transition);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         header.scrolled {
             padding: 15px 0;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
         }
 
         .navbar {
@@ -65,9 +73,17 @@
             font-weight: 700;
             color: var(--light);
             text-decoration: none;
+            display: flex;
+            align-items: center;
         }
 
         .logo span {
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
             color: var(--primary);
         }
 
@@ -81,15 +97,16 @@
         }
 
         .nav-links a {
-            color: var(--light);
+            color: var(--gray-light);
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition);
             position: relative;
+            font-size: 0.95rem;
         }
 
         .nav-links a:hover {
-            color: var(--primary);
+            color: var(--light);
         }
 
         .nav-links a::after {
@@ -111,6 +128,7 @@
             display: none;
             cursor: pointer;
             font-size: 1.5rem;
+            color: var(--light);
         }
 
         /* Hero Section */
@@ -120,6 +138,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
         }
 
         .hero-bg {
@@ -128,8 +147,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            z-index: -2;
+            background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
         }
 
         .hero-content {
@@ -141,6 +162,7 @@
             font-size: 3.5rem;
             margin-bottom: 20px;
             line-height: 1.2;
+            font-weight: 700;
         }
 
         .hero h1 span {
@@ -155,19 +177,20 @@
             left: 0;
             width: 100%;
             height: 8px;
-            background-color: rgba(108, 99, 255, 0.3);
+            background-color: rgba(74, 108, 247, 0.2);
             z-index: -1;
         }
 
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--gray-light);
+            max-width: 600px;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 30px;
+            padding: 14px 32px;
             background-color: var(--primary);
             color: white;
             border-radius: 30px;
@@ -176,22 +199,26 @@
             transition: var(--transition);
             border: none;
             cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
         }
 
         .btn:hover {
-            background-color: #554fd8;
+            background-color: var(--primary-dark);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(74, 108, 247, 0.4);
         }
 
         .btn-outline {
             background-color: transparent;
             border: 2px solid var(--primary);
             margin-left: 15px;
+            color: var(--primary);
         }
 
         .btn-outline:hover {
             background-color: var(--primary);
+            color: white;
         }
 
         /* Skills Section */
@@ -209,6 +236,7 @@
             margin-bottom: 15px;
             position: relative;
             display: inline-block;
+            font-weight: 700;
         }
 
         .section-title h2::after {
@@ -227,6 +255,7 @@
             color: var(--gray);
             max-width: 600px;
             margin: 0 auto;
+            font-size: 1.1rem;
         }
 
         .skills-grid {
@@ -236,34 +265,54 @@
         }
 
         .skill-card {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 30px;
+            background-color: var(--dark-light);
+            border-radius: var(--radius);
+            padding: 40px 30px;
             transition: var(--transition);
             text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .skill-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border-color: var(--primary);
+            box-shadow: var(--shadow);
+            border-color: rgba(74, 108, 247, 0.2);
         }
 
         .skill-icon {
             font-size: 3rem;
             color: var(--primary);
             margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: rgba(74, 108, 247, 0.1);
+            border-radius: 50%;
         }
 
         .skill-card h3 {
             font-size: 1.5rem;
             margin-bottom: 15px;
+            font-weight: 600;
         }
 
         .skill-card p {
             color: var(--gray);
+            line-height: 1.7;
         }
 
         /* Portfolio Section */
@@ -275,10 +324,11 @@
 
         .portfolio-item {
             position: relative;
-            border-radius: 10px;
+            border-radius: var(--radius);
             overflow: hidden;
             height: 300px;
             cursor: pointer;
+            box-shadow: var(--shadow);
         }
 
         .portfolio-img {
@@ -294,11 +344,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(26, 26, 46, 0.9));
+            background: linear-gradient(to bottom, transparent, rgba(15, 20, 37, 0.9));
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 20px;
+            padding: 25px;
             opacity: 0;
             transition: var(--transition);
         }
@@ -308,17 +358,19 @@
         }
 
         .portfolio-item:hover .portfolio-img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .portfolio-overlay h3 {
             font-size: 1.5rem;
             margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .portfolio-overlay p {
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 15px;
+            font-size: 0.95rem;
         }
 
         /* About Section */
@@ -330,27 +382,42 @@
         }
 
         .about-img {
-            border-radius: 10px;
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow);
             background: linear-gradient(45deg, var(--primary), var(--secondary));
-            height: 400px;
+            height: 450px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.5rem;
             text-align: center;
+            position: relative;
+        }
+
+        .about-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.2;
         }
 
         .about-text h3 {
             font-size: 1.8rem;
             margin-bottom: 20px;
+            font-weight: 600;
         }
 
         .about-text p {
             margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--gray-light);
+            line-height: 1.7;
         }
 
         .stats {
@@ -361,6 +428,11 @@
 
         .stat {
             text-align: center;
+            padding: 20px;
+            border-radius: var(--radius);
+            background: var(--dark-light);
+            flex: 1;
+            margin: 0 10px;
         }
 
         .stat-number {
@@ -373,6 +445,7 @@
         .stat-text {
             color: var(--gray);
             font-size: 0.9rem;
+            margin-top: 5px;
         }
 
         /* Contact Section */
@@ -392,24 +465,42 @@
             display: flex;
             align-items: flex-start;
             gap: 15px;
+            padding: 20px;
+            border-radius: var(--radius);
+            background: var(--dark-light);
+            transition: var(--transition);
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
         }
 
         .contact-icon {
             font-size: 1.5rem;
             color: var(--primary);
             margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(74, 108, 247, 0.1);
+            border-radius: 50%;
         }
 
         .contact-text h4 {
             font-size: 1.2rem;
             margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .contact-form {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--dark-light);
+            padding: 40px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow);
         }
 
         .form-group {
@@ -418,10 +509,10 @@
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
+            padding: 15px 20px;
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            border-radius: 8px;
             color: var(--light);
             font-size: 1rem;
             transition: var(--transition);
@@ -430,6 +521,7 @@
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
         }
 
         textarea.form-control {
@@ -439,8 +531,9 @@
 
         /* Footer */
         footer {
-            background-color: #0f0f1a;
-            padding: 60px 0 30px;
+            background-color: #0a0e1c;
+            padding: 80px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .footer-content {
@@ -455,6 +548,7 @@
             margin-bottom: 20px;
             position: relative;
             padding-bottom: 10px;
+            font-weight: 600;
         }
 
         .footer-column h3::after {
@@ -479,6 +573,7 @@
             color: var(--gray);
             text-decoration: none;
             transition: var(--transition);
+            font-size: 0.95rem;
         }
 
         .footer-links a:hover {
@@ -527,6 +622,15 @@
             .hero h1 {
                 font-size: 2.8rem;
             }
+            
+            .stats {
+                flex-wrap: wrap;
+            }
+            
+            .stat {
+                flex: 0 0 calc(50% - 20px);
+                margin-bottom: 20px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -545,6 +649,7 @@
                 padding: 20px 0;
                 clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
                 transition: var(--transition);
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
             }
             
             .nav-links.active {
@@ -566,6 +671,10 @@
             .stats {
                 flex-direction: column;
                 gap: 20px;
+            }
+            
+            .stat {
+                flex: 1;
             }
         }
 
@@ -591,6 +700,10 @@
             .btn-outline {
                 margin-left: 0;
             }
+            
+            .contact-form {
+                padding: 25px;
+            }
         }
 
         /* Animations */
@@ -609,32 +722,47 @@
             text-align: center;
             margin-top: 30px;
             padding: 20px;
-            background: rgba(108, 99, 255, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(108, 99, 255, 0.3);
+            background: rgba(74, 108, 247, 0.1);
+            border-radius: var(--radius);
+            border: 1px solid rgba(74, 108, 247, 0.3);
+            color: var(--gray-light);
         }
 
         /* Form Status Messages */
         .form-status {
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: var(--radius);
             margin-bottom: 20px;
             text-align: center;
             display: none;
+            font-weight: 500;
         }
 
         .form-status.success {
-            background-color: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
             color: #4CAF50;
             display: block;
         }
 
         .form-status.error {
-            background-color: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
             color: #F44336;
             display: block;
+        }
+
+        /* Professional Badge */
+        .professional-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -643,7 +771,10 @@
     <header id="header">
         <div class="container">
             <nav class="navbar">
-                <a href="#" class="logo">Sammu's<span>Space</span></a>
+                <a href="#" class="logo">
+                    <i class="fas fa-rocket logo-icon"></i>
+                    Sammu's<span>Space</span>
+                </a>
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#skills">Skills</a></li>
@@ -663,11 +794,12 @@
         <div class="hero-bg"></div>
         <div class="container">
             <div class="hero-content">
-                <h1>Transforming Ideas Into <span>Visual Masterpieces</span></h1>
-                <p>I'm a creative professional specializing in video editing, image manipulation, and graphic design. With a keen eye for detail and a passion for storytelling, I bring your vision to life.</p>
+                <div class="professional-badge">Professional Creative Services</div>
+                <h1>Crafting <span>Digital Experiences</span> That Captivate</h1>
+                <p>I'm a creative professional specializing in video editing, image manipulation, and graphic design. With a keen eye for detail and a passion for storytelling, I transform your vision into compelling visual narratives.</p>
                 <div>
-                    <a href="#contact" class="btn">Get In Touch</a>
-                    <a href="#skills" class="btn btn-outline">View My Skills</a>
+                    <a href="#contact" class="btn">Start a Project</a>
+                    <a href="#portfolio" class="btn btn-outline">View My Work</a>
                 </div>
             </div>
         </div>
@@ -677,8 +809,8 @@
     <section class="section" id="skills">
         <div class="container">
             <div class="section-title">
-                <h2>My Skills</h2>
-                <p>I offer a wide range of creative services to help bring your ideas to life</p>
+                <h2>My Expertise</h2>
+                <p>Comprehensive creative services to bring your ideas to life</p>
             </div>
             <div class="skills-grid">
                 <div class="skill-card">
@@ -731,8 +863,8 @@
     <section class="section" id="portfolio">
         <div class="container">
             <div class="section-title">
-                <h2>My Portfolio</h2>
-                <p>A selection of creative project examples that showcase my skills</p>
+                <h2>Featured Work</h2>
+                <p>A selection of projects that demonstrate my creative capabilities</p>
             </div>
             <div class="portfolio-grid">
                 <div class="portfolio-item">
@@ -775,10 +907,10 @@
             </div>
             <div class="about-content">
                 <div class="about-img">
-                    <div>Creative Space</div>
+                    <div>Creative Visionary</div>
                 </div>
                 <div class="about-text">
-                    <h3>Bringing Creative Visions to Life</h3>
+                    <h3>Crafting Visual Stories That Resonate</h3>
                     <p>I'm a passionate creative professional with extensive experience in video editing, image manipulation, and graphic design. My journey began with a simple curiosity about how visuals can tell compelling stories, and it has evolved into a career dedicated to creating impactful visual content.</p>
                     <p>I believe that every project has a unique story to tell, and my role is to find the most compelling way to tell it. Whether it's through cinematic video editing, striking graphic design, or meticulous image retouching, I approach each project with creativity, attention to detail, and a commitment to excellence.</p>
                     <p>My work spans various industries including advertising, entertainment, corporate communications, and social media. I'm constantly learning and adapting to new technologies and trends to ensure my clients receive cutting-edge creative solutions.</p>
@@ -806,7 +938,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>Get In Touch</h2>
-                <p>Have a project in mind? Let's discuss how we can bring your vision to life</p>
+                <p>Ready to bring your vision to life? Let's discuss your project</p>
             </div>
             <div class="contact-content">
                 <div class="contact-info">
