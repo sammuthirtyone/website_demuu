@@ -3,1140 +3,788 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sammu's Space | Professional Creative Services</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Bucket Jump · Happy Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4a6cf7;
-            --primary-dark: #3a5ce5;
-            --secondary: #6c63ff;
-            --accent: #ff6b6b;
-            --dark: #0f1425;
-            --dark-light: #1a2238;
-            --light: #f8f9fa;
-            --gray: #8c98b6;
-            --gray-light: #c5cee0;
-            --transition: all 0.3s ease;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-        }
-
         * {
+            box-sizing: border-box;
+            user-select: none;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
-            background-color: var(--dark);
-            color: var(--light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            font-weight: 400;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header & Navigation */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            background-color: rgba(15, 20, 37, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 0;
-            transition: var(--transition);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        header.scrolled {
-            padding: 15px 0;
-            box-shadow: var(--shadow);
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--light);
-            text-decoration: none;
+            background: #fff0f5; /* Lavender Blush */
+            background-image: radial-gradient(#e6e6fa 20%, transparent 20%),
+                              radial-gradient(#e6e6fa 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
+            min-height: 100vh;
             display: flex;
             align-items: center;
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .logo-icon {
-            margin-right: 10px;
-            font-size: 1.5rem;
-            color: var(--primary);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 30px;
-        }
-
-        .nav-links a {
-            color: var(--gray-light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a:hover {
-            color: var(--light);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--primary);
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .hamburger {
-            display: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--light);
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
             overflow: hidden;
-            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
         }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center;
-            background-size: cover;
-            opacity: 0.1;
-            z-index: -1;
-        }
-
-        .hero-content {
-            max-width: 700px;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            line-height: 1.2;
-            font-weight: 700;
-        }
-
-        .hero h1 span {
-            color: var(--primary);
-            position: relative;
-        }
-
-        .hero h1 span::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: rgba(74, 108, 247, 0.2);
-            z-index: -1;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            color: var(--gray-light);
-            max-width: 600px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 14px 32px;
-            background-color: var(--primary);
-            color: white;
+        .game-wrapper {
+            background: #ffffff;
+            border: 8px solid #ffb7b2;
+            padding: 1rem;
             border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
-        }
-
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(74, 108, 247, 0.4);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary);
-            margin-left: 15px;
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        /* Skills Section */
-        .section {
-            padding: 100px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            box-shadow: 0 20px 50px rgba(255, 183, 178, 0.4);
             position: relative;
-            display: inline-block;
-            font-weight: 700;
+            transform: scale(1);
+            transition: transform 0.2s;
         }
-
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 4px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        .section-title p {
-            color: var(--gray);
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 1.1rem;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .skill-card {
-            background-color: var(--dark-light);
-            border-radius: var(--radius);
-            padding: 40px 30px;
-            transition: var(--transition);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .skill-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-        .skill-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow);
-            border-color: rgba(74, 108, 247, 0.2);
-        }
-
-        .skill-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 80px;
-            height: 80px;
-            background: rgba(74, 108, 247, 0.1);
-            border-radius: 50%;
-        }
-
-        .skill-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .skill-card p {
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        /* Portfolio Section */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .portfolio-item {
-            position: relative;
-            border-radius: var(--radius);
-            overflow: hidden;
-            height: 300px;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-        }
-
-        .portfolio-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .portfolio-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(15, 20, 37, 0.9));
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 25px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .portfolio-item:hover .portfolio-overlay {
-            opacity: 1;
-        }
-
-        .portfolio-item:hover .portfolio-img {
-            transform: scale(1.05);
-        }
-
-        .portfolio-overlay h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .portfolio-overlay p {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-        }
-
-        /* About Section */
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
-        }
-
-        .about-img {
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            text-align: center;
-            position: relative;
-        }
-
-        .about-img::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') no-repeat center center;
-            background-size: cover;
-            opacity: 0.2;
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            color: var(--gray-light);
-            line-height: 1.7;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .stat {
-            text-align: center;
-            padding: 20px;
-            border-radius: var(--radius);
-            background: var(--dark-light);
-            flex: 1;
-            margin: 0 10px;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
+        canvas {
             display: block;
+            width: 100%;
+            max-width: 1024px;
+            aspect-ratio: 16 / 9;
+            border-radius: 20px;
+            background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+            cursor: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
         }
-
-        .stat-text {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        /* Contact Section */
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-        }
-
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            padding: 20px;
-            border-radius: var(--radius);
-            background: var(--dark-light);
-            transition: var(--transition);
-        }
-
-        .contact-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-        }
-
-        .contact-icon {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-top: 5px;
+        .ui-bar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: rgba(74, 108, 247, 0.1);
-            border-radius: 50%;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding: 0 10px;
         }
-
-        .contact-text h4 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            font-weight: 600;
+        .stat-badge {
+            background: #ffdac1;
+            color: #ff6f61;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 0 #ffb7b2;
+            text-transform: uppercase;
         }
-
-        .contact-form {
-            background-color: var(--dark-light);
-            padding: 40px;
-            border-radius: var(--radius);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: var(--shadow);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--light);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
-        }
-
-        textarea.form-control {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #0a0e1c;
-            padding: 80px 0 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background-color: var(--primary);
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: var(--gray);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.95rem;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary);
-            padding-left: 5px;
-        }
-
-        .social-links {
+        .btn-group {
             display: flex;
             gap: 15px;
+        }
+        button {
+            background: #b5ead7;
+            border: none;
+            color: #555;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #84dcc6;
+            transition: all 0.1s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+        button:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #84dcc6;
+        }
+        button.secondary {
+            background: #e2f0cb;
+            box-shadow: 0 5px 0 #c7ceea;
+        }
+        
+        /* Overlays */
+        #loadingOverlay, #menuOverlay, #winOverlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        #menuOverlay {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+        }
+
+        .title-text {
+            font-size: 4rem;
+            color: #ff9aa2;
+            text-shadow: 3px 3px 0 #ffdac1;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .play-btn {
+            font-size: 2rem;
+            padding: 15px 50px;
+            background: #ff9aa2;
+            color: white;
+            box-shadow: 0 8px 0 #e88890;
+        }
+
+        #loadingOverlay {
+            background: #fff;
+            display: none;
+            z-index: 20;
+        }
+        
+        .loader-container {
+            width: 300px;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
             margin-top: 20px;
         }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            color: var(--light);
-            text-decoration: none;
-            transition: var(--transition);
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: #ff9aa2;
+            transition: width 0.1s;
+            border-radius: 10px;
         }
 
-        .social-links a:hover {
-            background-color: var(--primary);
-            transform: translateY(-5px);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .about-content, .contact-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-            
-            .stats {
-                flex-wrap: wrap;
-            }
-            
-            .stat {
-                flex: 0 0 calc(50% - 20px);
-                margin-bottom: 20px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                position: relative;
-            }
-            
-            .nav-links {
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background-color: var(--dark);
-                flex-direction: column;
-                align-items: center;
-                padding: 20px 0;
-                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-                transition: var(--transition);
-                border-top: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            
-            .nav-links.active {
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-            }
-            
-            .nav-links li {
-                margin: 15px 0;
-            }
-            
-            .hamburger {
-                display: block;
-            }
-            
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            .stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .stat {
-                flex: 1;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .btn {
-                display: block;
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            
-            .btn-outline {
-                margin-left: 0;
-            }
-            
-            .contact-form {
-                padding: 25px;
-            }
-        }
-
-        /* Animations */
         @keyframes float {
-            0% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .floating {
-            animation: float 5s ease-in-out infinite;
-        }
-
-        /* Demo Portfolio Items */
-        .demo-notice {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(74, 108, 247, 0.1);
-            border-radius: var(--radius);
-            border: 1px solid rgba(74, 108, 247, 0.3);
-            color: var(--gray-light);
-        }
-
-        /* Form Status Messages */
-        .form-status {
-            padding: 15px;
-            border-radius: var(--radius);
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-            font-weight: 500;
-        }
-
-        .form-status.success {
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            color: #4CAF50;
-            display: block;
-        }
-
-        .form-status.error {
-            background-color: rgba(244, 67, 54, 0.1);
-            border: 1px solid rgba(244, 67, 54, 0.3);
-            color: #F44336;
-            display: block;
-        }
-
-        /* Professional Badge */
-        .professional-badge {
-            display: inline-block;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header id="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="#" class="logo">
-                    <i class="fas fa-rocket logo-icon"></i>
-                    Sammu's<span>Space</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#skills">Skills</a></li>
-                    <li><a href="#portfolio">Portfolio</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-                <div class="hamburger">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="professional-badge">Professional Creative Services</div>
-                <h1>Crafting <span>Digital Experiences</span> That Captivate</h1>
-                <p>I'm a creative professional specializing in video editing, image manipulation, and graphic design. With a keen eye for detail and a passion for storytelling, I transform your vision into compelling visual narratives.</p>
-                <div>
-                    <a href="#contact" class="btn">Start a Project</a>
-                    <a href="#portfolio" class="btn btn-outline">View My Work</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="game-wrapper">
+    <canvas id="gameCanvas" width="1024" height="576"></canvas>
 
-    <!-- Skills Section -->
-    <section class="section" id="skills">
-        <div class="container">
-            <div class="section-title">
-                <h2>My Expertise</h2>
-                <p>Comprehensive creative services to bring your ideas to life</p>
-            </div>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <h3>Video Editing</h3>
-                    <p>Professional video editing for commercials, social media, documentaries, and more. Expertise in Adobe Premiere, After Effects, and DaVinci Resolve.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <h3>Image Editing</h3>
-                    <p>Photo manipulation, retouching, and enhancement using Adobe Photoshop and Lightroom. Creating stunning visuals that capture attention.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-palette"></i>
-                    </div>
-                    <h3>Graphic Design</h3>
-                    <p>Creative design solutions including logos, branding, marketing materials, and social media graphics using Adobe Illustrator and InDesign.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <h3>Visual Effects</h3>
-                    <p>Adding cinematic visual effects to videos, motion graphics, and animations that elevate your content and engage your audience.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>UI/UX Design</h3>
-                    <p>Creating intuitive and visually appealing user interfaces and experiences for websites and applications that users love.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-cube"></i>
-                    </div>
-                    <h3>3D Modeling</h3>
-                    <p>Creating realistic 3D models, animations, and visualizations for various applications including product design and architectural visualization.</p>
-                </div>
-            </div>
+    <div class="ui-bar">
+        <div class="stat-badge">
+            ⭐ Level <span id="levelDisplay">1</span>
         </div>
-    </section>
-
-    <!-- Portfolio Section -->
-    <section class="section" id="portfolio">
-        <div class="container">
-            <div class="section-title">
-                <h2>Featured Work</h2>
-                <p>A selection of projects that demonstrate my creative capabilities</p>
-            </div>
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Video Editing Project" class="portfolio-img">
-                    <div class="portfolio-overlay">
-                        <h3>Cinematic Commercial</h3>
-                        <p>Video Editing & Color Grading</p>
-                        <a href="#contact" class="btn">Request Similar Project</a>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="https://images.unsplash.com/photo-1634084462412-b54873c0a56d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Graphic Design Project" class="portfolio-img">
-                    <div class="portfolio-overlay">
-                        <h3>Brand Identity</h3>
-                        <p>Logo & Graphic Design</p>
-                        <a href="#contact" class="btn">Request Similar Project</a>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <img src="https://images.unsplash.com/photo-1542744095-291d1f67b221?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Image Editing Project" class="portfolio-img">
-                    <div class="portfolio-overlay">
-                        <h3>Photo Manipulation</h3>
-                        <p>Image Editing & Compositing</p>
-                        <a href="#contact" class="btn">Request Similar Project</a>
-                    </div>
-                </div>
-            </div>
-            <div class="demo-notice">
-                <p><strong>Note:</strong> These are example projects to showcase the types of work I can create. Contact me to discuss your specific project needs!</p>
-            </div>
+        <div class="btn-group">
+            <button class="secondary" id="restartBtn">↺ Retry</button>
+            <button class="secondary" id="soundToggle">🔊 Sound</button>
+            <button class="secondary" id="menuBtn">⌂ Home</button>
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="section" id="about">
-        <div class="container">
-            <div class="section-title">
-                <h2>About Me</h2>
-                <p>Learn more about my journey and creative process</p>
-            </div>
-            <div class="about-content">
-                <div class="about-img">
-                    <div>Creative Visionary</div>
-                </div>
-                <div class="about-text">
-                    <h3>Crafting Visual Stories That Resonate</h3>
-                    <p>I'm a passionate creative professional with extensive experience in video editing, image manipulation, and graphic design. My journey began with a simple curiosity about how visuals can tell compelling stories, and it has evolved into a career dedicated to creating impactful visual content.</p>
-                    <p>I believe that every project has a unique story to tell, and my role is to find the most compelling way to tell it. Whether it's through cinematic video editing, striking graphic design, or meticulous image retouching, I approach each project with creativity, attention to detail, and a commitment to excellence.</p>
-                    <p>My work spans various industries including advertising, entertainment, corporate communications, and social media. I'm constantly learning and adapting to new technologies and trends to ensure my clients receive cutting-edge creative solutions.</p>
-                    <div class="stats">
-                        <div class="stat">
-                            <span class="stat-number">150+</span>
-                            <span class="stat-text">Projects Completed</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-text">Happy Clients</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">5+</span>
-                            <span class="stat-text">Years Experience</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-badge" style="background: #e2f0cb; color: #6b8c42;">
+            💔 Fails <span id="deathCounter">0</span>
         </div>
-    </section>
+    </div>
 
-    <!-- Contact Section -->
-    <section class="section" id="contact">
-        <div class="container">
-            <div class="section-title">
-                <h2>Get In Touch</h2>
-                <p>Ready to bring your vision to life? Let's discuss your project</p>
-            </div>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h4>Location</h4>
-                            <p>Bharatpur-7, Chitwan, Nepal</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h4>Phone</h4>
-                            <p>+977 9821146171</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h4>Email</h4>
-                            <p>sammanlamsal31@gmail.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h4>Working Hours</h4>
-                            <p>Monday - Friday: 9AM - 6PM</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <div id="form-status" class="form-status"></div>
-                    <form id="contactForm" action="https://formspree.io/f/xgvroego" method="POST">
-                        <div class="form-group">
-                            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" name="email" class="form-control" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="subject" class="form-control" placeholder="Subject">
-                        </div>
-                        <div class="form-group">
-                            <textarea name="message" class="form-control" placeholder="Your Message" required></textarea>
-                        </div>
-                        <button type="submit" class="btn">Send Message</button>
-                    </form>
-                </div>
-            </div>
+    <div id="menuOverlay">
+        <div class="title-text">BUCKET JUMP</div>
+        <button class="play-btn" id="startBtn">PLAY GAME</button>
+        <div style="margin-top: 20px; color: #888; font-size: 1rem;">Use Arrow Keys to Move & Jump</div>
+    </div>
+
+    <div id="loadingOverlay">
+        <div style="font-size: 2rem; color: #ff9aa2;">Loading Cuteness...</div>
+        <div class="loader-container">
+            <div class="loader-bar" id="progressBar"></div>
         </div>
-    </section>
+    </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Sammu's Space</h3>
-                    <p>Transforming ideas into visual masterpieces through expert video editing, image manipulation, and graphic design.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-behance"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#skills">Skills</a></li>
-                        <li><a href="#portfolio">Portfolio</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Services</h3>
-                    <ul class="footer-links">
-                        <li><a href="#skills">Video Editing</a></li>
-                        <li><a href="#skills">Image Editing</a></li>
-                        <li><a href="#skills">Graphic Design</a></li>
-                        <li><a href="#skills">Motion Graphics</a></li>
-                        <li><a href="#skills">UI/UX Design</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Newsletter</h3>
-                    <p>Subscribe to my newsletter for the latest updates and creative insights.</p>
-                    <div class="form-group">
-                        <input type="email" class="form-control" placeholder="Your Email">
-                    </div>
-                    <button class="btn">Subscribe</button>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Sammu's Space. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <div id="winOverlay" style="display: none; background: rgba(255,255,255,0.9);">
+        <div class="title-text" style="color: #ffb7b2;">YOU DID IT!</div>
+        <div style="font-size: 1.5rem; color: #555; margin-bottom: 30px;">The bucket is happy.</div>
+        <button class="play-btn" id="backToMenuBtn">PLAY AGAIN</button>
+    </div>
+</div>
 
-    <script>
-        // Header scroll effect
-        window.addEventListener('scroll', function() {
-            const header = document.getElementById('header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+<script>
+(function() {
+    // ---------- SETUP ----------
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const levelSpan = document.getElementById('levelDisplay');
+    const deathSpan = document.getElementById('deathCounter');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const winOverlay = document.getElementById('winOverlay');
+    const progressBar = document.getElementById('progressBar');
+    
+    // Buttons
+    document.getElementById('startBtn').onclick = startLoadingSequence;
+    document.getElementById('restartBtn').onclick = () => resetLevel();
+    document.getElementById('menuBtn').onclick = () => {
+        gameState = 'menu';
+        menuOverlay.style.display = 'flex';
+        winOverlay.style.display = 'none';
+        sound.stopMusic();
+    };
+    document.getElementById('backToMenuBtn').onclick = () => {
+         gameState = 'menu';
+         menuOverlay.style.display = 'flex';
+         winOverlay.style.display = 'none';
+    };
+
+    // ---------- SOUND (Softer, Cuter) ----------
+    class SoundManager {
+        constructor() {
+            this.enabled = true;
+            this.ctx = null;
+        }
+        init() {
+            if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+        }
+        playTone(freq, type, duration) {
+            if (!this.enabled) return;
+            this.init();
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        }
+        play(sfx) {
+            if(!this.enabled) return;
+            switch(sfx) {
+                case 'jump': 
+                    // Rising sine wave (bloop)
+                    this.playTone(300, 'sine', 0.2); 
+                    break;
+                case 'land':
+                    this.playTone(150, 'sine', 0.1);
+                    break;
+                case 'death':
+                    // Falling rounded wave
+                    this.playTone(150, 'triangle', 0.4);
+                    break;
+                case 'win':
+                    // Major chord arpeggio
+                    setTimeout(() => this.playTone(523.25, 'sine', 0.3), 0);
+                    setTimeout(() => this.playTone(659.25, 'sine', 0.3), 100);
+                    setTimeout(() => this.playTone(783.99, 'sine', 0.6), 200);
+                    break;
             }
-        });
+        }
+        toggle() { this.enabled = !this.enabled; return this.enabled; }
+        stopMusic() { /* Placeholder if we add bgm later */ }
+    }
 
-        // Mobile menu toggle
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
+    const sound = new SoundManager();
+    document.getElementById('soundToggle').onclick = function() {
+        const on = sound.toggle();
+        this.innerText = on ? '🔊 Sound' : '🔇 Mute';
+        this.style.opacity = on ? 1 : 0.6;
+    };
 
-        hamburger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-        });
+    // ---------- ENTITIES ----------
+    
+    // The "Bucket" Player
+    class Player {
+        constructor(x, y) {
+            this.x = x; this.y = y;
+            this.w = 32; this.h = 32; // Logical size
+            this.vx = 0; this.vy = 0;
+            this.speed = 5;
+            this.jumpPower = -10;
+            this.grounded = false;
+            this.alive = true;
+            this.facingRight = true;
+            
+            // Animation props
+            this.scaleX = 1;
+            this.scaleY = 1;
+            this.angle = 0;
+        }
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    navLinks.classList.remove('active');
+        update(platforms, traps) {
+            if (!this.alive) return;
+
+            // Gravity
+            this.vy += 0.6;
+            
+            // Move X
+            this.x += this.vx;
+            this.collideX(platforms);
+
+            // Move Y
+            this.y += this.vy;
+            this.collideY(platforms);
+
+            // Squash/Stretch Physics
+            this.scaleX = lerp(this.scaleX, 1, 0.15);
+            this.scaleY = lerp(this.scaleY, 1, 0.15);
+            
+            // Air Rotation
+            if (!this.grounded) {
+                this.angle = lerp(this.angle, this.vx * 0.05, 0.1);
+            } else {
+                this.angle = lerp(this.angle, 0, 0.2);
+            }
+
+            // Trap Collision
+            for (let t of traps) {
+                if (t.active && this.collides(t)) this.die();
+            }
+            
+            // Out of bounds
+            if (this.y > 700 || this.x < -50 || this.x > 1100) this.die();
+        }
+
+        jump() {
+            if (this.grounded) {
+                this.vy = this.jumpPower;
+                this.grounded = false;
+                this.scaleX = 0.7; // Thin
+                this.scaleY = 1.3; // Tall
+                sound.play('jump');
+                spawnDust(this.x + this.w/2, this.y + this.h);
+            }
+        }
+
+        collideX(platforms) {
+            for (let p of platforms) {
+                if (!p.active) continue;
+                if (this.collides(p)) {
+                    if (this.vx > 0) { this.x = p.x - this.w; this.vx = 0; }
+                    else if (this.vx < 0) { this.x = p.x + p.w; this.vx = 0; }
                 }
-            });
-        });
+            }
+        }
 
-        // Form submission with Formspree
-        const form = document.getElementById('contactForm');
-        const formStatus = document.getElementById('form-status');
+        collideY(platforms) {
+            this.grounded = false;
+            for (let p of platforms) {
+                if (!p.active) continue;
+                if (this.collides(p)) {
+                    if (this.vy > 0) {
+                        this.y = p.y - this.h;
+                        if(this.vy > 2) { // Land impact
+                            this.scaleX = 1.3;
+                            this.scaleY = 0.7;
+                            sound.play('land');
+                            spawnDust(this.x + this.w/2, this.y + this.h);
+                        }
+                        this.vy = 0;
+                        this.grounded = true;
+                    } else if (this.vy < 0) {
+                        this.y = p.y + p.h;
+                        this.vy = 0;
+                    }
+                }
+            }
+        }
+
+        collides(o) {
+            // slightly forgiving hitbox
+            return this.x + 4 < o.x + o.w && this.x + this.w - 4 > o.x &&
+                   this.y + 2 < o.y + o.h && this.y + this.h > o.y;
+        }
+
+        die() {
+            if(this.alive) {
+                this.alive = false;
+                sound.play('death');
+                spawnExplosion(this.x + this.w/2, this.y + this.h/2);
+                lm.deaths++;
+                deathSpan.innerText = lm.deaths;
+                setTimeout(resetLevel, 600);
+            }
+        }
+
+        draw(ctx) {
+            const cx = this.x + this.w / 2;
+            const cy = this.y + this.h; // Pivot at bottom
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(this.angle);
+            ctx.scale(this.scaleX, this.scaleY);
+            ctx.translate(-cx, -cy);
+
+            // Draw Bucket Body
+            ctx.fillStyle = '#ff9aa2'; // Cute Pink
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 3;
+            
+            // Trapezoid shape for bucket
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y); // Top Left
+            ctx.lineTo(this.x + this.w, this.y); // Top Right
+            ctx.lineTo(this.x + this.w - 4, this.y + this.h); // Bottom Right
+            ctx.lineTo(this.x + 4, this.y + this.h); // Bottom Left
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Rim
+            ctx.beginPath();
+            ctx.ellipse(cx, this.y, this.w/2, 4, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffb7b2'; // Darker pink inside
+            ctx.fill();
+            ctx.stroke();
+
+            // Handle
+            ctx.beginPath();
+            ctx.arc(cx, this.y, this.w/2, Math.PI, 0);
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Face (Eyes)
+            const eyeOffset = this.facingRight ? 4 : -4;
+            const eyeX = cx + eyeOffset;
+            const eyeY = this.y + 16;
+            
+            // Whites
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(eyeX - 5, eyeY, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX + 5, eyeY, 4, 0, Math.PI*2); ctx.fill();
+            
+            // Pupils (look direction)
+            ctx.fillStyle = 'black';
+            const pupilX = this.vx * 0.5;
+            const pupilY = this.vy * 0.5;
+            ctx.beginPath(); ctx.arc(eyeX - 5 + pupilX, eyeY + pupilY, 1.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX + 5 + pupilX, eyeY + pupilY, 1.5, 0, Math.PI*2); ctx.fill();
+
+            ctx.restore();
+        }
+    }
+
+    class Platform {
+        constructor(x, y, w, h, moveType = null) {
+            this.x = x; this.y = y; this.w = w; this.h = h;
+            this.initialY = y;
+            this.initialX = x;
+            this.active = true;
+            this.moveType = moveType; // 'fall', 'lift', 'horizontal'
+            this.timer = Math.random() * 100;
+        }
+        update() {
+            if (this.moveType === 'fall' && this.active) {
+                if (player.collides(this)) {
+                    this.y += 2; // Sink when stood on
+                    if (this.y > 700) this.active = false;
+                }
+            } else if (this.moveType === 'lift') {
+                this.timer += 0.05;
+                this.y = this.initialY + Math.sin(this.timer) * 50;
+            }
+        }
+        draw(ctx) {
+            if (!this.active) return;
+            // Draw as a cute floating island/cloud block
+            ctx.fillStyle = this.moveType ? '#b5ead7' : '#c7ceea'; // Mint or Periwinkle
+            if (this.moveType === 'fall') ctx.fillStyle = '#ffdac1'; // Peach for falling
+            
+            // Rounded rect
+            drawRoundedRect(ctx, this.x, this.y, this.w, this.h, 8);
+            ctx.fill();
+            
+            // Highlight top
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillRect(this.x + 5, this.y, this.w - 10, 6);
+
+            // Border
+            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Decorative "grass" or "drips"
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.beginPath();
+            ctx.arc(this.x + 10, this.y + this.h, 4, 0, Math.PI);
+            ctx.arc(this.x + 30, this.y + this.h, 6, 0, Math.PI);
+            ctx.fill();
+        }
+    }
+
+    class Trap {
+        constructor(x, y, w, h, isSpike = false, moving = false) {
+            this.x = x; this.y = y; this.w = w; this.h = h;
+            this.isSpike = isSpike;
+            this.moving = moving;
+            this.initialY = y;
+            this.time = Math.random() * 100;
+            this.active = true;
+        }
+        update() {
+            if (this.moving) {
+                this.time += 0.05;
+                this.y = this.initialY + Math.sin(this.time) * 60;
+            }
+        }
+        draw(ctx) {
+            if (!this.active) return;
+            
+            if (this.isSpike) {
+                // Draw Spikes
+                ctx.fillStyle = '#ff6f61';
+                const spikes = Math.floor(this.w / 10);
+                ctx.beginPath();
+                for(let i=0; i<spikes; i++) {
+                    ctx.lineTo(this.x + (i*10), this.y + this.h);
+                    ctx.lineTo(this.x + (i*10) + 5, this.y);
+                    ctx.lineTo(this.x + (i*10) + 10, this.y + this.h);
+                }
+                ctx.fill();
+            } else {
+                // Angry block
+                ctx.fillStyle = '#ff9aa2';
+                drawRoundedRect(ctx, this.x, this.y, this.w, this.h, 4);
+                ctx.fill();
+                // Angry face
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(this.x + this.w/3, this.y + this.h/2 - 2, 3, 0, Math.PI*2);
+                ctx.arc(this.x + this.w*2/3, this.y + this.h/2 - 2, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.strokeStyle = '#a44';
+                ctx.beginPath();
+                ctx.moveTo(this.x + this.w/3 - 3, this.y + this.h/3);
+                ctx.lineTo(this.x + this.w/3 + 3, this.y + this.h/2);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // ---------- LEVEL MANAGER ----------
+    class LevelManager {
+        constructor() {
+            this.currentLevel = 0;
+            this.deaths = 0;
+        }
+        getLevelData(lvl) {
+            // Simplified level generation for demonstration
+            // MoveType: null (static), 'fall' (drags/falls), 'lift' (up/down)
+            const levels = [
+                // LVL 1
+                {
+                    platforms: [
+                        new Platform(100, 450, 200, 30),
+                        new Platform(400, 380, 100, 20, 'fall'), 
+                        new Platform(650, 400, 150, 30)
+                    ],
+                    traps: [new Trap(200, 440, 40, 10, true)], // spike
+                    start: {x: 120, y: 350},
+                    goal: {x: 700, y: 340}
+                },
+                // LVL 2
+                {
+                    platforms: [
+                        new Platform(50, 500, 150, 30),
+                        new Platform(280, 420, 120, 20, 'lift'),
+                        new Platform(550, 350, 200, 30)
+                    ],
+                    traps: [new Trap(580, 330, 40, 20, false)], // block
+                    start: {x: 70, y: 400},
+                    goal: {x: 680, y: 290}
+                },
+                // LVL 3
+                {
+                    platforms: [
+                        new Platform(50, 500, 100, 30),
+                        new Platform(200, 450, 80, 20, 'fall'),
+                        new Platform(350, 380, 80, 20, 'fall'),
+                        new Platform(500, 300, 80, 20, 'fall'),
+                        new Platform(700, 250, 150, 30)
+                    ],
+                    traps: [new Trap(720, 230, 30, 20, true)],
+                    start: {x: 60, y: 400},
+                    goal: {x: 780, y: 190}
+                }
+            ];
+            return levels[lvl % levels.length];
+        }
+    }
+
+    // ---------- GLOBAL STATE ----------
+    const lm = new LevelManager();
+    let player, platforms = [], traps = [], particles = [];
+    let goal = {x: 0, y: 0, w: 40, h: 40, float: 0};
+    let gameState = 'menu'; // menu, loading, playing, win
+    let keys = { left: false, right: false, jump: false };
+
+    // ---------- HELPER FUNCTIONS ----------
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+    function spawnDust(x, y) {
+        for(let i=0; i<8; i++) {
+            particles.push({
+                x: x, y: y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() * -2),
+                size: Math.random() * 6 + 2,
+                color: '#fff',
+                life: 30
+            });
+        }
+    }
+
+    function spawnExplosion(x, y) {
+        for(let i=0; i<20; i++) {
+            particles.push({
+                x: x, y: y,
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10,
+                size: Math.random() * 8 + 4,
+                color: Math.random() > 0.5 ? '#ff9aa2' : '#ffdac1',
+                life: 40
+            });
+        }
+    }
+
+    // ---------- GAME LOGIC ----------
+    
+    function startLoadingSequence() {
+        menuOverlay.style.display = 'none';
+        loadingOverlay.style.display = 'flex';
+        gameState = 'loading';
+        let progress = 0;
         
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+        const interval = setInterval(() => {
+            progress += 2;
+            progressBar.style.width = progress + '%';
+            if (progress >= 100) {
+                clearInterval(interval);
+                loadingOverlay.style.display = 'none';
+                gameState = 'playing';
+                lm.currentLevel = 0;
+                lm.deaths = 0;
+                deathSpan.innerText = 0;
+                resetLevel();
+            }
+        }, 20); // Simulates loading time
+    }
+
+    function resetLevel() {
+        const data = lm.getLevelData(lm.currentLevel);
+        platforms = data.platforms;
+        traps = data.traps;
+        player = new Player(data.start.x, data.start.y);
+        goal.x = data.goal.x;
+        goal.y = data.goal.y;
+        levelSpan.innerText = lm.currentLevel + 1;
+    }
+
+    function update() {
+        if (gameState !== 'playing') return;
+
+        // Input
+        if (keys.left) { player.vx = -player.speed; player.facingRight = false; }
+        if (keys.right) { player.vx = player.speed; player.facingRight = true; }
+        if (!keys.left && !keys.right) player.vx = 0;
+        if (keys.jump) player.jump();
+
+        // Updates
+        platforms.forEach(p => p.update());
+        traps.forEach(t => t.update());
+        player.update(platforms, traps);
+
+        // Goal Check
+        goal.float += 0.1;
+        if (player.alive && 
+            player.x < goal.x + 30 && player.x + player.w > goal.x &&
+            player.y < goal.y + 30 && player.y + player.h > goal.y) {
             
-            // Show loading state
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            
-            // Submit form data
-            const formData = new FormData(form);
-            
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    formStatus.textContent = 'Thank you for your message! I will get back to you soon.';
-                    formStatus.className = 'form-status success';
-                    form.reset();
-                } else {
-                    throw new Error('Form submission failed');
-                }
-            })
-            .catch(error => {
-                formStatus.textContent = 'Oops! There was a problem sending your message. Please try again.';
-                formStatus.className = 'form-status error';
-            })
-            .finally(() => {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-                
-                // Hide status message after 5 seconds
-                setTimeout(() => {
-                    formStatus.style.display = 'none';
-                }, 5000);
-            });
+            sound.play('win');
+            if (lm.currentLevel < 2) {
+                lm.currentLevel++;
+                resetLevel();
+            } else {
+                gameState = 'win';
+                winOverlay.style.display = 'flex';
+            }
+        }
+
+        // Particles
+        particles.forEach((p, index) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life--;
+            p.size *= 0.95;
+            if(p.life <= 0) particles.splice(index, 1);
         });
-    </script>
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Background decor
+        ctx.fillStyle = '#f0f8ff';
+        ctx.beginPath();
+        ctx.arc(100, 100, 60, 0, Math.PI*2); // Cloud 1
+        ctx.arc(800, 200, 80, 0, Math.PI*2); // Cloud 2
+        ctx.fill();
+
+        if (gameState === 'playing' || gameState === 'win') {
+            platforms.forEach(p => p.draw(ctx));
+            traps.forEach(t => t.draw(ctx));
+
+            // Goal
+            const goalY = goal.y + Math.sin(goal.float) * 5;
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            // Draw star shape
+            for (let i = 0; i < 5; i++) {
+                ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * 20 + goal.x + 20,
+                           -Math.sin((18 + i * 72) / 180 * Math.PI) * 20 + goalY + 20);
+                ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * 10 + goal.x + 20,
+                           -Math.sin((54 + i * 72) / 180 * Math.PI) * 10 + goalY + 20);
+            }
+            ctx.fill();
+            // Star Glow
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 20;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            if (player.alive) player.draw(ctx);
+
+            // Draw particles
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 30;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            });
+        }
+        
+        requestAnimationFrame(() => { update(); draw(); });
+    }
+
+    // ---------- INPUT ----------
+    window.addEventListener('keydown', e => {
+        if(e.key === 'ArrowLeft') keys.left = true;
+        if(e.key === 'ArrowRight') keys.right = true;
+        if(e.key === 'ArrowUp' || e.key === ' ') keys.jump = true;
+    });
+    window.addEventListener('keyup', e => {
+        if(e.key === 'ArrowLeft') keys.left = false;
+        if(e.key === 'ArrowRight') keys.right = false;
+        if(e.key === 'ArrowUp' || e.key === ' ') keys.jump = false;
+    });
+
+    // Start Loop
+    draw();
+
+})();
+</script>
 </body>
 </html>
