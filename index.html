@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bucket Jump · Happy Adventure</title>
+    <title>Bucket Jump · Troll Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         * {
@@ -32,8 +32,6 @@
             border-radius: 30px;
             box-shadow: 0 20px 50px rgba(255, 183, 178, 0.4);
             position: relative;
-            transform: scale(1);
-            transition: transform 0.2s;
         }
         canvas {
             display: block;
@@ -177,15 +175,15 @@
     </div>
 
     <div id="loadingOverlay">
-        <div style="font-size: 2rem; color: #ff9aa2;">Loading Cuteness...</div>
+        <div style="font-size: 2rem; color: #ff9aa2;">Loading Traps...</div>
         <div class="loader-container">
             <div class="loader-bar" id="progressBar"></div>
         </div>
     </div>
 
     <div id="winOverlay" style="display: none; background: rgba(255,255,255,0.9);">
-        <div class="title-text" style="color: #ffb7b2;">YOU DID IT!</div>
-        <div style="font-size: 1.5rem; color: #555; margin-bottom: 30px;">The bucket is happy.</div>
+        <div class="title-text" style="color: #ffb7b2;">YOU SURVIVED!</div>
+        <div style="font-size: 1.5rem; color: #555; margin-bottom: 30px;">The bucket is proud.</div>
         <button class="play-btn" id="backToMenuBtn">PLAY AGAIN</button>
     </div>
 </div>
@@ -219,7 +217,7 @@
          winOverlay.style.display = 'none';
     };
 
-    // ---------- SOUND (Softer, Cuter) ----------
+    // ---------- SOUND ----------
     class SoundManager {
         constructor() {
             this.enabled = true;
@@ -247,18 +245,15 @@
             if(!this.enabled) return;
             switch(sfx) {
                 case 'jump': 
-                    // Rising sine wave (bloop)
                     this.playTone(300, 'sine', 0.2); 
                     break;
                 case 'land':
                     this.playTone(150, 'sine', 0.1);
                     break;
                 case 'death':
-                    // Falling rounded wave
-                    this.playTone(150, 'triangle', 0.4);
+                    this.playTone(100, 'sawtooth', 0.3); // Harsher sound for death
                     break;
                 case 'win':
-                    // Major chord arpeggio
                     setTimeout(() => this.playTone(523.25, 'sine', 0.3), 0);
                     setTimeout(() => this.playTone(659.25, 'sine', 0.3), 100);
                     setTimeout(() => this.playTone(783.99, 'sine', 0.6), 200);
@@ -266,7 +261,7 @@
             }
         }
         toggle() { this.enabled = !this.enabled; return this.enabled; }
-        stopMusic() { /* Placeholder if we add bgm later */ }
+        stopMusic() { }
     }
 
     const sound = new SoundManager();
@@ -278,19 +273,16 @@
 
     // ---------- ENTITIES ----------
     
-    // The "Bucket" Player
     class Player {
         constructor(x, y) {
             this.x = x; this.y = y;
-            this.w = 32; this.h = 32; // Logical size
+            this.w = 32; this.h = 32; 
             this.vx = 0; this.vy = 0;
-            this.speed = 5;
+            this.speed = 4; // REDUCED SPEED FOR CONTROL
             this.jumpPower = -10;
             this.grounded = false;
             this.alive = true;
             this.facingRight = true;
-            
-            // Animation props
             this.scaleX = 1;
             this.scaleY = 1;
             this.angle = 0;
@@ -298,8 +290,6 @@
 
         update(platforms, traps) {
             if (!this.alive) return;
-
-            // Gravity
             this.vy += 0.6;
             
             // Move X
@@ -310,16 +300,11 @@
             this.y += this.vy;
             this.collideY(platforms);
 
-            // Squash/Stretch Physics
+            // Physics Animation
             this.scaleX = lerp(this.scaleX, 1, 0.15);
             this.scaleY = lerp(this.scaleY, 1, 0.15);
-            
-            // Air Rotation
-            if (!this.grounded) {
-                this.angle = lerp(this.angle, this.vx * 0.05, 0.1);
-            } else {
-                this.angle = lerp(this.angle, 0, 0.2);
-            }
+            if (!this.grounded) this.angle = lerp(this.angle, this.vx * 0.05, 0.1);
+            else this.angle = lerp(this.angle, 0, 0.2);
 
             // Trap Collision
             for (let t of traps) {
@@ -334,8 +319,7 @@
             if (this.grounded) {
                 this.vy = this.jumpPower;
                 this.grounded = false;
-                this.scaleX = 0.7; // Thin
-                this.scaleY = 1.3; // Tall
+                this.scaleX = 0.7; this.scaleY = 1.3;
                 sound.play('jump');
                 spawnDust(this.x + this.w/2, this.y + this.h);
             }
@@ -358,9 +342,8 @@
                 if (this.collides(p)) {
                     if (this.vy > 0) {
                         this.y = p.y - this.h;
-                        if(this.vy > 2) { // Land impact
-                            this.scaleX = 1.3;
-                            this.scaleY = 0.7;
+                        if(this.vy > 2) { 
+                            this.scaleX = 1.3; this.scaleY = 0.7; 
                             sound.play('land');
                             spawnDust(this.x + this.w/2, this.y + this.h);
                         }
@@ -375,9 +358,8 @@
         }
 
         collides(o) {
-            // slightly forgiving hitbox
-            return this.x + 4 < o.x + o.w && this.x + this.w - 4 > o.x &&
-                   this.y + 2 < o.y + o.h && this.y + this.h > o.y;
+            return this.x + 6 < o.x + o.w && this.x + this.w - 6 > o.x &&
+                   this.y + 4 < o.y + o.h && this.y + this.h > o.y;
         }
 
         die() {
@@ -393,25 +375,22 @@
 
         draw(ctx) {
             const cx = this.x + this.w / 2;
-            const cy = this.y + this.h; // Pivot at bottom
-
+            const cy = this.y + this.h; 
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(this.angle);
             ctx.scale(this.scaleX, this.scaleY);
             ctx.translate(-cx, -cy);
 
-            // Draw Bucket Body
-            ctx.fillStyle = '#ff9aa2'; // Cute Pink
+            // Bucket
+            ctx.fillStyle = '#ff9aa2';
             ctx.strokeStyle = '#555';
             ctx.lineWidth = 3;
-            
-            // Trapezoid shape for bucket
             ctx.beginPath();
-            ctx.moveTo(this.x, this.y); // Top Left
-            ctx.lineTo(this.x + this.w, this.y); // Top Right
-            ctx.lineTo(this.x + this.w - 4, this.y + this.h); // Bottom Right
-            ctx.lineTo(this.x + 4, this.y + this.h); // Bottom Left
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + this.w, this.y);
+            ctx.lineTo(this.x + this.w - 4, this.y + this.h);
+            ctx.lineTo(this.x + 4, this.y + this.h);
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
@@ -419,7 +398,7 @@
             // Rim
             ctx.beginPath();
             ctx.ellipse(cx, this.y, this.w/2, 4, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffb7b2'; // Darker pink inside
+            ctx.fillStyle = '#ffb7b2';
             ctx.fill();
             ctx.stroke();
 
@@ -430,23 +409,18 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Face (Eyes)
+            // Face
             const eyeOffset = this.facingRight ? 4 : -4;
             const eyeX = cx + eyeOffset;
             const eyeY = this.y + 16;
-            
-            // Whites
             ctx.fillStyle = 'white';
             ctx.beginPath(); ctx.arc(eyeX - 5, eyeY, 4, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(eyeX + 5, eyeY, 4, 0, Math.PI*2); ctx.fill();
-            
-            // Pupils (look direction)
             ctx.fillStyle = 'black';
             const pupilX = this.vx * 0.5;
             const pupilY = this.vy * 0.5;
             ctx.beginPath(); ctx.arc(eyeX - 5 + pupilX, eyeY + pupilY, 1.5, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(eyeX + 5 + pupilX, eyeY + pupilY, 1.5, 0, Math.PI*2); ctx.fill();
-
             ctx.restore();
         }
     }
@@ -457,40 +431,35 @@
             this.initialY = y;
             this.initialX = x;
             this.active = true;
-            this.moveType = moveType; // 'fall', 'lift', 'horizontal'
+            this.moveType = moveType; 
             this.timer = Math.random() * 100;
         }
         update() {
             if (this.moveType === 'fall' && this.active) {
                 if (player.collides(this)) {
-                    this.y += 2; // Sink when stood on
+                    this.y += 4; // Fast fall
                     if (this.y > 700) this.active = false;
                 }
             } else if (this.moveType === 'lift') {
-                this.timer += 0.05;
-                this.y = this.initialY + Math.sin(this.timer) * 50;
+                this.timer += 0.03; // Slower lift
+                this.y = this.initialY + Math.sin(this.timer) * 80;
             }
         }
         draw(ctx) {
             if (!this.active) return;
-            // Draw as a cute floating island/cloud block
-            ctx.fillStyle = this.moveType ? '#b5ead7' : '#c7ceea'; // Mint or Periwinkle
-            if (this.moveType === 'fall') ctx.fillStyle = '#ffdac1'; // Peach for falling
+            // TROLL VISUAL: 'fall' platforms look EXACTLY like 'lift' or safe platforms
+            ctx.fillStyle = '#b5ead7'; 
             
-            // Rounded rect
             drawRoundedRect(ctx, this.x, this.y, this.w, this.h, 8);
             ctx.fill();
             
-            // Highlight top
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
             ctx.fillRect(this.x + 5, this.y, this.w - 10, 6);
 
-            // Border
             ctx.strokeStyle = 'rgba(0,0,0,0.1)';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Decorative "grass" or "drips"
             ctx.fillStyle = 'rgba(0,0,0,0.1)';
             ctx.beginPath();
             ctx.arc(this.x + 10, this.y + this.h, 4, 0, Math.PI);
@@ -518,32 +487,25 @@
             if (!this.active) return;
             
             if (this.isSpike) {
-                // Draw Spikes
                 ctx.fillStyle = '#ff6f61';
                 const spikes = Math.floor(this.w / 10);
                 ctx.beginPath();
                 for(let i=0; i<spikes; i++) {
-                    ctx.lineTo(this.x + (i*10), this.y + this.h);
-                    ctx.lineTo(this.x + (i*10) + 5, this.y);
-                    ctx.lineTo(this.x + (i*10) + 10, this.y + this.h);
+                    // Triangle spikes
+                    ctx.lineTo(this.x + (i*10), this.y); // top left
+                    ctx.lineTo(this.x + (i*10) + 5, this.y + this.h); // point down
+                    ctx.lineTo(this.x + (i*10) + 10, this.y); // top right
                 }
                 ctx.fill();
             } else {
-                // Angry block
                 ctx.fillStyle = '#ff9aa2';
                 drawRoundedRect(ctx, this.x, this.y, this.w, this.h, 4);
                 ctx.fill();
-                // Angry face
                 ctx.fillStyle = '#fff';
                 ctx.beginPath();
                 ctx.arc(this.x + this.w/3, this.y + this.h/2 - 2, 3, 0, Math.PI*2);
                 ctx.arc(this.x + this.w*2/3, this.y + this.h/2 - 2, 3, 0, Math.PI*2);
                 ctx.fill();
-                ctx.strokeStyle = '#a44';
-                ctx.beginPath();
-                ctx.moveTo(this.x + this.w/3 - 3, this.y + this.h/3);
-                ctx.lineTo(this.x + this.w/3 + 3, this.y + this.h/2);
-                ctx.stroke();
             }
         }
     }
@@ -555,41 +517,42 @@
             this.deaths = 0;
         }
         getLevelData(lvl) {
-            // Simplified level generation for demonstration
-            // MoveType: null (static), 'fall' (drags/falls), 'lift' (up/down)
             const levels = [
-                // LVL 1
+                // LVL 1: Tutorial
                 {
                     platforms: [
                         new Platform(100, 450, 200, 30),
                         new Platform(400, 380, 100, 20, 'fall'), 
                         new Platform(650, 400, 150, 30)
                     ],
-                    traps: [new Trap(200, 440, 40, 10, true)], // spike
+                    traps: [new Trap(200, 440, 40, 10, true)], 
                     start: {x: 120, y: 350},
                     goal: {x: 700, y: 340}
                 },
-                // LVL 2
+                // LVL 2: THE TROLL (Easier jumps, mean trap)
+                {
+                    platforms: [
+                        new Platform(50, 500, 200, 30), // Start
+                        new Platform(300, 420, 250, 20, 'lift'), // Huge lift
+                        new Platform(650, 350, 250, 30) // End
+                    ],
+                    // TROLL: Ceiling spikes that block the jump when the lift is HIGH
+                    traps: [
+                        new Trap(400, 320, 100, 20, true) // Spike hanging in air
+                    ],
+                    start: {x: 70, y: 400},
+                    goal: {x: 750, y: 290}
+                },
+                // LVL 3: TRUST ISSUES
                 {
                     platforms: [
                         new Platform(50, 500, 150, 30),
-                        new Platform(280, 420, 120, 20, 'lift'),
-                        new Platform(550, 350, 200, 30)
-                    ],
-                    traps: [new Trap(580, 330, 40, 20, false)], // block
-                    start: {x: 70, y: 400},
-                    goal: {x: 680, y: 290}
-                },
-                // LVL 3
-                {
-                    platforms: [
-                        new Platform(50, 500, 100, 30),
-                        new Platform(200, 450, 80, 20, 'fall'),
-                        new Platform(350, 380, 80, 20, 'fall'),
-                        new Platform(500, 300, 80, 20, 'fall'),
+                        new Platform(220, 450, 100, 20, 'fall'), // Looks safe
+                        new Platform(350, 380, 100, 20, 'fall'), // Looks safe
+                        new Platform(500, 300, 100, 20, 'fall'), // Looks safe
                         new Platform(700, 250, 150, 30)
                     ],
-                    traps: [new Trap(720, 230, 30, 20, true)],
+                    traps: [new Trap(720, 200, 30, 20, true)],
                     start: {x: 60, y: 400},
                     goal: {x: 780, y: 190}
                 }
@@ -602,7 +565,7 @@
     const lm = new LevelManager();
     let player, platforms = [], traps = [], particles = [];
     let goal = {x: 0, y: 0, w: 40, h: 40, float: 0};
-    let gameState = 'menu'; // menu, loading, playing, win
+    let gameState = 'menu';
     let keys = { left: false, right: false, jump: false };
 
     // ---------- HELPER FUNCTIONS ----------
@@ -668,7 +631,7 @@
                 deathSpan.innerText = 0;
                 resetLevel();
             }
-        }, 20); // Simulates loading time
+        }, 20);
     }
 
     function resetLevel() {
@@ -724,11 +687,11 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw Background decor
+        // Background
         ctx.fillStyle = '#f0f8ff';
         ctx.beginPath();
-        ctx.arc(100, 100, 60, 0, Math.PI*2); // Cloud 1
-        ctx.arc(800, 200, 80, 0, Math.PI*2); // Cloud 2
+        ctx.arc(100, 100, 60, 0, Math.PI*2);
+        ctx.arc(800, 200, 80, 0, Math.PI*2);
         ctx.fill();
 
         if (gameState === 'playing' || gameState === 'win') {
@@ -739,7 +702,6 @@
             const goalY = goal.y + Math.sin(goal.float) * 5;
             ctx.fillStyle = '#ffd700';
             ctx.beginPath();
-            // Draw star shape
             for (let i = 0; i < 5; i++) {
                 ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * 20 + goal.x + 20,
                            -Math.sin((18 + i * 72) / 180 * Math.PI) * 20 + goalY + 20);
@@ -747,7 +709,6 @@
                            -Math.sin((54 + i * 72) / 180 * Math.PI) * 10 + goalY + 20);
             }
             ctx.fill();
-            // Star Glow
             ctx.shadowColor = '#ffd700';
             ctx.shadowBlur = 20;
             ctx.stroke();
@@ -755,7 +716,6 @@
 
             if (player.alive) player.draw(ctx);
 
-            // Draw particles
             particles.forEach(p => {
                 ctx.fillStyle = p.color;
                 ctx.globalAlpha = p.life / 30;
@@ -781,7 +741,6 @@
         if(e.key === 'ArrowUp' || e.key === ' ') keys.jump = false;
     });
 
-    // Start Loop
     draw();
 
 })();
