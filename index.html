@@ -2,381 +2,245 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bucket Jump: Slosh Edition 🪣</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <title>Bucket Jump: Marketplace Edition 🪣</title>
     <style>
-        * { box-sizing: border-box; user-select: none; margin: 0; padding: 0; }
-        body {
-            background: #1a1a2e;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Fredoka One', cursive;
-            overflow: hidden;
-            color: #fff;
-        }
-        .game-wrapper {
-            background: #16213e;
-            border: 6px solid #4dd0e1;
-            padding: 10px;
-            border-radius: 25px;
-            box-shadow: 0 0 50px rgba(77, 208, 225, 0.3);
-            position: relative;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 9;
-            border-radius: 15px;
-            background: #0f3460;
-        }
-        .ui-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        .stat {
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        #menuOverlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 52, 96, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            border-radius: 20px;
-        }
-        button {
-            background: #e94560;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: 'Fredoka One';
-            box-shadow: 0 5px 0 #950740;
-            transition: 0.1s;
-        }
-        button:active { transform: translateY(3px); box-shadow: 0 2px 0 #950740; }
-        .progress-container {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        #progressBar { width: 0%; height: 100%; background: #4dd0e1; transition: width 0.3s; }
+        :root { --neon: #4dd0e1; --accent: #e94560; --bg: #1a1a2e; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        #game-container { position: relative; border: 5px solid var(--neon); border-radius: 20px; box-shadow: 0 0 30px rgba(77, 208, 225, 0.2); }
+        canvas { display: block; background: #16213e; border-radius: 15px; cursor: crosshair; }
+        
+        /* UI Overlays */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.95); 
+                    display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border-radius: 15px; }
+        .hidden { display: none !important; }
+        
+        h1 { font-size: 3rem; color: var(--neon); text-shadow: 0 0 10px var(--neon); margin: 0; }
+        .btn { background: var(--accent); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; border-radius: 50px; 
+               cursor: pointer; margin: 10px; font-weight: bold; transition: 0.2s; box-shadow: 0 4px 0 #950740; }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #950740; }
+        
+        /* Shop Styles */
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px; }
+        .shop-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 2px solid transparent; text-align: center; width: 120px; }
+        .shop-item.owned { border-color: var(--neon); }
+        .skin-preview { width: 40px; height: 40px; margin: 0 auto 10px; border-radius: 5px; }
+        
+        .hud { position: absolute; top: 15px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; pointer-events: none; font-weight: bold; font-size: 1.2rem; }
+        .currency { color: #ffd700; }
     </style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <div class="progress-container"><div id="progressBar"></div></div>
-    <canvas id="gameCanvas" width="900" height="500"></canvas>
-
-    <div class="ui-bar">
-        <div class="stat">LEVEL <span id="levelDisplay">1</span></div>
-        <div class="stat" style="color: #ffd700">⭐ <span id="starDisplay">0</span> / 3</div>
+<div id="game-container">
+    <div class="hud">
+        <div>LEVEL: <span id="lv-ui">1</span></div>
+        <div class="currency">💧 WATER: <span id="gold-ui">0</span></div>
     </div>
 
-    <div id="menuOverlay">
-        <h1 style="font-size: 4rem; margin-bottom: 20px; color: #4dd0e1; text-shadow: 0 0 20px #4dd0e1;">BUCKET JUMP</h1>
-        <p style="margin-bottom: 30px; opacity: 0.8;">Space to Jump | A-D to Move</p>
-        <button id="startBtn">START JUMPING</button>
+    <div id="menu" class="overlay">
+        <h1>BUCKET JUMP</h1>
+        <p style="opacity: 0.7">Collect 3 Gold Stars to exit!</p>
+        <button class="btn" onclick="startGame()">START GAME</button>
+        <button class="btn" style="background:#4ecca3; box-shadow: 0 4px 0 #11998e;" onclick="showShop()">MARKETPLACE</button>
     </div>
+
+    <div id="shop" class="overlay hidden">
+        <h1>MARKETPLACE</h1>
+        <div class="shop-grid" id="shop-items"></div>
+        <button class="btn" onclick="hideShop()">BACK</button>
+    </div>
+
+    <canvas id="c" width="850" height="450"></canvas>
 </div>
 
 <script>
-(function() {
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+
+// --- GAME DATA & SAVING ---
+let state = JSON.parse(localStorage.getItem('bucketJumpSave')) || {
+    gold: 0, owned: ['Default'], active: 'Default'
+};
+function save() { 
+    localStorage.setItem('bucketJumpSave', JSON.stringify(state)); 
+    document.getElementById('gold-ui').innerText = state.gold;
+}
+
+const SKINS = {
+    'Default': { color: '#00b0ff', trail: '#00b0ff44', cost: 0 },
+    'Lava':    { color: '#ff4d4d', trail: '#ff4d4d44', cost: 50 },
+    'Forest':  { color: '#4ecca3', trail: '#4ecca344', cost: 100 },
+    'Stealth': { color: '#2d3436', trail: '#636e7244', cost: 200 },
+    'Royal':   { color: '#ffd700', trail: '#ffd70044', cost: 500 },
+    'Galaxy':  { color: '#6c5ce7', trail: '#a29bfe44', cost: 1000 }
+};
+
+// --- AUDIO ---
+let ac;
+function playSound(f, t, d, v) {
+    if(!ac) return;
+    let o = ac.createOscillator(), g = ac.createGain();
+    o.type = t; o.frequency.setValueAtTime(f, ac.currentTime);
+    o.frequency.exponentialRampToValueAtTime(10, ac.currentTime + d);
+    g.gain.setValueAtTime(v, ac.currentTime);
+    g.gain.linearRampToValueAtTime(0, ac.currentTime + d);
+    o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime + d);
+}
+
+// --- ENGINE ---
+let player = { x: 100, y: 300, vx: 0, vy: 0, w: 32, h: 32, j: 0, ground: false, trail: [] };
+let platforms = [], stars = [], drops = [], level = 1, collectedStars = 0, camX = 0, keys = {};
+
+function initLevel(num) {
+    level = num; collectedStars = 0; camX = 0;
+    player.x = 100; player.y = 300; player.vx = 0; player.vy = 0;
+    platforms = [{x: 0, y: 380, w: 300, h: 70}];
+    stars = []; drops = [];
     
-    // --- AUDIO ENGINE (Procedural Synth) ---
-    const Audio = {
-        ctx: null,
-        init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-        play(freq, type, duration, vol) {
-            this.init();
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + duration);
-            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + duration);
-            osc.connect(gain); gain.connect(this.ctx.destination);
-            osc.start(); osc.stop(this.ctx.currentTime + duration);
-        },
-        jump() { this.play(400, 'sine', 0.2, 0.1); },
-        land() { this.play(150, 'triangle', 0.1, 0.1); },
-        coin() { 
-            this.play(800, 'square', 0.1, 0.05); 
-            setTimeout(() => this.play(1200, 'square', 0.1, 0.05), 50); 
-        },
-        death() { this.play(100, 'sawtooth', 0.5, 0.2); }
-    };
+    let cx = 400;
+    for(let i=0; i < 8+num; i++) {
+        let w = 80 + Math.random()*100, y = 180 + Math.random()*180;
+        platforms.push({ x: cx, y: y, w: w, h: 25 });
+        if(i % 2 === 0) stars.push({ x: cx + w/2, y: y-40, off: Math.random()*10 });
+        drops.push({ x: cx + Math.random()*w, y: y-80, off: Math.random()*10 });
+        cx += w + 80 + Math.random()*60;
+    }
+    platforms.push({ x: cx, y: 350, w: 200, h: 100, goal: true });
+    document.getElementById('lv-ui').innerText = level;
+    save();
+}
 
-    // --- GAME STATE ---
-    let game = {
-        level: 1, stars: 0, 
-        platforms: [], stars_objs: [], hazards: [], particles: [],
-        cameraX: 0, shake: 0, winWidth: 0
-    };
+function update() {
+    if(keys['KeyA']) player.vx -= 0.7;
+    if(keys['KeyD']) player.vx += 0.7;
+    player.vx *= 0.88; player.vy += 0.6;
+    player.x += player.vx; player.y += player.vy;
+    player.ground = false;
+
+    // Trail logic
+    player.trail.push({x: player.x, y: player.y});
+    if(player.trail.length > 8) player.trail.shift();
+
+    platforms.forEach(p => {
+        if(player.x+player.w > p.x && player.x < p.x+p.w && player.y+player.h > p.y && player.y < p.y+p.h) {
+            if(player.vy > 0) {
+                player.y = p.y - player.h; player.vy = 0; player.ground = true; player.j = 0;
+                if(p.goal && collectedStars >= 3) { playSound(600, 'sine', 0.4, 0.1); initLevel(level+1); }
+            }
+        }
+    });
+
+    stars.forEach((s, i) => {
+        if(!s.done && Math.hypot(player.x-s.x, player.y-s.y) < 40) {
+            s.done = true; collectedStars++; playSound(800, 'square', 0.1, 0.1);
+        }
+    });
+
+    drops.forEach((d, i) => {
+        if(!d.done && Math.hypot(player.x-d.x, player.y-d.y) < 40) {
+            d.done = true; state.gold += 5; save(); playSound(1200, 'sine', 0.05, 0.05);
+        }
+    });
+
+    if(player.y > 500) { playSound(100, 'sawtooth', 0.3, 0.2); initLevel(level); }
+    camX += (player.x - camX - 250) * 0.1;
+}
+
+function render() {
+    ctx.clearRect(0,0,850,450);
+    ctx.save(); ctx.translate(-camX, 0);
+
+    const skin = SKINS[state.active];
+
+    // Platforms
+    platforms.forEach(p => {
+        ctx.fillStyle = p.goal ? (collectedStars >= 3 ? '#ffd700' : '#444') : '#4dd0e1';
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(p.x, p.y, p.w, 4);
+    });
+
+    // Trail
+    player.trail.forEach((t, i) => {
+        ctx.globalAlpha = i/10; ctx.fillStyle = skin.color;
+        ctx.fillRect(t.x, t.y, player.w, player.h);
+    });
+    ctx.globalAlpha = 1;
+
+    // Items
+    stars.forEach(s => { if(!s.done) { ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(s.x, s.y + Math.sin(Date.now()/200)*5, 10, 0, 7); ctx.fill(); }});
+    drops.forEach(d => { if(!d.done) { ctx.fillStyle = '#00b0ff'; ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x+6, d.y+12); ctx.lineTo(d.x-6, d.y+12); ctx.fill(); }});
+
+    // Player
+    ctx.fillStyle = skin.color;
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+    ctx.fillStyle = 'white'; ctx.fillRect(player.x+6, player.y+6, 6, 6); ctx.fillRect(player.x+20, player.y+6, 6, 6);
+
+    ctx.restore();
+    update();
+    requestAnimationFrame(render);
+}
+
+// --- UI LOGIC ---
+function startGame() {
+    if(!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+    document.getElementById('menu').classList.add('hidden');
+    initLevel(1); render();
+}
+
+function showShop() {
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('shop').classList.remove('hidden');
+    const container = document.getElementById('shop-items');
+    container.innerHTML = '';
     
-    let keys = { a: false, d: false, space: false };
-    let player;
-
-    class Player {
-        constructor() {
-            this.x = 100; this.y = 300; this.w = 34; this.h = 34;
-            this.vx = 0; this.vy = 0;
-            this.jumpCount = 0;
-            this.grounded = false;
-            this.slosh = 0; // For water animation
-        }
-
-        update() {
-            if (keys.a) this.vx -= 0.8;
-            if (keys.d) this.vx += 0.8;
-            this.vx *= 0.88;
-            this.vy += 0.6; // Gravity
-            this.x += this.vx;
-            this.checkCollisions('x');
-            this.y += this.vy;
-            this.checkCollisions('y');
-
-            this.slosh = (this.vx * 0.2) + (this.vy * 0.05);
-
-            if (this.y > 600) this.die();
-            
-            // Item collection
-            game.stars_objs.forEach(s => {
-                if(!s.got && this.dist(s) < 30) {
-                    s.got = true; game.stars++;
-                    Audio.coin();
-                    document.getElementById('starDisplay').innerText = game.stars;
-                }
-            });
-
-            // Hazard collision
-            game.hazards.forEach(h => {
-                if(this.dist(h) < 25) this.die();
-            });
-
-            // Goal
-            if (game.stars >= 3 && this.x > game.winWidth - 100) nextLevel();
-        }
-
-        dist(o) { return Math.hypot((this.x+17)-o.x, (this.y+17)-o.y); }
-
-        checkCollisions(axis) {
-            game.platforms.forEach(p => {
-                if (this.x < p.x + p.w && this.x + this.w > p.x && this.y < p.y + p.h && this.y + this.h > p.y) {
-                    if (axis === 'x') {
-                        this.x = this.vx > 0 ? p.x - this.w : p.x + p.w;
-                        this.vx = 0;
-                    } else {
-                        if (this.vy > 0) {
-                            if (this.vy > 8) Audio.land();
-                            this.y = p.y - this.h;
-                            this.vy = 0; this.grounded = true; this.jumpCount = 0;
-                        } else {
-                            this.y = p.y + p.h; this.vy = 0;
-                        }
-                    }
-                }
-            });
-        }
-
-        die() {
-            Audio.death();
-            game.shake = 15;
-            spawnParticles(this.x, this.y, '#4dd0e1', 20);
-            setTimeout(() => startLevel(game.level), 500);
-            this.x = -1000; // Move off screen
-        }
-
-        draw() {
-            ctx.save();
-            ctx.translate(this.x + 17, this.y + 34);
-            ctx.rotate(this.vx * 0.03);
-            
-            // Bucket Shape
-            ctx.fillStyle = '#4dd0e1';
-            ctx.beginPath();
-            ctx.moveTo(-17, -34); ctx.lineTo(17, -34);
-            ctx.lineTo(12, 0); ctx.lineTo(-12, 0);
-            ctx.fill();
-
-            // Sloshing Water
-            ctx.fillStyle = '#00b0ff';
-            ctx.beginPath();
-            ctx.moveTo(-14, -20 + this.slosh * 10);
-            ctx.bezierCurveTo(0, -20 - this.slosh * 10, 0, -20 + this.slosh * 10, 14, -20 - this.slosh * 10);
-            ctx.lineTo(10, -2); ctx.lineTo(-10, -2);
-            ctx.fill();
-
-            // Eyes
-            ctx.fillStyle = 'white';
-            ctx.beginPath(); ctx.arc(-6, -24, 4, 0, 7); ctx.arc(6, -24, 4, 0, 7); ctx.fill();
-            ctx.fillStyle = '#1a1a2e';
-            ctx.beginPath(); ctx.arc(-6 + this.vx, -24, 2, 0, 7); ctx.arc(6 + this.vx, -24, 2, 0, 7); ctx.fill();
-            ctx.restore();
-        }
-    }
-
-    // --- LEVEL ENGINE ---
-    function spawnParticles(x, y, color, count) {
-        for(let i=0; i<count; i++) {
-            game.particles.push({
-                x, y, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10,
-                life: 1, c: color
-            });
-        }
-    }
-
-    function startLevel(n) {
-        game.level = n; game.stars = 0; game.platforms = []; game.stars_objs = []; game.hazards = [];
-        document.getElementById('levelDisplay').innerText = n;
-        document.getElementById('starDisplay').innerText = "0";
+    for(let name in SKINS) {
+        const s = SKINS[name];
+        const owned = state.owned.includes(name);
+        const active = state.active === name;
         
-        let cx = 0;
-        game.platforms.push({x: 0, y: 400, w: 300, h: 100});
-        cx = 350;
-
-        for(let i=0; i<10 + n; i++) {
-            let w = 80 + Math.random()*100;
-            let y = 150 + Math.random()*250;
-            game.platforms.push({x: cx, y: y, w: w, h: 30});
-            if (i % 3 === 0) game.stars_objs.push({x: cx + w/2, y: y - 40, got: false});
-            if (i > 2 && Math.random() > 0.7) game.hazards.push({x: cx + w/2, y: y - 100, base: y - 100});
-            cx += w + 80 + Math.random()*70;
-        }
-
-        game.winWidth = cx + 200;
-        game.platforms.push({x: cx, y: 400, w: 300, h: 100});
-        player = new Player();
-        document.getElementById('menuOverlay').style.display = 'none';
+        const div = document.createElement('div');
+        div.className = `shop-item ${active ? 'owned' : ''}`;
+        div.innerHTML = `
+            <div class="skin-preview" style="background:${s.color}"></div>
+            <div style="font-size:0.8rem">${name}</div>
+            <button class="btn" style="padding:5px 10px; font-size:0.7rem; width:100%" 
+                onclick="handleBuy('${name}')">
+                ${owned ? (active ? 'EQUIPPED' : 'SELECT') : '💧' + s.cost}
+            </button>
+        `;
+        container.appendChild(div);
     }
+}
 
-    function nextLevel() {
-        spawnParticles(player.x, player.y, '#ffd700', 30);
-        setTimeout(() => startLevel(game.level + 1), 300);
+function handleBuy(name) {
+    const s = SKINS[name];
+    if(state.owned.includes(name)) {
+        state.active = name;
+    } else if(state.gold >= s.cost) {
+        state.gold -= s.cost;
+        state.owned.push(name);
+        state.active = name;
+        playSound(900, 'sine', 0.2, 0.1);
     }
+    save(); showShop();
+}
 
-    function draw() {
-        // Sky Gradient
-        let grad = ctx.createLinearGradient(0, 0, 0, 500);
-        grad.addColorStop(0, '#1a1a2e'); grad.addColorStop(1, '#16213e');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 900, 500);
+function hideShop() { 
+    document.getElementById('shop').classList.add('hidden'); 
+    document.getElementById('menu').classList.remove('hidden'); 
+}
 
-        ctx.save();
-        if (game.shake > 0) {
-            ctx.translate(Math.random()*game.shake, Math.random()*game.shake);
-            game.shake *= 0.9;
-        }
-
-        game.cameraX = Math.max(0, player.x - 300);
-        ctx.translate(-game.cameraX, 0);
-
-        // Progress Bar update
-        document.getElementById('progressBar').style.width = (player.x / game.winWidth * 100) + "%";
-
-        // Draw World
-        ctx.fillStyle = '#4dd0e1';
-        game.platforms.forEach(p => {
-            ctx.fillRect(p.x, p.y, p.w, p.h);
-            ctx.fillStyle = 'rgba(255,255,255,0.1)';
-            ctx.fillRect(p.x, p.y, p.w, 5);
-        });
-
-        // Stars
-        game.stars_objs.forEach(s => {
-            if(s.got) return;
-            ctx.fillStyle = '#ffd700';
-            ctx.shadowBlur = 15; ctx.shadowColor = "yellow";
-            ctx.beginPath(); ctx.arc(s.x, s.y + Math.sin(Date.now()/200)*10, 8, 0, 7); ctx.fill();
-            ctx.shadowBlur = 0;
-        });
-
-        // Hazards
-        game.hazards.forEach(h => {
-            h.y = h.base + Math.sin(Date.now()/500)*50;
-            ctx.fillStyle = '#ff4d4d';
-            ctx.beginPath(); ctx.arc(h.x, h.y, 12, 0, 7); ctx.fill();
-            // Spikes
-            ctx.strokeStyle = '#ff4d4d';
-            for(let i=0; i<8; i++) {
-                ctx.beginPath(); ctx.moveTo(h.x, h.y);
-                ctx.lineTo(h.x + Math.cos(i)*20, h.y + Math.sin(i)*20);
-                ctx.stroke();
-            }
-        });
-
-        // Goal Well
-        ctx.fillStyle = '#ffd700';
-        ctx.shadowBlur = 20; ctx.shadowColor = game.stars >= 3 ? "cyan" : "transparent";
-        ctx.fillRect(game.winWidth - 120, 380, 80, 20);
-        ctx.shadowBlur = 0;
-
-        player.update();
-        player.draw();
-
-        // Particles
-        game.particles.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-            ctx.fillStyle = p.c; ctx.globalAlpha = p.life;
-            ctx.fillRect(p.x, p.y, 4, 4);
-            if(p.life <= 0) game.particles.splice(i, 1);
-        });
-        ctx.globalAlpha = 1;
-
-        ctx.restore();
-        requestAnimationFrame(draw);
+window.onkeydown = e => keys[e.code] = true;
+window.onkeyup = e => keys[e.code] = false;
+window.addEventListener('keydown', e => {
+    if(e.code === 'Space' && (player.ground || player.j < 1)) {
+        player.vy = -13; player.ground = false; player.j++;
+        playSound(400, 'sine', 0.1, 0.1);
     }
+});
 
-    // Input
-    window.onkeydown = e => {
-        if(e.code === 'KeyA') keys.a = true;
-        if(e.code === 'KeyD') keys.d = true;
-        if(e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-            if (player.grounded || player.jumpCount < 1) {
-                player.vy = -12;
-                player.grounded = false;
-                player.jumpCount++;
-                Audio.jump();
-                spawnParticles(player.x+17, player.y+34, 'white', 5);
-            }
-        }
-    };
-    window.onkeyup = e => {
-        if(e.code === 'KeyA') keys.a = false;
-        if(e.code === 'KeyD') keys.d = false;
-    };
-
-    document.getElementById('startBtn').onclick = () => {
-        Audio.init();
-        startLevel(1);
-    };
-
-    draw();
-})();
+save(); // Initial HUD sync
 </script>
 </body>
 </html>
