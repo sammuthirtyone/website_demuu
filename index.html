@@ -2,210 +2,690 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bucket Jump: Realism Edition 🪣</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Match Saga</title>
     <style>
-        :root { --neon: #00f2ff; --accent: #ff007b; --bg: #0a0a1a; }
-        * { box-sizing: border-box; user-select: none; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        #game-container { position: relative; width: 900px; height: 500px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 100px rgba(0,0,0,0.5); border: 1px solid #333; }
-        canvas { display: block; background: #050510; }
-        .hud { position: absolute; top: 20px; width: 100%; padding: 0 30px; display: flex; justify-content: space-between; z-index: 10; pointer-events: none; }
-        .stat { background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--neon); font-weight: 900; letter-spacing: 1px; }
-        .menu { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-        .btn { background: var(--neon); color: #000; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon); }
-        .hidden { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        :root {
+            --bg-color: #ffe6f2;
+            --panel-color: #fff0f6;
+            --primary-btn: #ff6bacee;
+            --primary-btn-shadow: #c94681;
+            --text-color: #5c3a51;
+            --grid-bg: #ffc2d4;
+            --cell-bg: #ffeef5;
+        }
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(135deg, #ffe6f2 0%, #e6e6ff 100%);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            color: var(--text-color);
+        }
+
+        /* --- Screens --- */
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        /* --- UI Elements --- */
+        h1 {
+            font-size: 3rem;
+            color: #ff5e9a;
+            text-shadow: 2px 2px 0px #fff;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 4px solid #fff;
+            max-width: 90%;
+        }
+
+        .btn {
+            background-color: var(--primary-btn);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-family: inherit;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--primary-btn-shadow);
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin: 10px;
+            min-width: 150px;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 var(--primary-btn-shadow);
+        }
+
+        .btn-secondary {
+            background-color: #8ecae6;
+            --primary-btn-shadow: #219ebc;
+        }
+
+        .btn-small {
+            padding: 5px 15px;
+            font-size: 1rem;
+            min-width: auto;
+        }
+
+        /* --- Level Select --- */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .level-node {
+            width: 60px;
+            height: 60px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: not-allowed;
+            border: 3px solid #bbb;
+            position: relative;
+        }
+
+        .level-node.unlocked {
+            background: #ff9ecf;
+            color: white;
+            border-color: #ff5e9a;
+            cursor: pointer;
+        }
+        
+        .level-node.unlocked:hover {
+            transform: scale(1.1);
+        }
+
+        .level-node.completed::after {
+            content: '★';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            color: #ffd700;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 0 #b8860b;
+        }
+
+        /* --- Game Board --- */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            width: 340px;
+            margin-bottom: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-label { font-size: 0.8rem; color: #aaa; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: #ff5e9a; }
+
+        .grid-container {
+            width: 340px;
+            height: 340px;
+            background-color: var(--grid-bg);
+            border-radius: 15px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 4px;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .tile {
+            width: 100%;
+            height: 100%;
+            background-color: var(--cell-bg);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tile.selected {
+            background-color: #fff;
+            box-shadow: 0 0 10px #ff5e9a;
+            transform: scale(1.1);
+            z-index: 2;
+        }
+
+        .tile.match-anim {
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        /* --- Marketplace --- */
+        .shop-items {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .shop-item {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #ddd;
+            cursor: pointer;
+        }
+
+        .shop-item:hover { border-color: #ff5e9a; }
+
+        .coin-display {
+            background: #ffd700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: #b8860b;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+            border: 2px solid #b8860b;
+        }
+
+        /* --- Animations --- */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            animation: bounce 0.5s ease-out;
+        }
+
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div class="hud">
-        <div class="stat">LVL: <span id="lv">1</span></div>
-        <div class="stat">💧 <span id="dr">0</span></div>
+    <div id="start-screen" class="screen active">
+        <div class="panel">
+            <h1>Sweet Match</h1>
+            <div class="coin-display">Coins: <span id="menu-coins">0</span></div>
+            <br>
+            <button class="btn" onclick="showScreen('level-screen')">Play</button>
+            <br>
+            <button class="btn btn-secondary" onclick="showScreen('shop-screen')">Market</button>
+        </div>
     </div>
 
-    <div id="m-menu" class="menu">
-        <h1 style="font-size: 4rem; margin: 0; text-shadow: 0 0 20px var(--neon);">BUCKET JUMP</h1>
-        <p style="margin-bottom: 30px; opacity: 0.7;">WASD or Arrows to Move | Space to Jump</p>
-        <button class="btn" onclick="game.start()">LAUNCH</button>
+    <div id="level-screen" class="screen">
+        <div class="panel">
+            <h2>Select Level</h2>
+            <div class="level-grid" id="level-container">
+                </div>
+            <button class="btn btn-small btn-secondary" onclick="showScreen('start-screen')">Back</button>
+        </div>
     </div>
 
-    <canvas id="stage"></canvas>
-</div>
+    <div id="shop-screen" class="screen">
+        <div class="panel">
+            <h2>Marketplace</h2>
+            <div class="coin-display">Coins: <span id="shop-coins">0</span></div>
+            <p>Buy boosters for your next game!</p>
+            <div class="shop-items">
+                <div class="shop-item" onclick="buyItem('time')">
+                    <span style="font-size: 2rem">⏰</span>
+                    <span>+10 Secs</span>
+                    <small>50 Coins</small>
+                </div>
+                <div class="shop-item" onclick="buyItem('moves')">
+                    <span style="font-size: 2rem">💣</span>
+                    <span>Score Bonus</span>
+                    <small>100 Coins</small>
+                </div>
+            </div>
+            <div id="shop-msg" style="height: 20px; color: #ff5e9a; font-size: 0.9rem;"></div>
+            <button class="btn btn-small btn-secondary" onclick="showScreen('start-screen')">Back</button>
+        </div>
+    </div>
 
-<script>
-const game = {
-    state: { drops: 0, level: 1 },
-    init() {
-        this.cvs = document.getElementById('stage');
-        this.ctx = this.cvs.getContext('2d');
-        this.cvs.width = 900; this.cvs.height = 500;
-        this.keys = {};
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <div class="stat-box">
+                <span class="stat-label">Time</span>
+                <span class="stat-value" id="timer">60</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Target</span>
+                <span class="stat-value" id="target-score">1000</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+        </div>
+        <div class="grid-container" id="grid">
+            </div>
+        <button class="btn btn-small btn-secondary" style="margin-top:10px" onclick="endGame(false)">Give Up</button>
+    </div>
+
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="result-title">Level Complete!</h2>
+            <p id="result-msg">You scored 500 points.</p>
+            <button class="btn" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Game Config & State ---
+        const width = 8;
+        const candyColors = ['🍭', '🧁', '🍩', '🍦', '🍪', '🍫'];
+        let grid = [];
+        let score = 0;
+        let timer = 60;
+        let timerInterval;
+        let draggedCandy = null;
+        let replacedCandy = null;
+        let currentLevel = 1;
         
-        window.onkeydown = e => { 
-            this.keys[e.code] = true;
-            if(['Space','KeyW','ArrowUp'].includes(e.code)) this.jump();
+        // Player Data
+        let playerData = {
+            coins: 100,
+            unlockedLevels: 1,
+            completedLevels: [],
+            boostTime: false,
+            boostScore: false
         };
-        window.onkeyup = e => this.keys[e.code] = false;
-        
-        this.p = { x: 100, y: 300, vx: 0, vy: 0, w: 40, h: 45, jc: 0, scaleY: 1, scaleX: 1 };
-        this.camX = 0; this.platforms = []; this.items = []; this.running = false;
-        this.loop();
-    },
 
-    start() {
-        document.getElementById('m-menu').classList.add('hidden');
-        this.running = true;
-        this.lvl(1);
-    },
+        const levels = [
+            { id: 1, target: 500, time: 45 },
+            { id: 2, target: 1000, time: 40 },
+            { id: 3, target: 1500, time: 40 },
+            { id: 4, target: 2000, time: 35 },
+            { id: 5, target: 3000, time: 35 },
+            { id: 6, target: 5000, time: 30 }
+        ];
 
-    lvl(n) {
-        this.state.level = n;
-        this.p.x = 100; this.p.y = 300; this.p.vx = 0; this.p.vy = 0;
-        this.platforms = [{x: 0, y: 400, w: 300, h: 100}];
-        this.items = [];
-        let tx = 450;
-        for(let i=0; i<12; i++) {
-            let tw = 100 + Math.random()*100;
-            let ty = 200 + Math.random()*200;
-            this.platforms.push({x: tx, y: ty, w: tw, h: 20});
-            if(i % 2 === 0) this.items.push({x: tx + tw/2, y: ty-40, t:'d'});
-            tx += tw + 100 + Math.random()*60;
+        // --- Navigation ---
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            updateUI();
+            
+            if (screenId === 'level-screen') renderLevels();
         }
-        this.platforms.push({x: tx, y: 350, w: 200, h: 150, goal: true});
-        document.getElementById('lv').innerText = n;
-    },
 
-    jump() {
-        if(!this.running) return;
-        if(this.p.jc < 2) {
-            this.p.vy = -15;
-            this.p.jc++;
-            this.p.scaleY = 1.4; this.p.scaleX = 0.7; // Stretch
+        function updateUI() {
+            document.getElementById('menu-coins').innerText = playerData.coins;
+            document.getElementById('shop-coins').innerText = playerData.coins;
         }
-    },
 
-    update() {
-        if(!this.running) return;
-        let p = this.p;
-        
-        if(this.keys['KeyA'] || this.keys['ArrowLeft']) p.vx -= 1;
-        if(this.keys['KeyD'] || this.keys['ArrowRight']) p.vx += 1;
-        if(this.keys['KeyS'] || this.keys['ArrowDown']) p.vy += 2; // Fast fall
-        
-        p.vx *= 0.85; p.vy += 0.8;
-        p.x += p.vx; p.y += p.vy;
-
-        // Animate squash/stretch back to normal
-        p.scaleX += (1 - p.scaleX) * 0.2;
-        p.scaleY += (1 - p.scaleY) * 0.2;
-
-        this.platforms.forEach(plt => {
-            if(p.x+20 > plt.x && p.x-20 < plt.x+plt.w && p.y+p.h/2 > plt.y && p.y < plt.y+plt.h) {
-                if(p.vy > 0) {
-                    if(p.vy > 5) { p.scaleY = 0.6; p.scaleX = 1.3; } // Squash on land
-                    p.y = plt.y - p.h/2; p.vy = 0; p.jc = 0;
-                    if(plt.goal) this.lvl(this.state.level+1);
+        // --- Marketplace Logic ---
+        function buyItem(type) {
+            const msg = document.getElementById('shop-msg');
+            if (type === 'time') {
+                if (playerData.coins >= 50) {
+                    playerData.coins -= 50;
+                    playerData.boostTime = true;
+                    msg.innerText = "Purchased +10s Time Boost!";
+                } else {
+                    msg.innerText = "Not enough coins!";
+                }
+            } else if (type === 'moves') {
+                if (playerData.coins >= 100) {
+                    playerData.coins -= 100;
+                    playerData.boostScore = true;
+                    msg.innerText = "Purchased Score Multiplier!";
+                } else {
+                    msg.innerText = "Not enough coins!";
                 }
             }
-        });
-
-        this.items.forEach((it, i) => {
-            if(!it.done && Math.hypot(p.x-it.x, p.y-it.y) < 40) {
-                it.done = true; this.state.drops += 10;
-                document.getElementById('dr').innerText = this.state.drops;
-            }
-        });
-
-        if(p.y > 600) this.lvl(this.state.level);
-        this.camX += (p.x - this.camX - 300) * 0.1;
-    },
-
-    drawBucket(x, y) {
-        let ctx = this.ctx;
-        let p = this.p;
-        ctx.save();
-        ctx.translate(x, y + p.h/2);
-        ctx.scale(p.scaleX, p.scaleY);
-        
-        // Bucket Body (Trapezoid)
-        ctx.fillStyle = '#bdc3c7'; // Metal side
-        ctx.beginPath();
-        ctx.moveTo(-15, -p.h);
-        ctx.lineTo(15, -p.h);
-        ctx.lineTo(10, 0);
-        ctx.lineTo(-10, 0);
-        ctx.closePath();
-        ctx.fill();
-
-        // Water Inside
-        ctx.fillStyle = '#00f2ff';
-        ctx.beginPath();
-        ctx.moveTo(-13, -p.h + 5);
-        ctx.lineTo(13, -p.h + 5);
-        ctx.lineTo(9, -2);
-        ctx.lineTo(-9, -2);
-        ctx.fill();
-
-        // Handle
-        ctx.strokeStyle = '#7f8c8d';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(0, -p.h, 15, Math.PI, 0);
-        ctx.stroke();
-
-        // Rim
-        ctx.fillStyle = '#ecf0f1';
-        ctx.fillRect(-16, -p.h, 32, 4);
-
-        ctx.restore();
-    },
-
-    draw() {
-        this.ctx.clearRect(0,0,900,500);
-        
-        // Background Grid
-        this.ctx.strokeStyle = '#11112b';
-        for(let i=0; i<20; i++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, i*30); this.ctx.lineTo(900, i*30);
-            this.ctx.stroke();
+            updateUI();
         }
 
-        this.ctx.save();
-        this.ctx.translate(-this.camX, 0);
+        // --- Level Logic ---
+        function renderLevels() {
+            const container = document.getElementById('level-container');
+            container.innerHTML = '';
+            levels.forEach(lvl => {
+                const node = document.createElement('div');
+                node.className = 'level-node';
+                node.innerText = lvl.id;
+                
+                if (lvl.id <= playerData.unlockedLevels) {
+                    node.classList.add('unlocked');
+                    node.onclick = () => startLevel(lvl.id);
+                }
+                
+                if (playerData.completedLevels.includes(lvl.id)) {
+                    node.classList.add('completed');
+                }
+                
+                container.appendChild(node);
+            });
+        }
 
-        this.platforms.forEach(plt => {
-            this.ctx.fillStyle = plt.goal ? var(--accent) : '#1a1a3a';
-            this.ctx.shadowBlur = 10; this.ctx.shadowColor = plt.goal ? var(--accent) : '#00f2ff';
-            this.ctx.fillRect(plt.x, plt.y, plt.w, plt.h);
-            this.ctx.fillStyle = 'rgba(255,255,255,0.05)';
-            this.ctx.fillRect(plt.x, plt.y, plt.w, 4);
-        });
+        // --- Game Engine ---
+        function startLevel(levelId) {
+            currentLevel = levelId;
+            const levelConfig = levels[levelId - 1];
+            
+            score = 0;
+            timer = levelConfig.time;
+            
+            // Apply boosters
+            if (playerData.boostTime) {
+                timer += 10;
+                playerData.boostTime = false; // Consume booster
+            }
+            
+            document.getElementById('score').innerText = score;
+            document.getElementById('target-score').innerText = levelConfig.target;
+            document.getElementById('timer').innerText = timer;
+            
+            showScreen('game-screen');
+            createBoard();
+            
+            // Start Timer
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer').innerText = timer;
+                if (timer <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
 
-        this.items.forEach(it => {
-            if(it.done) return;
-            this.ctx.fillStyle = var(--neon);
-            this.ctx.beginPath();
-            this.ctx.arc(it.x, it.y + Math.sin(Date.now()/200)*5, 8, 0, 7);
-            this.ctx.fill();
-        });
+        function createBoard() {
+            const gridDisplay = document.getElementById('grid');
+            gridDisplay.innerHTML = '';
+            grid = [];
 
-        this.drawBucket(this.p.x, this.p.y);
+            for (let i = 0; i < width * width; i++) {
+                const tile = document.createElement('div');
+                tile.setAttribute('draggable', true);
+                tile.setAttribute('id', i);
+                tile.classList.add('tile');
+                
+                let randomColor = Math.floor(Math.random() * candyColors.length);
+                tile.innerHTML = candyColors[randomColor];
+                tile.dataset.color = candyColors[randomColor];
 
-        this.ctx.restore();
-    }
-};
+                gridDisplay.appendChild(tile);
+                grid.push(tile);
 
-const var = (name) => getComputedStyle(document.documentElement).getPropertyValue(name);
+                // Touch/Click Events
+                tile.addEventListener('click', clickCandy);
+            }
+            // Initial check to remove pre-existing matches
+            checkRowForThree();
+            checkColumnForThree();
+        }
 
-game.init();
-game.loop = function() {
-    game.update();
-    game.draw();
-    requestAnimationFrame(game.loop);
-};
-</script>
+        let firstSelection = null;
+
+        function clickCandy() {
+            if (!firstSelection) {
+                firstSelection = this;
+                this.classList.add('selected');
+            } else {
+                let secondSelection = this;
+                
+                if (firstSelection === secondSelection) {
+                    firstSelection.classList.remove('selected');
+                    firstSelection = null;
+                    return;
+                }
+
+                // Check adjacency
+                let validMove = checkAdjacency(firstSelection.id, secondSelection.id);
+                
+                if (validMove) {
+                    swapColors(firstSelection, secondSelection);
+                    // Check for valid match after swap
+                    let isMatch = checkRowForThree() || checkColumnForThree();
+                    
+                    if (!isMatch) {
+                        // Swap back if no match (delayed for visual effect)
+                        setTimeout(() => swapColors(firstSelection, secondSelection), 200);
+                    } else {
+                        // Successful Move
+                        moveDown();
+                    }
+                }
+                
+                firstSelection.classList.remove('selected');
+                firstSelection = null;
+            }
+        }
+
+        function checkAdjacency(id1, id2) {
+            id1 = parseInt(id1);
+            id2 = parseInt(id2);
+            // Check right, left, up, down
+            let validMoves = [id1 - 1, id1 + 1, id1 - width, id1 + width];
+            
+            // Prevent wrapping (left/right edge cases)
+            if (id1 % width === 0 && id2 === id1 - 1) return false;
+            if ((id1 + 1) % width === 0 && id2 === id1 + 1) return false;
+
+            return validMoves.includes(id2);
+        }
+
+        function swapColors(tile1, tile2) {
+            let tempColor = tile1.dataset.color;
+            let tempHtml = tile1.innerHTML;
+            
+            tile1.dataset.color = tile2.dataset.color;
+            tile1.innerHTML = tile2.innerHTML;
+            
+            tile2.dataset.color = tempColor;
+            tile2.innerHTML = tempHtml;
+        }
+
+        // --- Match Logic ---
+        function checkRowForThree() {
+            let matchFound = false;
+            for (let i = 0; i < 64; i++) {
+                let rowOfThree = [i, i+1, i+2];
+                let decidedColor = grid[i].dataset.color;
+                const isBlank = grid[i].dataset.color === '';
+
+                // Don't check last 2 columns
+                if (i % width > width - 3) continue;
+
+                if (rowOfThree.every(index => grid[index].dataset.color === decidedColor && !isBlank)) {
+                    scorePoints(3);
+                    rowOfThree.forEach(index => {
+                        grid[index].classList.add('match-anim');
+                        // setTimeout to remove visual
+                        setTimeout(() => {
+                            grid[index].innerHTML = '';
+                            grid[index].dataset.color = '';
+                            grid[index].classList.remove('match-anim');
+                        }, 200);
+                    });
+                    matchFound = true;
+                }
+            }
+            return matchFound;
+        }
+
+        function checkColumnForThree() {
+            let matchFound = false;
+            for (let i = 0; i < 47; i++) { // width * (width-3) + width - 1 is limit? no, just loop to 47
+                let columnOfThree = [i, i+width, i+width*2];
+                let decidedColor = grid[i].dataset.color;
+                const isBlank = grid[i].dataset.color === '';
+
+                if (columnOfThree.every(index => grid[index].dataset.color === decidedColor && !isBlank)) {
+                    scorePoints(3);
+                    columnOfThree.forEach(index => {
+                        grid[index].classList.add('match-anim');
+                        setTimeout(() => {
+                            grid[index].innerHTML = '';
+                            grid[index].dataset.color = '';
+                            grid[index].classList.remove('match-anim');
+                        }, 200);
+                    });
+                    matchFound = true;
+                }
+            }
+            return matchFound;
+        }
+
+        function scorePoints(num) {
+            let multiplier = playerData.boostScore ? 2 : 1;
+            score += (10 * num) * multiplier;
+            document.getElementById('score').innerText = score;
+            
+            const levelTarget = levels[currentLevel-1].target;
+            if (score >= levelTarget) {
+                endGame(true);
+            }
+        }
+
+        function moveDown() {
+            // Wait slightly for clear animation
+            setTimeout(() => {
+                for (let i = 0; i < 55; i++) {
+                    if (grid[i + width].dataset.color === '') {
+                        grid[i + width].dataset.color = grid[i].dataset.color;
+                        grid[i + width].innerHTML = grid[i].innerHTML;
+                        grid[i].dataset.color = '';
+                        grid[i].innerHTML = '';
+                        
+                        // Fill top row
+                        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+                        const isFirstRow = firstRow.includes(i);
+                        if (isFirstRow && grid[i].dataset.color === '') {
+                            let randomColor = Math.floor(Math.random() * candyColors.length);
+                            grid[i].innerHTML = candyColors[randomColor];
+                            grid[i].dataset.color = candyColors[randomColor];
+                        }
+                    }
+                }
+                
+                // Recursively check until board is stable
+                if(checkRowForThree() || checkColumnForThree()) {
+                    moveDown();
+                }
+            }, 250);
+        }
+
+        // --- Game End ---
+        function endGame(isWin) {
+            clearInterval(timerInterval);
+            const modal = document.getElementById('result-modal');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-msg');
+            
+            modal.style.display = 'flex';
+            
+            if (isWin) {
+                title.innerText = "Yummy! Level Complete!";
+                title.style.color = "#4CAF50";
+                msg.innerText = `You reached the target! +20 Coins`;
+                
+                // Rewards
+                playerData.coins += 20;
+                if (!playerData.completedLevels.includes(currentLevel)) {
+                    playerData.completedLevels.push(currentLevel);
+                }
+                if (currentLevel === playerData.unlockedLevels && currentLevel < 6) {
+                    playerData.unlockedLevels++;
+                }
+            } else {
+                title.innerText = "Time's Up!";
+                title.style.color = "#ff5e9a";
+                msg.innerText = `Score: ${score}. Try again!`;
+            }
+            updateUI();
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+            showScreen('level-screen');
+        }
+
+        // --- Init ---
+        // Pre-fill top row logic fix for the gravity loop
+        setInterval(() => {
+            // Keep top row filled if empty (fallback)
+            for(let i=0; i<width; i++) {
+                if(grid[i] && grid[i].dataset.color === '') {
+                    let randomColor = Math.floor(Math.random() * candyColors.length);
+                    grid[i].innerHTML = candyColors[randomColor];
+                    grid[i].dataset.color = candyColors[randomColor];
+                }
+            }
+        }, 500);
+
+    </script>
 </body>
 </html>
