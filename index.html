@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sugar Rush: Ultimate</title>
+    <title>Sugar Rush: Ultimate Levels</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
@@ -92,6 +92,43 @@
         .btn-pink { background: linear-gradient(to bottom, #ff80ab, #f50057); color: white; box-shadow: 0 6px 0 #ad003d; }
         .btn-pink:active { box-shadow: 0 2px 0 #ad003d; }
         .btn-icon { padding: 10px; width: 60px; height: 60px; border-radius: 50%; font-size: 1.8rem; }
+
+        /* --- Level Select Styles --- */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 10px;
+        }
+
+        .level-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            border: none;
+            font-family: inherit;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(to bottom, #00e5ff, #00b0ff);
+            box-shadow: 0 5px 0 #0081cb, 0 5px 10px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .level-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0081cb; }
+        
+        .level-btn.locked {
+            background: #e0e0e0;
+            color: #999;
+            box-shadow: 0 5px 0 #bdbdbd;
+            cursor: not-allowed;
+        }
+        .level-btn.locked:active { transform: none; }
 
         /* --- Game Board --- */
         .header-stats {
@@ -202,14 +239,24 @@
         <div class="panel">
             <h1>Jelly<br>Pop</h1>
             <p>Ultimate Edition</p>
-            <button class="btn" onclick="game.init()">PLAY</button>
+            <button class="btn" onclick="ui.nav('screen-levels')">PLAY</button>
             <button class="btn btn-pink" onclick="ui.nav('screen-shop')">SHOP</button>
+        </div>
+    </div>
+
+    <div id="screen-levels" class="screen">
+        <div class="panel">
+            <h2>Select Level</h2>
+            <div id="level-container" class="level-grid">
+                </div>
+            <button class="btn btn-pink" onclick="ui.nav('screen-home')" style="font-size:1rem; padding:10px 30px;">Back Home</button>
         </div>
     </div>
 
     <div id="screen-game" class="screen">
         <div class="panel" style="width: 100%; max-width: 380px; padding: 10px; background: rgba(255,255,255,0.7);">
             <div class="header-stats">
+                <div class="stat"><div>LVL</div><div id="ui-lvl-num">1</div></div>
                 <div class="stat"><div>MOVES</div><div id="ui-moves">20</div></div>
                 <div class="stat"><div>TARGET</div><div id="ui-target">1000</div></div>
                 <div class="stat"><div>SCORE</div><div id="ui-score">0</div></div>
@@ -274,11 +321,23 @@
             <h1 id="res-title">Won!</h1>
             <div id="res-stars" style="font-size:3rem;">⭐⭐⭐</div>
             <p id="res-msg">Score: 5000</p>
-            <button class="btn" onclick="ui.nav('screen-home')">Continue</button>
+            <div id="res-btns">
+                <button class="btn" onclick="ui.nav('screen-levels')">Levels</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // --- LEVEL CONFIGURATION ---
+        const levels = [
+            { id: 1, moves: 15, target: 500,  reward: 50 },
+            { id: 2, moves: 20, target: 1200, reward: 75 },
+            { id: 3, moves: 25, target: 2000, reward: 100 },
+            { id: 4, moves: 25, target: 3500, reward: 150 },
+            { id: 5, moves: 30, target: 5000, reward: 200 },
+            { id: 6, moves: 35, target: 8000, reward: 500 } // Boss level feel
+        ];
+
         const audioSys = {
             ctx: null,
             bgmOsc: [],
@@ -353,8 +412,10 @@
             selected: null,
             locked: false,
             score: 0,
-            moves: 20,
-            target: 1000,
+            moves: 0,
+            target: 0,
+            levelIdx: 0, 
+            maxUnlocked: 1, // Start with only level 1
             inventory: { hammer: 1, bomb: 0, shuffle: 1 },
             coins: 100,
             activeTool: null
@@ -367,12 +428,31 @@
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(id).classList.add('active');
                 if(id === 'screen-shop') this.updateShop();
+                if(id === 'screen-levels') this.buildLevelSelect();
+            },
+            buildLevelSelect() {
+                const con = document.getElementById('level-container');
+                con.innerHTML = '';
+                levels.forEach((lvl, idx) => {
+                    const btn = document.createElement('button');
+                    const isLocked = (idx + 1) > state.maxUnlocked;
+                    
+                    btn.className = `level-btn ${isLocked ? 'locked' : ''}`;
+                    btn.innerHTML = isLocked ? '🔒' : (idx + 1);
+                    
+                    if(!isLocked) {
+                        btn.onclick = () => game.startLevel(idx);
+                    }
+                    con.appendChild(btn);
+                });
             },
             updateStats() {
+                document.getElementById('ui-lvl-num').innerText = state.levelIdx + 1;
                 document.getElementById('ui-score').innerText = state.score;
                 document.getElementById('ui-moves').innerText = state.moves;
                 const pct = Math.min(100, (state.score / state.target) * 100);
                 document.getElementById('score-bar').style.width = pct + '%';
+                document.getElementById('ui-target').innerText = state.target;
             },
             updateShop() {
                 document.getElementById('shop-coins').innerText = state.coins;
@@ -383,9 +463,17 @@
         };
 
         const game = {
-            init() {
+            startLevel(idx) {
+                state.levelIdx = idx;
+                const config = levels[idx];
+                state.moves = config.moves;
+                state.target = config.target;
                 state.score = 0;
-                state.moves = 20;
+                
+                this.init();
+            },
+
+            init() {
                 state.locked = false;
                 state.activeTool = null;
                 audioSys.init();
@@ -438,13 +526,11 @@
                 let startX, startY;
                 let isDragging = false;
 
-                // Stop native browser dragging (fixes laptop issues)
                 el.ondragstart = () => false;
 
                 const start = (e) => {
                     if(state.locked) return;
                     
-                    // Always pull fresh coordinates
                     const pos = { r: parseInt(el.dataset.r), c: parseInt(el.dataset.c) };
                     
                     if(state.activeTool) {
@@ -486,7 +572,6 @@
                     const dx = t.clientX - startX;
                     const dy = t.clientY - startY;
                     
-                    // Reduced threshold from 30px to 15px so drags trigger flawlessly
                     if(Math.abs(dx) > 15 || Math.abs(dy) > 15) {
                         isDragging = false;
                         let targetR = pos.r;
@@ -507,7 +592,6 @@
 
                 const end = () => { isDragging = false; };
 
-                // Handle PC mouse & Mobile touch cleanly
                 el.addEventListener('mousedown', start);
                 el.addEventListener('touchstart', start, {passive: false});
                 el.addEventListener('mousemove', move); 
@@ -760,15 +844,53 @@
                 state.locked = true;
                 setTimeout(() => {
                     const res = document.getElementById('screen-result');
+                    const btnContainer = document.getElementById('res-btns');
                     ui.nav('screen-result');
+                    
                     if(win) {
                         audioSys.sfx('win');
+                        const reward = levels[state.levelIdx].reward;
                         document.getElementById('res-title').innerText = "Sweet Victory!";
-                        document.getElementById('res-msg').innerText = "You earned 50 Coins!";
-                        state.coins += 50;
+                        document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
+                        state.coins += reward;
+                        
+                        // Unlock Next Level
+                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) {
+                            state.maxUnlocked++;
+                        }
+
+                        // Button logic
+                        btnContainer.innerHTML = '';
+                        if((state.levelIdx + 1) < levels.length) {
+                             const btnNext = document.createElement('button');
+                             btnNext.className = 'btn';
+                             btnNext.innerText = 'Next Level';
+                             btnNext.onclick = () => game.startLevel(state.levelIdx + 1);
+                             btnContainer.appendChild(btnNext);
+                        }
+                        
+                        const btnMenu = document.createElement('button');
+                        btnMenu.className = 'btn btn-pink';
+                        btnMenu.innerText = 'Levels';
+                        btnMenu.onclick = () => ui.nav('screen-levels');
+                        btnContainer.appendChild(btnMenu);
+
                     } else {
                         document.getElementById('res-title').innerText = "Out of Moves";
-                        document.getElementById('res-msg').innerText = "Try buying more boosters!";
+                        document.getElementById('res-msg').innerText = "Don't give up!";
+                        
+                        btnContainer.innerHTML = '';
+                        const btnRetry = document.createElement('button');
+                        btnRetry.className = 'btn';
+                        btnRetry.innerText = 'Try Again';
+                        btnRetry.onclick = () => game.startLevel(state.levelIdx);
+                        btnContainer.appendChild(btnRetry);
+
+                        const btnMenu = document.createElement('button');
+                        btnMenu.className = 'btn btn-pink';
+                        btnMenu.innerText = 'Levels';
+                        btnMenu.onclick = () => ui.nav('screen-levels');
+                        btnContainer.appendChild(btnMenu);
                     }
                     ui.updateShop();
                 }, 500);
@@ -872,6 +994,9 @@
                 }
             }
         };
+
+        // Initialize Level Screen UI on load
+        ui.buildLevelSelect();
 
     </script>
 </body>
