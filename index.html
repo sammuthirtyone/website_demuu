@@ -2,245 +2,302 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bucket Jump: Marketplace Edition 🪣</title>
+    <title>Bucket Jump: Ultra Edition 🌌</title>
     <style>
-        :root { --neon: #4dd0e1; --accent: #e94560; --bg: #1a1a2e; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        #game-container { position: relative; border: 5px solid var(--neon); border-radius: 20px; box-shadow: 0 0 30px rgba(77, 208, 225, 0.2); }
-        canvas { display: block; background: #16213e; border-radius: 15px; cursor: crosshair; }
+        :root { --neon: #00f2ff; --accent: #ff007b; --gold: #ffcc00; --bg: #050510; }
+        * { box-sizing: border-box; user-select: none; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
         
-        /* UI Overlays */
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.95); 
-                    display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border-radius: 15px; }
-        .hidden { display: none !important; }
+        #game-container { position: relative; width: 900px; height: 500px; border: 2px solid rgba(0, 242, 255, 0.3); border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); }
+        canvas { display: block; background: radial-gradient(circle at center, #101025 0%, #050510 100%); }
+
+        /* UI HUD */
+        .hud { position: absolute; top: 0; left: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; z-index: 10; pointer-events: none; }
+        .stat-box { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .fuel-container { width: 120px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+        #fuel-fill { width: 100%; height: 100%; background: var(--neon); transition: width 0.1s; }
+
+        /* Menus */
+        .menu-layer { position: absolute; inset: 0; background: rgba(5, 5, 16, 0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: 0.3s; }
+        .hidden { opacity: 0; pointer-events: none; }
         
-        h1 { font-size: 3rem; color: var(--neon); text-shadow: 0 0 10px var(--neon); margin: 0; }
-        .btn { background: var(--accent); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; border-radius: 50px; 
-               cursor: pointer; margin: 10px; font-weight: bold; transition: 0.2s; box-shadow: 0 4px 0 #950740; }
-        .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
-        .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #950740; }
+        h1 { font-size: 3.5rem; margin: 0; background: linear-gradient(to bottom, #fff, var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px var(--neon)); }
         
-        /* Shop Styles */
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px; }
-        .shop-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 2px solid transparent; text-align: center; width: 120px; }
-        .shop-item.owned { border-color: var(--neon); }
-        .skin-preview { width: 40px; height: 40px; margin: 0 auto 10px; border-radius: 5px; }
+        .btn { background: var(--accent); color: white; border: none; padding: 16px 40px; font-size: 1.1rem; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin: 10px; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 0, 123, 0.4); }
         
-        .hud { position: absolute; top: 15px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; pointer-events: none; font-weight: bold; font-size: 1.2rem; }
-        .currency { color: #ffd700; }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; width: 90%; }
+        .item-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; text-align: center; }
+        .item-card.active { border-color: var(--neon); background: rgba(0, 242, 255, 0.05); }
     </style>
 </head>
 <body>
 
 <div id="game-container">
     <div class="hud">
-        <div>LEVEL: <span id="lv-ui">1</span></div>
-        <div class="currency">💧 WATER: <span id="gold-ui">0</span></div>
+        <div class="stat-box">
+            <span style="font-size: 0.8rem; opacity: 0.6;">LEVEL</span><br>
+            <span id="lv-txt" style="font-size: 1.4rem; font-weight: 900;">1</span>
+            <div id="fuel-ui" class="fuel-container"><div id="fuel-fill"></div></div>
+        </div>
+        <div class="stat-box" style="text-align: right;">
+            <span style="font-size: 0.8rem; opacity: 0.6;">DROPS</span><br>
+            <span id="drop-txt" style="color: var(--neon); font-size: 1.4rem; font-weight: 900;">0</span>
+        </div>
     </div>
 
-    <div id="menu" class="overlay">
+    <div id="main-menu" class="menu-layer">
         <h1>BUCKET JUMP</h1>
-        <p style="opacity: 0.7">Collect 3 Gold Stars to exit!</p>
-        <button class="btn" onclick="startGame()">START GAME</button>
-        <button class="btn" style="background:#4ecca3; box-shadow: 0 4px 0 #11998e;" onclick="showShop()">MARKETPLACE</button>
+        <p style="color: var(--neon); margin-bottom: 30px;">ULTRA EDITION</p>
+        <button class="btn" onclick="app.start()">Enter Void</button>
+        <button class="btn" style="background: transparent; border: 2px solid white;" onclick="app.toggleShop(true)">Marketplace</button>
     </div>
 
-    <div id="shop" class="overlay hidden">
-        <h1>MARKETPLACE</h1>
-        <div class="shop-grid" id="shop-items"></div>
-        <button class="btn" onclick="hideShop()">BACK</button>
+    <div id="shop-menu" class="menu-layer hidden">
+        <h2 style="font-size: 2rem;">MARKETPLACE</h2>
+        <div class="shop-grid" id="shop-content"></div>
+        <button class="btn" onclick="app.toggleShop(false)">Return</button>
     </div>
 
-    <canvas id="c" width="850" height="450"></canvas>
+    <canvas id="stage"></canvas>
 </div>
 
 <script>
-const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
-
-// --- GAME DATA & SAVING ---
-let state = JSON.parse(localStorage.getItem('bucketJumpSave')) || {
-    gold: 0, owned: ['Default'], active: 'Default'
-};
-function save() { 
-    localStorage.setItem('bucketJumpSave', JSON.stringify(state)); 
-    document.getElementById('gold-ui').innerText = state.gold;
-}
-
-const SKINS = {
-    'Default': { color: '#00b0ff', trail: '#00b0ff44', cost: 0 },
-    'Lava':    { color: '#ff4d4d', trail: '#ff4d4d44', cost: 50 },
-    'Forest':  { color: '#4ecca3', trail: '#4ecca344', cost: 100 },
-    'Stealth': { color: '#2d3436', trail: '#636e7244', cost: 200 },
-    'Royal':   { color: '#ffd700', trail: '#ffd70044', cost: 500 },
-    'Galaxy':  { color: '#6c5ce7', trail: '#a29bfe44', cost: 1000 }
-};
-
-// --- AUDIO ---
-let ac;
-function playSound(f, t, d, v) {
-    if(!ac) return;
-    let o = ac.createOscillator(), g = ac.createGain();
-    o.type = t; o.frequency.setValueAtTime(f, ac.currentTime);
-    o.frequency.exponentialRampToValueAtTime(10, ac.currentTime + d);
-    g.gain.setValueAtTime(v, ac.currentTime);
-    g.gain.linearRampToValueAtTime(0, ac.currentTime + d);
-    o.connect(g); g.connect(ac.destination);
-    o.start(); o.stop(ac.currentTime + d);
-}
-
-// --- ENGINE ---
-let player = { x: 100, y: 300, vx: 0, vy: 0, w: 32, h: 32, j: 0, ground: false, trail: [] };
-let platforms = [], stars = [], drops = [], level = 1, collectedStars = 0, camX = 0, keys = {};
-
-function initLevel(num) {
-    level = num; collectedStars = 0; camX = 0;
-    player.x = 100; player.y = 300; player.vx = 0; player.vy = 0;
-    platforms = [{x: 0, y: 380, w: 300, h: 70}];
-    stars = []; drops = [];
+const app = {
+    // Config & State
+    state: JSON.parse(localStorage.getItem('BJ_ULTRA_V1')) || {
+        drops: 0, owned: ['Classic'], active: 'Classic', jetpack: false, magnet: false
+    },
+    skins: {
+        'Classic': { c: '#00f2ff', aura: 'rgba(0,242,255,0.3)' },
+        'Magma': { c: '#ff4d00', aura: 'rgba(255,77,0,0.3)' },
+        'Void': { c: '#a000ff', aura: 'rgba(160,0,255,0.3)' },
+        'Gold': { c: '#ffcc00', aura: 'rgba(255,204,0,0.3)' }
+    },
     
-    let cx = 400;
-    for(let i=0; i < 8+num; i++) {
-        let w = 80 + Math.random()*100, y = 180 + Math.random()*180;
-        platforms.push({ x: cx, y: y, w: w, h: 25 });
-        if(i % 2 === 0) stars.push({ x: cx + w/2, y: y-40, off: Math.random()*10 });
-        drops.push({ x: cx + Math.random()*w, y: y-80, off: Math.random()*10 });
-        cx += w + 80 + Math.random()*60;
-    }
-    platforms.push({ x: cx, y: 350, w: 200, h: 100, goal: true });
-    document.getElementById('lv-ui').innerText = level;
-    save();
-}
-
-function update() {
-    if(keys['KeyA']) player.vx -= 0.7;
-    if(keys['KeyD']) player.vx += 0.7;
-    player.vx *= 0.88; player.vy += 0.6;
-    player.x += player.vx; player.y += player.vy;
-    player.ground = false;
-
-    // Trail logic
-    player.trail.push({x: player.x, y: player.y});
-    if(player.trail.length > 8) player.trail.shift();
-
-    platforms.forEach(p => {
-        if(player.x+player.w > p.x && player.x < p.x+p.w && player.y+player.h > p.y && player.y < p.y+p.h) {
-            if(player.vy > 0) {
-                player.y = p.y - player.h; player.vy = 0; player.ground = true; player.j = 0;
-                if(p.goal && collectedStars >= 3) { playSound(600, 'sine', 0.4, 0.1); initLevel(level+1); }
-            }
-        }
-    });
-
-    stars.forEach((s, i) => {
-        if(!s.done && Math.hypot(player.x-s.x, player.y-s.y) < 40) {
-            s.done = true; collectedStars++; playSound(800, 'square', 0.1, 0.1);
-        }
-    });
-
-    drops.forEach((d, i) => {
-        if(!d.done && Math.hypot(player.x-d.x, player.y-d.y) < 40) {
-            d.done = true; state.gold += 5; save(); playSound(1200, 'sine', 0.05, 0.05);
-        }
-    });
-
-    if(player.y > 500) { playSound(100, 'sawtooth', 0.3, 0.2); initLevel(level); }
-    camX += (player.x - camX - 250) * 0.1;
-}
-
-function render() {
-    ctx.clearRect(0,0,850,450);
-    ctx.save(); ctx.translate(-camX, 0);
-
-    const skin = SKINS[state.active];
-
-    // Platforms
-    platforms.forEach(p => {
-        ctx.fillStyle = p.goal ? (collectedStars >= 3 ? '#ffd700' : '#444') : '#4dd0e1';
-        ctx.fillRect(p.x, p.y, p.w, p.h);
-        ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(p.x, p.y, p.w, 4);
-    });
-
-    // Trail
-    player.trail.forEach((t, i) => {
-        ctx.globalAlpha = i/10; ctx.fillStyle = skin.color;
-        ctx.fillRect(t.x, t.y, player.w, player.h);
-    });
-    ctx.globalAlpha = 1;
-
-    // Items
-    stars.forEach(s => { if(!s.done) { ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(s.x, s.y + Math.sin(Date.now()/200)*5, 10, 0, 7); ctx.fill(); }});
-    drops.forEach(d => { if(!d.done) { ctx.fillStyle = '#00b0ff'; ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x+6, d.y+12); ctx.lineTo(d.x-6, d.y+12); ctx.fill(); }});
-
-    // Player
-    ctx.fillStyle = skin.color;
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-    ctx.fillStyle = 'white'; ctx.fillRect(player.x+6, player.y+6, 6, 6); ctx.fillRect(player.x+20, player.y+6, 6, 6);
-
-    ctx.restore();
-    update();
-    requestAnimationFrame(render);
-}
-
-// --- UI LOGIC ---
-function startGame() {
-    if(!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
-    document.getElementById('menu').classList.add('hidden');
-    initLevel(1); render();
-}
-
-function showShop() {
-    document.getElementById('menu').classList.add('hidden');
-    document.getElementById('shop').classList.remove('hidden');
-    const container = document.getElementById('shop-items');
-    container.innerHTML = '';
-    
-    for(let name in SKINS) {
-        const s = SKINS[name];
-        const owned = state.owned.includes(name);
-        const active = state.active === name;
+    init() {
+        this.cvs = document.getElementById('stage');
+        this.ctx = this.cvs.getContext('2d');
+        this.cvs.width = 900; this.cvs.height = 500;
+        this.keys = {};
+        this.resetSession();
         
-        const div = document.createElement('div');
-        div.className = `shop-item ${active ? 'owned' : ''}`;
-        div.innerHTML = `
-            <div class="skin-preview" style="background:${s.color}"></div>
-            <div style="font-size:0.8rem">${name}</div>
-            <button class="btn" style="padding:5px 10px; font-size:0.7rem; width:100%" 
-                onclick="handleBuy('${name}')">
-                ${owned ? (active ? 'EQUIPPED' : 'SELECT') : '💧' + s.cost}
-            </button>
-        `;
-        container.appendChild(div);
-    }
-}
+        window.onkeydown = e => { 
+            this.keys[e.code] = true;
+            // Immediate Jump Trigger for responsiveness
+            if(e.code === 'Space' || e.code === 'ArrowUp') this.playerJump();
+        };
+        window.onkeyup = e => this.keys[e.code] = false;
+        this.cvs.onmousedown = () => this.playerJump();
+        
+        this.loop();
+    },
 
-function handleBuy(name) {
-    const s = SKINS[name];
-    if(state.owned.includes(name)) {
-        state.active = name;
-    } else if(state.gold >= s.cost) {
-        state.gold -= s.cost;
-        state.owned.push(name);
-        state.active = name;
-        playSound(900, 'sine', 0.2, 0.1);
-    }
-    save(); showShop();
-}
+    resetSession() {
+        this.level = 1; this.collected = 0; this.camX = 0;
+        this.spawnLevel();
+    },
 
-function hideShop() { 
-    document.getElementById('shop').classList.add('hidden'); 
-    document.getElementById('menu').classList.remove('hidden'); 
-}
+    spawnLevel() {
+        this.player = { 
+            x: 100, y: 300, vx: 0, vy: 0, w: 34, h: 34, 
+            jCount: 0, fuel: 100, trail: [], coyote: 0 
+        };
+        this.platforms = [{x: 0, y: 400, w: 300, h: 100, type: 'start'}];
+        this.items = []; this.parts = []; this.collected = 0;
+        
+        let tx = 450;
+        for(let i=0; i<10 + this.level; i++) {
+            let tw = 100 + Math.random()*120;
+            let ty = 180 + Math.random()*220;
+            this.platforms.push({x: tx, y: ty, w: tw, h: 20});
+            
+            // Spawn items
+            if(i % 2 === 0) this.items.push({x: tx + tw/2, y: ty - 40, type: 'drop'});
+            if(i % 4 === 0) this.items.push({x: tx + 20, y: ty - 60, type: 'star'});
+            
+            tx += tw + 100 + Math.random()*50;
+        }
+        this.platforms.push({x: tx, y: 350, w: 200, h: 150, type: 'goal'});
+        this.targetDist = tx;
+        document.getElementById('lv-txt').innerText = this.level;
+        document.getElementById('fuel-ui').style.display = this.state.jetpack ? 'block' : 'none';
+        this.save();
+    },
 
-window.onkeydown = e => keys[e.code] = true;
-window.onkeyup = e => keys[e.code] = false;
-window.addEventListener('keydown', e => {
-    if(e.code === 'Space' && (player.ground || player.j < 1)) {
-        player.vy = -13; player.ground = false; player.j++;
-        playSound(400, 'sine', 0.1, 0.1);
-    }
-});
+    playerJump() {
+        if(!this.running) return;
+        // Jump if on ground OR has double jump available
+        if(this.player.coyote > 0 || this.player.jCount < 1) {
+            this.player.vy = -14;
+            this.player.jCount++;
+            this.player.coyote = 0;
+            this.sound(400, 'sine', 0.1, 0.1);
+        }
+    },
 
-save(); // Initial HUD sync
+    sound(f, t, d, v) {
+        if(!this.ac) this.ac = new (window.AudioContext || window.webkitAudioContext)();
+        let o = this.ac.createOscillator(), g = this.ac.createGain();
+        o.type = t; o.frequency.setValueAtTime(f, this.ac.currentTime);
+        g.gain.setValueAtTime(v, this.ac.currentTime);
+        g.gain.linearRampToValueAtTime(0, this.ac.currentTime+d);
+        o.connect(g); g.connect(this.ac.destination);
+        o.start(); o.stop(this.ac.currentTime+d);
+    },
+
+    update() {
+        if(!this.running) return;
+        let p = this.player;
+        
+        // Input
+        if(this.keys['KeyA']) p.vx -= 0.9;
+        if(this.keys['KeyD']) p.vx += 0.9;
+        
+        // Jetpack
+        if(this.keys['Space'] && this.state.jetpack && p.fuel > 0 && p.jCount >= 1) {
+            p.vy -= 1.1; p.fuel -= 2;
+            this.parts.push({x: p.x + 17, y: p.y + 34, vx: (Math.random()-0.5)*4, vy: 5, l: 1, c: '#ff6600'});
+        }
+
+        p.vx *= 0.88; p.vy += 0.7; // Friction & Gravity
+        p.x += p.vx; p.y += p.vy;
+        p.coyote--;
+
+        // Collision
+        this.platforms.forEach(plt => {
+            if(p.x+p.w > plt.x && p.x < plt.x+plt.w && p.y+p.h > plt.y && p.y < plt.y+plt.h) {
+                if(p.vy > 0 && p.y < plt.y + 10) { // Landed
+                    p.y = plt.y - p.h; p.vy = 0; p.jCount = 0; p.coyote = 10;
+                    p.fuel = Math.min(100, p.fuel + 5);
+                    if(plt.type === 'goal' && this.collected >= 3) {
+                        this.level++; this.spawnLevel();
+                    }
+                }
+            }
+        });
+
+        // Items & Magnet
+        this.items.forEach(it => {
+            if(it.taken) return;
+            let d = Math.hypot(p.x - it.x, p.y - it.y);
+            if(this.state.magnet && d < 180) {
+                it.x += (p.x - it.x) * 0.15; it.y += (p.y - it.y) * 0.15;
+            }
+            if(d < 40) {
+                it.taken = true;
+                if(it.type === 'drop') { this.state.drops += 5; this.sound(1000, 'sine', 0.05, 0.05); }
+                else { this.collected++; this.sound(800, 'square', 0.1, 0.1); }
+                this.save();
+            }
+        });
+
+        if(p.y > 600) this.spawnLevel();
+        this.camX += (p.x - this.camX - 300) * 0.1;
+        document.getElementById('fuel-fill').style.width = p.fuel + '%';
+        document.getElementById('drop-txt').innerText = this.state.drops;
+    },
+
+    draw() {
+        this.ctx.clearRect(0,0,900,500);
+        
+        // Parallax Stars
+        this.ctx.fillStyle = "white";
+        for(let i=0; i<50; i++) {
+            let sX = (i * 200 - this.camX * 0.2) % 1000;
+            this.ctx.globalAlpha = 0.5;
+            this.ctx.fillRect(sX, (i * 30) % 500, 2, 2);
+        }
+
+        this.ctx.save();
+        this.ctx.translate(-this.camX, 0);
+
+        const skin = this.skins[this.state.active];
+
+        // Platforms
+        this.platforms.forEach(plt => {
+            let g = this.ctx.createLinearGradient(plt.x, plt.y, plt.x, plt.y+plt.h);
+            g.addColorStop(0, plt.type === 'goal' ? (this.collected >= 3 ? '#ffcc00' : '#333') : '#00f2ff');
+            g.addColorStop(1, '#050510');
+            this.ctx.fillStyle = g;
+            this.ctx.fillRect(plt.x, plt.y, plt.w, plt.h);
+        });
+
+        // Items
+        this.items.forEach(it => {
+            if(it.taken) return;
+            this.ctx.shadowBlur = 15;
+            this.ctx.fillStyle = it.type === 'drop' ? '#00f2ff' : '#ffcc00';
+            this.ctx.shadowColor = this.ctx.fillStyle;
+            this.ctx.beginPath(); this.ctx.arc(it.x, it.y + Math.sin(Date.now()/200)*8, 8, 0, 7); this.ctx.fill();
+        });
+
+        // Particles
+        this.parts.forEach((pt, i) => {
+            pt.y += pt.vy; pt.l -= 0.04;
+            this.ctx.globalAlpha = pt.l; this.ctx.fillStyle = pt.c;
+            this.ctx.fillRect(pt.x, pt.y, 4, 4);
+            if(pt.l <= 0) this.parts.splice(i, 1);
+        });
+
+        // Player
+        this.ctx.shadowBlur = 20; this.ctx.shadowColor = skin.c;
+        this.ctx.fillStyle = skin.c;
+        this.ctx.fillRect(this.player.x, this.player.y, 34, 34);
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillRect(this.player.x+6, this.player.y+8, 6, 6);
+        this.ctx.fillRect(this.player.x+22, this.player.y+8, 6, 6);
+
+        this.ctx.restore();
+    },
+
+    loop() {
+        this.update();
+        this.draw();
+        requestAnimationFrame(() => this.loop());
+    },
+
+    start() {
+        this.running = true;
+        document.getElementById('main-menu').classList.add('hidden');
+        this.sound(200, 'sine', 0.5, 0.1);
+    },
+
+    toggleShop(show) {
+        document.getElementById('shop-menu').className = show ? 'menu-layer' : 'menu-layer hidden';
+        if(show) {
+            let container = document.getElementById('shop-content');
+            container.innerHTML = `
+                <div class="item-card ${this.state.jetpack?'active':''}">JETPACK<br>💧 200<br><button class="btn" onclick="app.buy('jet', 200)">${this.state.jetpack?'OWNED':'BUY'}</button></div>
+                <div class="item-card ${this.state.magnet?'active':''}">MAGNET<br>💧 150<br><button class="btn" onclick="app.buy('mag', 150)">${this.state.magnet?'OWNED':'BUY'}</button></div>
+            `;
+            Object.keys(this.skins).forEach(k => {
+                let owned = this.state.owned.includes(k);
+                container.innerHTML += `<div class="item-card ${this.state.active===k?'active':''}">
+                    <div style="width:20px;height:20px;background:${this.skins[k].c};margin:0 auto 5px;"></div>
+                    ${k}<br>${owned?'OWNED':'💧 100'}<br>
+                    <button class="btn" onclick="app.buySkin('${k}')">${owned?'EQUIP':'BUY'}</button>
+                </div>`;
+            });
+        }
+    },
+
+    buy(type, cost) {
+        if(type === 'jet' && !this.state.jetpack && this.state.drops >= cost) { this.state.drops -= cost; this.state.jetpack = true; }
+        if(type === 'mag' && !this.state.magnet && this.state.drops >= cost) { this.state.drops -= cost; this.state.magnet = true; }
+        this.save(); this.toggleShop(true);
+    },
+
+    buySkin(k) {
+        if(this.state.owned.includes(k)) this.state.active = k;
+        else if(this.state.drops >= 100) { this.state.drops -= 100; this.state.owned.push(k); this.state.active = k; }
+        this.save(); this.toggleShop(true);
+    },
+
+    save() { localStorage.setItem('BJ_ULTRA_V1', JSON.stringify(this.state)); }
+};
+
+app.init();
 </script>
 </body>
 </html>
