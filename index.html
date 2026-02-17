@@ -279,7 +279,6 @@
     </div>
 
     <script>
-        // --- AUDIO ENGINE (Synthesizer) ---
         const audioSys = {
             ctx: null,
             bgmOsc: [],
@@ -345,7 +344,6 @@
             }
         };
 
-        // --- GAME LOGIC ---
         const cfg = { w: 8, h: 8, size: 40 };
         const emojis = ['🍇', '🍊', '🥥', '🍭', '🧁', '🍩']; 
         
@@ -426,7 +424,7 @@
                         el.dataset.r = r;
                         el.dataset.c = c;
                         
-                        this.attachInput(el, r, c);
+                        this.attachInput(el);
                         
                         con.appendChild(el);
                         dRow.push(el);
@@ -436,49 +434,64 @@
                 }
             },
 
-            attachInput(el, r, c) {
+            attachInput(el) {
                 let startX, startY;
+                let isDragging = false;
+
+                // Stop native browser dragging (fixes laptop issues)
+                el.ondragstart = () => false;
 
                 const start = (e) => {
                     if(state.locked) return;
+                    
+                    // Always pull fresh coordinates
+                    const pos = { r: parseInt(el.dataset.r), c: parseInt(el.dataset.c) };
+                    
                     if(state.activeTool) {
-                        powerups.use(r, c);
+                        powerups.use(pos.r, pos.c);
                         return;
                     }
 
+                    isDragging = true;
                     const t = e.touches ? e.touches[0] : e;
                     startX = t.clientX;
                     startY = t.clientY;
                     
                     if(!state.selected) {
-                        this.select(r, c);
-                    } else if (state.selected.r === r && state.selected.c === c) {
+                        this.select(pos.r, pos.c);
+                    } else if (state.selected.r === pos.r && state.selected.c === pos.c) {
                         this.deselect();
+                        isDragging = false;
                     } else {
-                        const dr = Math.abs(state.selected.r - r);
-                        const dc = Math.abs(state.selected.c - c);
+                        const dr = Math.abs(state.selected.r - pos.r);
+                        const dc = Math.abs(state.selected.c - pos.c);
                         if(dr + dc === 1) {
-                            // Fixed: Clear selection state immediately before attempting swap
                             const oldSel = state.selected;
                             this.deselect();
-                            this.attemptSwap(oldSel, {r, c});
+                            this.attemptSwap(oldSel, pos);
+                            isDragging = false;
                         } else {
-                            this.select(r, c); 
+                            this.select(pos.r, pos.c); 
                         }
                     }
                 };
 
                 const move = (e) => {
-                    if(!state.selected || state.locked) return;
-                    if(state.selected.r !== r || state.selected.c !== c) return; 
+                    if(!isDragging || !state.selected || state.locked) return;
+                    
+                    const pos = { r: parseInt(el.dataset.r), c: parseInt(el.dataset.c) };
+                    if(state.selected.r !== pos.r || state.selected.c !== pos.c) return; 
 
                     const t = e.touches ? e.touches[0] : e;
                     const dx = t.clientX - startX;
                     const dy = t.clientY - startY;
                     
-                    if(Math.abs(dx) > 30 || Math.abs(dy) > 30) {
-                        let targetR = r;
-                        let targetC = c;
+                    // Reduced threshold from 30px to 15px so drags trigger flawlessly
+                    if(Math.abs(dx) > 15 || Math.abs(dy) > 15) {
+                        isDragging = false;
+                        let targetR = pos.r;
+                        let targetC = pos.c;
+                        
                         if(Math.abs(dx) > Math.abs(dy)) {
                             targetC += dx > 0 ? 1 : -1;
                         } else {
@@ -486,16 +499,22 @@
                         }
                         
                         if(targetR >=0 && targetR < cfg.h && targetC >= 0 && targetC < cfg.w) {
-                            this.attemptSwap({r,c}, {r:targetR, c:targetC});
-                            this.deselect(); 
+                            this.attemptSwap(pos, {r:targetR, c:targetC});
                         }
+                        this.deselect(); 
                     }
                 };
 
+                const end = () => { isDragging = false; };
+
+                // Handle PC mouse & Mobile touch cleanly
                 el.addEventListener('mousedown', start);
-                el.addEventListener('touchstart', start);
+                el.addEventListener('touchstart', start, {passive: false});
                 el.addEventListener('mousemove', move); 
-                el.addEventListener('touchmove', move);
+                el.addEventListener('touchmove', move, {passive: false});
+                el.addEventListener('mouseup', end);
+                el.addEventListener('mouseleave', end);
+                el.addEventListener('touchend', end);
             },
 
             select(r, c) {
@@ -559,9 +578,8 @@
                     await this.processMatches(matches);
                 } else {
                     audioSys.sfx('bad');
-                    this.swapData(p1.r, p1.c, p2.r, p2.c); // revert data logic
+                    this.swapData(p1.r, p1.c, p2.r, p2.c); 
                     
-                    // Fixed: Revert visual explicitly directly back to original spots
                     const t1 = domGrid[p1.r][p1.c];
                     const t2 = domGrid[p2.r][p2.c];
                     t1.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
@@ -657,7 +675,6 @@
                         } else if (emptyCount > 0) {
                             this.swapData(r, c, r+emptyCount, c);
                             const el = domGrid[r+emptyCount][c];
-                            // Fixed: Remove invalid CSS transition 'bounce' to let the class transition take over smoothly
                             el.style.transition = ""; 
                             el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px)`;
                             moved = true;
@@ -675,7 +692,6 @@
                         
                         void el.offsetWidth;
                         
-                        // Fixed: Restores smooth CSS transition
                         el.style.transition = ""; 
                         el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
                         el.style.opacity = 1;
