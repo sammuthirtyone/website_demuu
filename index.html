@@ -11,7 +11,7 @@
             --primary: #ff4081;
             --secondary: #00e5ff;
             --glass: rgba(255, 255, 255, 0.9);
-            --tile-size: 45px; /* Adjustable base size */
+            --tile-size: 45px;
             --gap: 4px;
         }
 
@@ -117,7 +117,7 @@
 
         .grid {
             position: relative;
-            width: 320px; /* 8 * 40 */
+            width: 320px;
             height: 320px;
             margin: 0 auto;
         }
@@ -135,7 +135,6 @@
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-            /* Disable touch scrolling on tiles */
             touch-action: none; 
         }
 
@@ -178,7 +177,6 @@
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
         
-        /* Floating Text */
         .floater {
             position: absolute;
             color: #fff;
@@ -190,7 +188,6 @@
         }
         @keyframes floatUp { to { transform: translateY(-50px); opacity: 0; } }
 
-        /* Powerup Active State */
         .mode-active { cursor: crosshair !important; border: 4px solid red; }
 
     </style>
@@ -332,12 +329,11 @@
                 }
             },
 
-            // Simple generative background music loop
             playMusic() {
                 if(this.isMuted || this.isPlaying) return;
                 this.isPlaying = true;
                 let note = 0;
-                const melody = [392, 523, 659, 783, 659, 523]; // G C E G E C
+                const melody = [392, 523, 659, 783, 659, 523]; 
                 const interval = setInterval(() => {
                     if(this.isMuted) { clearInterval(interval); this.isPlaying = false; return; }
                     this.playNote(melody[note % melody.length], 'sine', 0.5, 0.05);
@@ -353,11 +349,10 @@
         const cfg = { w: 8, h: 8, size: 40 };
         const emojis = ['🍇', '🍊', '🥥', '🍭', '🧁', '🍩']; 
         
-        // State
-        let grid = []; // Logical grid (stores integers)
-        let domGrid = []; // Stores DIV elements
+        let grid = []; 
+        let domGrid = []; 
         let state = {
-            selected: null, // {r, c}
+            selected: null,
             locked: false,
             score: 0,
             moves: 20,
@@ -367,7 +362,6 @@
             activeTool: null
         };
         
-        // Hint Timer
         let hintTimer = null;
 
         const ui = {
@@ -415,7 +409,6 @@
                 for(let r=0; r<cfg.h; r++) {
                     let row = [], dRow = [];
                     for(let c=0; c<cfg.w; c++) {
-                        // Prevent initial matches
                         let type;
                         do {
                             type = Math.floor(Math.random() * emojis.length);
@@ -433,7 +426,6 @@
                         el.dataset.r = r;
                         el.dataset.c = c;
                         
-                        // Input Handling
                         this.attachInput(el, r, c);
                         
                         con.appendChild(el);
@@ -445,12 +437,10 @@
             },
 
             attachInput(el, r, c) {
-                // Mouse & Touch support for Swap & Swipe
                 let startX, startY;
 
                 const start = (e) => {
                     if(state.locked) return;
-                    // Check powerups
                     if(state.activeTool) {
                         powerups.use(r, c);
                         return;
@@ -465,20 +455,22 @@
                     } else if (state.selected.r === r && state.selected.c === c) {
                         this.deselect();
                     } else {
-                        // Check adjacency for click-swap
                         const dr = Math.abs(state.selected.r - r);
                         const dc = Math.abs(state.selected.c - c);
                         if(dr + dc === 1) {
-                            this.attemptSwap(state.selected, {r, c});
+                            // Fixed: Clear selection state immediately before attempting swap
+                            const oldSel = state.selected;
+                            this.deselect();
+                            this.attemptSwap(oldSel, {r, c});
                         } else {
-                            this.select(r, c); // Change selection
+                            this.select(r, c); 
                         }
                     }
                 };
 
                 const move = (e) => {
                     if(!state.selected || state.locked) return;
-                    if(state.selected.r !== r || state.selected.c !== c) return; // Only swipe from selected
+                    if(state.selected.r !== r || state.selected.c !== c) return; 
 
                     const t = e.touches ? e.touches[0] : e;
                     const dx = t.clientX - startX;
@@ -495,15 +487,14 @@
                         
                         if(targetR >=0 && targetR < cfg.h && targetC >= 0 && targetC < cfg.w) {
                             this.attemptSwap({r,c}, {r:targetR, c:targetC});
-                            this.deselect(); // Clear selection after swipe
+                            this.deselect(); 
                         }
                     }
                 };
 
                 el.addEventListener('mousedown', start);
                 el.addEventListener('touchstart', start);
-                // Attach move to window to catch swipes that leave the tile
-                el.addEventListener('mousemove', move); // simplified
+                el.addEventListener('mousemove', move); 
                 el.addEventListener('touchmove', move);
             },
 
@@ -527,21 +518,18 @@
             },
 
             showHint() {
-                // Brute force find a move
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
-                        // Check right swap
                         if(c<cfg.w-1) {
                             this.swapData(r, c, r, c+1);
                             if(this.findMatches().length > 0) {
                                 domGrid[r][c].classList.add('hint');
                                 domGrid[r][c+1].classList.add('hint');
-                                this.swapData(r, c, r, c+1); // swap back
+                                this.swapData(r, c, r, c+1); 
                                 return;
                             }
-                            this.swapData(r, c, r, c+1); // swap back
+                            this.swapData(r, c, r, c+1); 
                         }
-                        // Check down swap
                         if(r<cfg.h-1) {
                             this.swapData(r, c, r+1, c);
                             if(this.findMatches().length > 0) {
@@ -560,13 +548,9 @@
                 state.locked = true;
                 this.resetHint();
                 
-                // 1. Visual Swap
                 await this.animSwap(p1, p2);
-                
-                // 2. Logic Swap
                 this.swapData(p1.r, p1.c, p2.r, p2.c);
                 
-                // 3. Check Matches
                 const matches = this.findMatches();
                 
                 if(matches.length > 0) {
@@ -574,40 +558,36 @@
                     ui.updateStats();
                     await this.processMatches(matches);
                 } else {
-                    // Invalid
                     audioSys.sfx('bad');
-                    this.swapData(p1.r, p1.c, p2.r, p2.c); // revert data
-                    await this.animSwap(p1, p2); // revert visual
+                    this.swapData(p1.r, p1.c, p2.r, p2.c); // revert data logic
+                    
+                    // Fixed: Revert visual explicitly directly back to original spots
+                    const t1 = domGrid[p1.r][p1.c];
+                    const t2 = domGrid[p2.r][p2.c];
+                    t1.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
+                    t2.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
+                    
+                    await this.wait(250);
                     state.locked = false;
                 }
             },
 
             swapData(r1, c1, r2, c2) {
-                // Swap Grid Types
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
                 
-                // Swap DOM references
                 let tEl = domGrid[r1][c1];
                 domGrid[r1][c1] = domGrid[r2][c2];
                 domGrid[r2][c2] = tEl;
                 
-                // Update Coordinates in DOM
                 if(domGrid[r1][c1]) { domGrid[r1][c1].dataset.r = r1; domGrid[r1][c1].dataset.c = c1; }
                 if(domGrid[r2][c2]) { domGrid[r2][c2].dataset.r = r2; domGrid[r2][c2].dataset.c = c2; }
             },
 
             animSwap(p1, p2) {
                 return new Promise(resolve => {
-                    const el1 = domGrid[p1.r][p1.c]; // Note: domGrid is NOT swapped yet in attemptSwap when this is called 1st time, 
-                    // BUT for the revert, data IS swapped. 
-                    // To be safe, we use the coordinates to get the current DOM at that pos.
-                    
-                    // Actually, simpler: calculate pixel positions based on R/C
-                    // The DOM elements at (p1) and (p2) need to trade places.
-                    
-                    const t1 = domGrid[p1.r][p1.c];
+                    const t1 = domGrid[p1.r][p1.c]; 
                     const t2 = domGrid[p2.r][p2.c];
                     
                     t1.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
@@ -619,7 +599,6 @@
 
             findMatches() {
                 let matched = new Set();
-                // Horizontal
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w-2; c++) {
                         let t = grid[r][c];
@@ -629,7 +608,6 @@
                         }
                     }
                 }
-                // Vertical
                 for(let c=0; c<cfg.w; c++) {
                     for(let r=0; r<cfg.h-2; r++) {
                         let t = grid[r][c];
@@ -649,73 +627,56 @@
                 this.deselect();
                 audioSys.sfx('match');
                 
-                // Score & Particles
                 const baseScore = matches.length * 10;
                 const bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
                 state.score += baseScore + bonus;
                 ui.updateStats();
 
-                // Floating Text
                 const center = matches[Math.floor(matches.length/2)];
                 this.floatText(center.r, center.c, `+${baseScore+bonus}`);
 
-                // Remove logic
                 for(let m of matches) {
                     const el = domGrid[m.r][m.c];
                     this.createParticles(m.r, m.c, el.innerText);
                     el.style.transform = `${el.style.transform} scale(0)`;
-                    grid[m.r][m.c] = -1; // Empty
+                    grid[m.r][m.c] = -1; 
                 }
 
                 await this.wait(300);
-
-                // Gravity
                 await this.applyGravity();
             },
 
             async applyGravity() {
                 let moved = false;
                 
-                // 1. Shift Down
                 for(let c=0; c<cfg.w; c++) {
                     let emptyCount = 0;
                     for(let r=cfg.h-1; r>=0; r--) {
                         if(grid[r][c] === -1) {
                             emptyCount++;
                         } else if (emptyCount > 0) {
-                            // Move logic
                             this.swapData(r, c, r+emptyCount, c);
-                            // Move visual
                             const el = domGrid[r+emptyCount][c];
-                            el.style.transition = "transform 0.4s bounce";
+                            // Fixed: Remove invalid CSS transition 'bounce' to let the class transition take over smoothly
+                            el.style.transition = ""; 
                             el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px)`;
                             moved = true;
                         }
                     }
                     
-                    // 2. Spawn New
                     for(let r=0; r<emptyCount; r++) {
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
                         
-                        // Recycle or create DOM
-                        // (Here we recycle the one shifted down which left a 'null' in domGrid? No, wait)
-                        // Actually, simplified: Create NEW dom for top slots, old ones are "gone" visually but elements exist.
-                        // Better: reuse the elements that were "popped" (scaled to 0)
-                        
-                        // Finding a recyclable element is complex in short code. 
-                        // Let's just grab the element that is currently mapped to the 'null' or old position?
-                        // No, domGrid was swapped. The popped elements are now at the TOP of the array logically (because we swapped non-empty down).
-                        
-                        let el = domGrid[r][c]; // This holds the element that was swapped UP (the popped one)
+                        let el = domGrid[r][c]; 
                         el.innerText = emojis[type];
                         el.style.transition = 'none';
                         el.style.transform = `translate(${c*cfg.size}px, -50px)`;
                         
-                        // Force Reflow
                         void el.offsetWidth;
                         
-                        el.style.transition = "transform 0.4s";
+                        // Fixed: Restores smooth CSS transition
+                        el.style.transition = ""; 
                         el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
                         el.style.opacity = 1;
                         el.style.zIndex = 10;
@@ -725,7 +686,6 @@
 
                 if(moved) {
                     await this.wait(400);
-                    // Chain Reaction?
                     const newMatches = this.findMatches();
                     if(newMatches.length > 0) {
                         await this.processMatches(newMatches);
@@ -741,14 +701,13 @@
             },
 
             createParticles(r, c, char) {
-                const rect = document.getElementById('board-container').getBoundingClientRect();
                 const x = c * cfg.size + 20;
                 const y = r * cfg.size + 20;
                 
                 for(let i=0; i<6; i++) {
                     const p = document.createElement('div');
                     p.className = 'particle';
-                    p.innerText = char; // tiny version of the candy
+                    p.innerText = char; 
                     p.style.fontSize = '12px';
                     p.style.left = x + 'px';
                     p.style.top = y + 'px';
@@ -807,14 +766,11 @@
                 if(state.locked) return;
                 if(state.inventory[tool] > 0) {
                     if(state.activeTool === tool) {
-                        // toggle off
                         state.activeTool = null;
                         document.getElementById('grid').classList.remove('mode-active');
                     } else {
-                        // toggle on
                         state.activeTool = tool;
                         document.getElementById('grid').classList.add('mode-active');
-                        // Immediate effects
                         if(tool === 'shuffle') {
                             state.inventory.shuffle--;
                             this.doShuffle();
@@ -859,7 +815,6 @@
                 }
             },
             doShuffle() {
-                // Fisher-Yates
                 let flat = [];
                 for(let r=0; r<cfg.h; r++) for(let c=0; c<cfg.w; c++) if(grid[r][c]!==-1) flat.push(grid[r][c]);
                 
@@ -874,7 +829,6 @@
                         if(grid[r][c]!==-1) {
                             grid[r][c] = flat[k++];
                             domGrid[r][c].innerText = emojis[grid[r][c]];
-                            // Anim
                             domGrid[r][c].style.transform = `scale(0)`;
                             setTimeout(() => {
                                 domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
