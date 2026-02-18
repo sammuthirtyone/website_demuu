@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jelly PoP</title>
+    <title>Jelly PoP - Blaster Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
@@ -12,7 +12,6 @@
             --secondary: #00e5ff;
             --glass: rgba(255, 255, 255, 0.9);
             --tile-size: 45px;
-            --gap: 4px;
         }
 
         body {
@@ -29,7 +28,6 @@
             height: 100vh;
         }
 
-        /* --- Screens & UI --- */
         .screen {
             position: absolute;
             width: 100%;
@@ -93,7 +91,6 @@
         .btn-pink:active { box-shadow: 0 2px 0 #ad003d; }
         .btn-icon { padding: 10px; width: 50px; height: 50px; border-radius: 50%; font-size: 1.4rem; margin: 3px; }
 
-        /* --- Level Select Styles (Scrollable) --- */
         .level-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -103,12 +100,7 @@
             max-height: 250px; 
             overflow-y: auto; 
             scrollbar-width: thin;
-            scrollbar-color: #ff80ab rgba(0,0,0,0.05);
         }
-
-        .level-grid::-webkit-scrollbar { width: 8px; }
-        .level-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
-        .level-grid::-webkit-scrollbar-thumb { background: #ff80ab; border-radius: 10px; }
 
         .level-btn {
             width: 70px;
@@ -125,21 +117,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
             margin: 0 auto; 
         }
-
         .level-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0081cb; }
-        
-        .level-btn.locked {
-            background: #e0e0e0;
-            color: #999;
-            box-shadow: 0 5px 0 #bdbdbd;
-            cursor: not-allowed;
-        }
+        .level-btn.locked { background: #e0e0e0; color: #999; box-shadow: 0 5px 0 #bdbdbd; cursor: not-allowed; }
         .level-btn.locked:active { transform: none; }
 
-        /* --- Game Board --- */
         .header-stats {
             display: flex;
             justify-content: space-between;
@@ -149,6 +132,7 @@
             padding: 10px;
             border-radius: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
         }
         .stat div:first-child { font-size: 0.8rem; color: #888; }
         .stat div:last-child { font-size: 1.4rem; color: #333; }
@@ -182,7 +166,8 @@
             z-index: 10;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
             touch-action: none; 
-            backface-visibility: hidden; /* Fix for flickering */
+            backface-visibility: hidden;
+            border-radius: 50%;
         }
 
         .tile.selected { z-index: 20; }
@@ -196,7 +181,24 @@
         }
         .tile.hint { animation: shake 2s infinite; filter: brightness(1.3); }
 
-        /* Particles */
+        /* BLASTER STYLE */
+        .tile.blaster {
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,215,0,0.4) 70%);
+            box-shadow: 0 0 10px 2px #fff, 0 0 15px 5px gold;
+            border: 2px solid #fff;
+            animation: blastPulse 1s infinite alternate;
+            z-index: 15;
+        }
+        .tile.blaster::before {
+            content: '⭐';
+            position: absolute;
+            font-size: 10px;
+            top: 0; right: 0;
+            text-shadow: 0 0 2px black;
+        }
+
+        @keyframes blastPulse { 0% { transform: scale(1); filter: brightness(1); } 100% { transform: scale(1.1); filter: brightness(1.3); } }
+        
         .particle {
             position: absolute;
             pointer-events: none;
@@ -204,7 +206,6 @@
             animation: pop 0.6s ease-out forwards;
         }
 
-        /* --- Shop Items --- */
         .shop-item {
             display: flex;
             align-items: center;
@@ -218,7 +219,6 @@
         .shop-item:hover { border-color: gold; transform: scale(1.02); }
         .shop-price { background: #ffd700; color: #8a6e02; padding: 5px 10px; border-radius: 10px; font-size: 0.9rem; white-space: nowrap; }
 
-        /* --- Animations --- */
         @keyframes pulse { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(0.9); } }
         @keyframes pop { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -228,12 +228,14 @@
             position: absolute;
             color: #fff;
             text-shadow: 2px 2px 0 #000;
+            font-weight: bold;
             font-size: 1.5rem;
             pointer-events: none;
-            animation: floatUp 1s forwards;
+            animation: floatUp 1.5s forwards;
             z-index: 100;
+            white-space: nowrap;
         }
-        @keyframes floatUp { to { transform: translateY(-50px); opacity: 0; } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
 
         .mode-active { cursor: crosshair !important; border: 4px solid red; }
         .mode-free { border: 4px solid #ff4081; animation: pulse 0.5s infinite; }
@@ -249,7 +251,7 @@
     <div id="screen-home" class="screen active">
         <div class="panel">
             <h1>Jelly<br>Pop</h1>
-            <p>Ultimate Edition</p>
+            <p>Blaster Edition</p>
             <button class="btn" onclick="ui.nav('screen-levels')">PLAY</button>
             <button class="btn btn-pink" onclick="ui.nav('screen-shop')">SHOP</button>
         </div>
@@ -354,37 +356,32 @@
             <h1 id="res-title">Won!</h1>
             <div id="res-stars" style="font-size:3rem;">⭐⭐⭐</div>
             <p id="res-msg">Score: 5000</p>
-            <div id="res-btns">
-                <button class="btn" onclick="ui.nav('screen-levels')">Levels</button>
-            </div>
+            <div id="res-btns"></div>
         </div>
     </div>
 
     <script>
         // --- LEVEL CONFIGURATION ---
         const levels = [];
-        // Generating levels 1 to 300
         for(let i=1; i<=300; i++){
-            // Base difficulty curve
             let moves = 15 + Math.floor(i * 1.5);
             let target = 500 + (i * 200);
             let reward = 50 + (i * 10);
-            
-            // Special bumps for "boss" levels
             if(i % 5 === 0) { moves += 10; target += 1000; reward += 50; }
-            
             levels.push({id:i, moves: moves, target: target, reward: reward});
         }
 
         const audioSys = {
             ctx: null,
-            bgmOsc: [],
             isMuted: true,
             isPlaying: false,
 
             init() {
                 if(!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if(this.ctx.state === 'suspended') {
+                    this.ctx.resume();
                 }
             },
 
@@ -397,7 +394,7 @@
             },
 
             playNote(freq, type, dur, vol=0.1) {
-                if(this.isMuted) return;
+                if(this.isMuted || !this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = type;
@@ -418,6 +415,10 @@
                         this.playNote(600, 'triangle', 0.1); 
                         setTimeout(()=>this.playNote(800, 'triangle', 0.1), 100);
                         break;
+                    case 'blaster':
+                        this.playNote(200, 'sawtooth', 0.2);
+                        setTimeout(()=>this.playNote(100, 'square', 0.4), 100);
+                        break;
                     case 'bad': this.playNote(150, 'sawtooth', 0.3); break;
                     case 'win': 
                         [0, 0.2, 0.4].forEach((t, i) => setTimeout(() => this.playNote(500 + i*200, 'square', 0.3), t*1000));
@@ -432,14 +433,15 @@
                 this.isPlaying = true;
                 let note = 0;
                 const melody = [392, 523, 659, 783, 659, 523]; 
-                const interval = setInterval(() => {
-                    if(this.isMuted) { clearInterval(interval); this.isPlaying = false; return; }
+                this.musicInterval = setInterval(() => {
+                    if(this.isMuted) { this.stopMusic(); return; }
                     this.playNote(melody[note % melody.length], 'sine', 0.5, 0.05);
                     note++;
                 }, 400);
             },
             stopMusic() {
                 this.isPlaying = false;
+                if(this.musicInterval) clearInterval(this.musicInterval);
             }
         };
 
@@ -477,10 +479,8 @@
                 levels.forEach((lvl, idx) => {
                     const btn = document.createElement('button');
                     const isLocked = (idx + 1) > state.maxUnlocked;
-                    
                     btn.className = `level-btn ${isLocked ? 'locked' : ''}`;
                     btn.innerHTML = isLocked ? '🔒' : (idx + 1);
-                    
                     if(!isLocked) {
                         btn.onclick = () => game.startLevel(idx);
                     }
@@ -497,11 +497,10 @@
             },
             updateShop() {
                 document.getElementById('shop-coins').innerText = state.coins;
-                document.getElementById('btn-hammer').innerHTML = `🔨 <span style="font-size:0.6rem">${state.inventory.hammer}</span>`;
-                document.getElementById('btn-bomb').innerHTML = `💣 <span style="font-size:0.6rem">${state.inventory.bomb}</span>`;
-                document.getElementById('btn-shuffle').innerHTML = `🔄 <span style="font-size:0.6rem">${state.inventory.shuffle}</span>`;
-                document.getElementById('btn-cocoteddy').innerHTML = `🧸 <span style="font-size:0.6rem">${state.inventory.cocoteddy}</span>`;
-                document.getElementById('btn-candycane').innerHTML = `🍭 <span style="font-size:0.6rem">${state.inventory.candycane}</span>`;
+                ['hammer','bomb','shuffle','cocoteddy','candycane'].forEach(t => {
+                    const icon = t==='hammer'?'🔨':t==='bomb'?'💣':t==='shuffle'?'🔄':t==='cocoteddy'?'🧸':'🍭';
+                    document.getElementById(`btn-${t}`).innerHTML = `${icon} <span style="font-size:0.6rem">${state.inventory[t]}</span>`;
+                });
             }
         };
 
@@ -512,7 +511,6 @@
                 state.moves = config.moves;
                 state.target = config.target;
                 state.score = 0;
-                
                 this.init();
             },
 
@@ -549,22 +547,24 @@
                         );
                         
                         row.push(type);
-                        
-                        const el = document.createElement('div');
-                        el.className = 'tile';
-                        el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                        el.innerText = emojis[type];
-                        el.dataset.r = r;
-                        el.dataset.c = c;
-                        
-                        this.attachInput(el);
-                        
+                        const el = this.createTile(r, c, type);
                         con.appendChild(el);
                         dRow.push(el);
                     }
                     grid.push(row);
                     domGrid.push(dRow);
                 }
+            },
+
+            createTile(r, c, type) {
+                const el = document.createElement('div');
+                el.className = 'tile';
+                el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
+                el.innerText = emojis[type];
+                el.dataset.r = r;
+                el.dataset.c = c;
+                this.attachInput(el);
+                return el;
             },
 
             attachInput(el) {
@@ -576,10 +576,12 @@
                 const start = (e) => {
                     if(state.locked && !state.freeMove) return;
                     
-                    const pos = { r: parseInt(el.dataset.r), c: parseInt(el.dataset.c) };
+                    // Always get fresh coordinates
+                    const r = parseInt(el.dataset.r);
+                    const c = parseInt(el.dataset.c);
                     
                     if(state.activeTool) {
-                        powerups.use(pos.r, pos.c);
+                        powerups.use(r, c);
                         return;
                     }
 
@@ -589,20 +591,20 @@
                     startY = t.clientY;
                     
                     if(!state.selected) {
-                        this.select(pos.r, pos.c);
-                    } else if (state.selected.r === pos.r && state.selected.c === pos.c) {
+                        this.select(r, c);
+                    } else if (state.selected.r === r && state.selected.c === c) {
                         this.deselect();
                         isDragging = false;
                     } else {
-                        const dr = Math.abs(state.selected.r - pos.r);
-                        const dc = Math.abs(state.selected.c - pos.c);
+                        const dr = Math.abs(state.selected.r - r);
+                        const dc = Math.abs(state.selected.c - c);
                         if(dr + dc === 1) {
                             const oldSel = state.selected;
                             this.deselect();
-                            this.attemptSwap(oldSel, pos);
+                            this.attemptSwap(oldSel, {r, c});
                             isDragging = false;
                         } else {
-                            this.select(pos.r, pos.c); 
+                            this.select(r, c); 
                         }
                     }
                 };
@@ -610,8 +612,10 @@
                 const move = (e) => {
                     if(!isDragging || !state.selected || (state.locked && !state.freeMove)) return;
                     
-                    const pos = { r: parseInt(el.dataset.r), c: parseInt(el.dataset.c) };
-                    if(state.selected.r !== pos.r || state.selected.c !== pos.c) return; 
+                    const r = parseInt(el.dataset.r);
+                    const c = parseInt(el.dataset.c);
+                    
+                    if(state.selected.r !== r || state.selected.c !== c) return; 
 
                     const t = e.touches ? e.touches[0] : e;
                     const dx = t.clientX - startX;
@@ -619,8 +623,8 @@
                     
                     if(Math.abs(dx) > 15 || Math.abs(dy) > 15) {
                         isDragging = false;
-                        let targetR = pos.r;
-                        let targetC = pos.c;
+                        let targetR = r;
+                        let targetC = c;
                         
                         if(Math.abs(dx) > Math.abs(dy)) {
                             targetC += dx > 0 ? 1 : -1;
@@ -629,7 +633,7 @@
                         }
                         
                         if(targetR >=0 && targetR < cfg.h && targetC >= 0 && targetC < cfg.w) {
-                            this.attemptSwap(pos, {r:targetR, c:targetC});
+                            this.attemptSwap({r, c}, {r:targetR, c:targetC});
                         }
                         this.deselect(); 
                     }
@@ -654,7 +658,9 @@
             },
             deselect() {
                 if(state.selected) {
-                    domGrid[state.selected.r][state.selected.c].classList.remove('selected');
+                    if(domGrid[state.selected.r] && domGrid[state.selected.r][state.selected.c]) {
+                        domGrid[state.selected.r][state.selected.c].classList.remove('selected');
+                    }
                     state.selected = null;
                 }
             },
@@ -667,72 +673,43 @@
 
             showHint() {
                 if(state.locked) return;
+                // Simple logic: clone grid, test swap, check match
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
                         if(c<cfg.w-1) {
-                            this.swapData(r, c, r, c+1);
-                            if(this.findMatches().length > 0) {
+                            if(this.testSwap(r, c, r, c+1)) {
                                 domGrid[r][c].classList.add('hint');
                                 domGrid[r][c+1].classList.add('hint');
-                                this.swapData(r, c, r, c+1); 
                                 return;
                             }
-                            this.swapData(r, c, r, c+1); 
                         }
                         if(r<cfg.h-1) {
-                            this.swapData(r, c, r+1, c);
-                            if(this.findMatches().length > 0) {
+                            if(this.testSwap(r, c, r+1, c)) {
                                 domGrid[r][c].classList.add('hint');
                                 domGrid[r+1][c].classList.add('hint');
-                                this.swapData(r, c, r+1, c);
                                 return;
                             }
-                            this.swapData(r, c, r+1, c);
                         }
                     }
                 }
             },
 
-            checkDeadlock() {
-                if(state.locked) return;
-                let possible = false;
+            testSwap(r1, c1, r2, c2) {
+                // Logical swap only
+                let temp = grid[r1][c1];
+                grid[r1][c1] = grid[r2][c2];
+                grid[r2][c2] = temp;
                 
-                for(let r=0; r<cfg.h; r++) {
-                    for(let c=0; c<cfg.w; c++) {
-                        if(c<cfg.w-1) {
-                            this.swapData(r, c, r, c+1);
-                            if(this.findMatches().length > 0) possible = true;
-                            this.swapData(r, c, r, c+1); 
-                            if(possible) return;
-                        }
-                        if(r<cfg.h-1) {
-                            this.swapData(r, c, r+1, c);
-                            if(this.findMatches().length > 0) possible = true;
-                            this.swapData(r, c, r+1, c); 
-                            if(possible) return;
-                        }
-                    }
-                }
-
-                if(!possible) {
-                    game.floatText(3, 3, "No Moves! Shuffle!");
-                    setTimeout(() => powerups.doShuffle(), 1000);
-                }
+                const hasMatch = this.findMatches().length > 0;
+                
+                // Swap back
+                grid[r2][c2] = grid[r1][c1];
+                grid[r1][c1] = temp;
+                
+                return hasMatch;
             },
 
             async attemptSwap(p1, p2) {
-                if (state.freeMove) {
-                    await this.animSwap(p1, p2);
-                    this.swapData(p1.r, p1.c, p2.r, p2.c);
-                    const matches = this.findMatches();
-                    if(matches.length > 0) {
-                        state.moves--;
-                        ui.updateStats();
-                        await this.processMatches(matches);
-                    }
-                    return;
-                }
-
                 state.locked = true;
                 this.resetHint();
                 
@@ -741,33 +718,31 @@
                 
                 const matches = this.findMatches();
                 
-                if(matches.length > 0) {
-                    state.moves--; // Logic check: This reduces moves.
+                if(matches.length > 0 || state.freeMove) {
+                    if(!state.freeMove) state.moves--;
                     ui.updateStats();
                     await this.processMatches(matches);
                 } else {
                     audioSys.sfx('bad');
+                    // Undo
+                    await this.animSwap(p1, p2); 
                     this.swapData(p1.r, p1.c, p2.r, p2.c); 
-                    
-                    const t1 = domGrid[p1.r][p1.c];
-                    const t2 = domGrid[p2.r][p2.c];
-                    t1.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
-                    t2.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
-                    
-                    await this.wait(250);
                     state.locked = false;
                 }
             },
 
             swapData(r1, c1, r2, c2) {
+                // Swap logic
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
                 
+                // Swap DOM references
                 let tEl = domGrid[r1][c1];
                 domGrid[r1][c1] = domGrid[r2][c2];
                 domGrid[r2][c2] = tEl;
                 
+                // Update datasets
                 if(domGrid[r1][c1]) { domGrid[r1][c1].dataset.r = r1; domGrid[r1][c1].dataset.c = c1; }
                 if(domGrid[r2][c2]) { domGrid[r2][c2].dataset.r = r2; domGrid[r2][c2].dataset.c = c2; }
             },
@@ -777,6 +752,7 @@
                     const t1 = domGrid[p1.r][p1.c]; 
                     const t2 = domGrid[p2.r][p2.c];
                     
+                    // Visual Translation
                     t1.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
                     t2.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
                     
@@ -786,21 +762,33 @@
 
             findMatches() {
                 let matched = new Set();
+                // Horizontal
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w-2; c++) {
                         let t = grid[r][c];
                         if(t === -1) continue;
-                        if(grid[r][c+1] === t && grid[r][c+2] === t) {
-                            matched.add(`${r},${c}`); matched.add(`${r},${c+1}`); matched.add(`${r},${c+2}`);
+                        let matchLen = 1;
+                        while(c+matchLen < cfg.w && grid[r][c+matchLen] === t) {
+                            matchLen++;
+                        }
+                        if(matchLen >= 3) {
+                            for(let k=0; k<matchLen; k++) matched.add(`${r},${c+k}`);
+                            c += matchLen - 1; 
                         }
                     }
                 }
+                // Vertical
                 for(let c=0; c<cfg.w; c++) {
                     for(let r=0; r<cfg.h-2; r++) {
                         let t = grid[r][c];
                         if(t === -1) continue;
-                        if(grid[r+1][c] === t && grid[r+2][c] === t) {
-                            matched.add(`${r},${c}`); matched.add(`${r+1},${c}`); matched.add(`${r+2},${c}`);
+                        let matchLen = 1;
+                        while(r+matchLen < cfg.h && grid[r+matchLen][c] === t) {
+                            matchLen++;
+                        }
+                        if(matchLen >= 3) {
+                            for(let k=0; k<matchLen; k++) matched.add(`${r+k},${c}`);
+                            r += matchLen - 1;
                         }
                     }
                 }
@@ -812,24 +800,82 @@
 
             async processMatches(matches) {
                 this.deselect();
-                audioSys.sfx('match');
                 
-                const baseScore = matches.length * 10;
-                const bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
+                // BLASTER LOGIC: Check if this is a big match (4+)
+                // Since matches is a flat list, we need to guess grouping or use simple heuristic
+                // If matches.length >= 4, we spawn a blaster at the center of the match
+                let createBlaster = false;
+                let blasterPos = null;
+                let blasterType = -1;
+
+                if (matches.length >= 4) {
+                    createBlaster = true;
+                    // Pick a random spot or the first one as the blaster origin
+                    const m = matches[Math.floor(matches.length/2)];
+                    blasterPos = {r: m.r, c: m.c};
+                    blasterType = grid[m.r][m.c];
+                }
+
+                // Scoring
+                let baseScore = matches.length * 10;
+                let bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
+                
+                // Check if we popped any existing Blasters
+                let blasterPopCount = 0;
+                for(let m of matches) {
+                    const el = domGrid[m.r][m.c];
+                    if(el.classList.contains('blaster')) {
+                        blasterPopCount++;
+                        baseScore += 150;
+                        game.floatText(m.r, m.c, "BLAST! +150");
+                        audioSys.sfx('blaster');
+                        createParticles(m.r, m.c, "⭐");
+                    }
+                }
+
+                if(!blasterPopCount) audioSys.sfx('match');
+                
                 state.score += baseScore + bonus;
                 ui.updateStats();
 
                 const center = matches[Math.floor(matches.length/2)];
-                this.floatText(center.r, center.c, `+${baseScore+bonus}`);
+                if(!blasterPopCount) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
 
+                // Visual removal
                 for(let m of matches) {
+                    // If we are creating a blaster, skip destroying the target tile
+                    if(createBlaster && m.r === blasterPos.r && m.c === blasterPos.c) continue;
+
                     const el = domGrid[m.r][m.c];
                     this.createParticles(m.r, m.c, el.innerText);
                     el.style.transform = `${el.style.transform} scale(0)`;
                     grid[m.r][m.c] = -1; 
                 }
 
+                // If creating blaster, update that specific tile
+                if(createBlaster) {
+                     const el = domGrid[blasterPos.r][blasterPos.c];
+                     el.classList.add('blaster');
+                     // Pulse animation reset
+                     el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
+                     setTimeout(() => {
+                        el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
+                     }, 200);
+                     game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
+                }
+
                 await this.wait(300);
+                
+                // Remove destroyed DOM elements formally
+                for(let r=0; r<cfg.h; r++){
+                    for(let c=0; c<cfg.w; c++){
+                        if(grid[r][c] === -1 && domGrid[r][c]) {
+                            domGrid[r][c].remove();
+                            domGrid[r][c] = null;
+                        }
+                    }
+                }
+
                 await this.applyGravity();
             },
 
@@ -837,51 +883,45 @@
                 let moved = false;
                 
                 for(let c=0; c<cfg.w; c++) {
-                    let emptyCount = 0;
-                    // Scan bottom to top
+                    let emptySlots = 0;
+                    // Scan column from bottom to top
                     for(let r=cfg.h-1; r>=0; r--) {
                         if(grid[r][c] === -1) {
-                            emptyCount++;
-                        } else if (emptyCount > 0) {
-                            // Move valid tile down
-                            this.swapData(r, c, r+emptyCount, c);
-                            const el = domGrid[r+emptyCount][c];
-                            el.style.opacity = '1';
-                            el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px) scale(1)`; 
-                            moved = true;
+                            emptySlots++;
+                        } else if (emptySlots > 0) {
+                            // Move logic down
+                            let targetR = r + emptySlots;
+                            grid[targetR][c] = grid[r][c];
+                            grid[r][c] = -1;
+                            
+                            // Move DOM
+                            let el = domGrid[r][c];
+                            domGrid[targetR][c] = el;
+                            domGrid[r][c] = null;
+                            
+                            if(el) {
+                                el.dataset.r = targetR;
+                                el.style.transform = `translate(${c*cfg.size}px, ${targetR*cfg.size}px)`;
+                                moved = true;
+                            }
                         }
                     }
-                    
-                    // Spawn new candies at top with FRESH ELEMENTS (Fixes Glitch)
-                    for(let r=0; r<emptyCount; r++) {
+
+                    // Fill top empty slots
+                    for(let r=0; r<emptySlots; r++) {
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
                         
-                        // FIX: Clean up the old recycling element that caused flickering
-                        if(domGrid[r][c]) domGrid[r][c].remove();
-
-                        // Create brand new element
-                        const el = document.createElement('div');
-                        el.className = 'tile';
-                        el.innerText = emojis[type];
-                        el.dataset.r = r;
-                        el.dataset.c = c;
-                        
-                        // Start position: Above the board
+                        const el = this.createTile(r, c, type);
+                        // Start above board
                         el.style.transform = `translate(${c*cfg.size}px, -${cfg.size}px)`;
-                        el.style.opacity = '0';
-                        
-                        game.attachInput(el); // Attach events to new element
                         document.getElementById('grid').appendChild(el);
                         domGrid[r][c] = el;
                         
-                        // Force Reflow
-                        void el.offsetWidth;
-                        
-                        // Animate In
-                        el.style.opacity = '1';
-                        el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                        
+                        // Animate in
+                        requestAnimationFrame(() => {
+                            el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
+                        });
                         moved = true;
                     }
                 }
@@ -933,7 +973,7 @@
                 el.style.left = (c*cfg.size + 10) + 'px';
                 el.style.top = (r*cfg.size) + 'px';
                 document.getElementById('grid').appendChild(el);
-                setTimeout(()=>el.remove(), 1000);
+                setTimeout(()=>el.remove(), 1500);
             },
 
             checkWin() {
@@ -944,13 +984,35 @@
                 }
             },
 
+            checkDeadlock() {
+                // Deadlock check should not modify DOM
+                let possible = false;
+                for(let r=0; r<cfg.h; r++) {
+                    for(let c=0; c<cfg.w; c++) {
+                        if(c<cfg.w-1 && this.testSwap(r, c, r, c+1)) possible = true;
+                        if(r<cfg.h-1 && this.testSwap(r, c, r+1, c)) possible = true;
+                        if(possible) return;
+                    }
+                }
+
+                if(!possible) {
+                    game.floatText(3, 3, "No Moves! Shuffle!");
+                    setTimeout(() => powerups.doShuffle(), 1000);
+                }
+            },
+
             gameOver(win) {
                 state.locked = true;
                 setTimeout(() => {
-                    const res = document.getElementById('screen-result');
                     const btnContainer = document.getElementById('res-btns');
                     ui.nav('screen-result');
+                    btnContainer.innerHTML = '';
                     
+                    const btnMenu = document.createElement('button');
+                    btnMenu.className = 'btn btn-pink';
+                    btnMenu.innerText = 'Levels';
+                    btnMenu.onclick = () => ui.nav('screen-levels');
+
                     if(win) {
                         audioSys.sfx('win');
                         const reward = levels[state.levelIdx] ? levels[state.levelIdx].reward : 100;
@@ -962,7 +1024,6 @@
                             state.maxUnlocked++;
                         }
 
-                        btnContainer.innerHTML = '';
                         if((state.levelIdx + 1) < levels.length) {
                              const btnNext = document.createElement('button');
                              btnNext.className = 'btn';
@@ -970,28 +1031,16 @@
                              btnNext.onclick = () => game.startLevel(state.levelIdx + 1);
                              btnContainer.appendChild(btnNext);
                         }
-                        
-                        const btnMenu = document.createElement('button');
-                        btnMenu.className = 'btn btn-pink';
-                        btnMenu.innerText = 'Levels';
-                        btnMenu.onclick = () => ui.nav('screen-levels');
                         btnContainer.appendChild(btnMenu);
-
                     } else {
                         document.getElementById('res-title').innerText = "Out of Moves";
                         document.getElementById('res-msg').innerText = "Don't give up!";
                         
-                        btnContainer.innerHTML = '';
                         const btnRetry = document.createElement('button');
                         btnRetry.className = 'btn';
                         btnRetry.innerText = 'Try Again';
                         btnRetry.onclick = () => game.startLevel(state.levelIdx);
                         btnContainer.appendChild(btnRetry);
-
-                        const btnMenu = document.createElement('button');
-                        btnMenu.className = 'btn btn-pink';
-                        btnMenu.innerText = 'Levels';
-                        btnMenu.onclick = () => ui.nav('screen-levels');
                         btnContainer.appendChild(btnMenu);
                     }
                     ui.updateShop();
@@ -1011,23 +1060,25 @@
                         document.getElementById('grid').classList.remove('mode-active');
                     } else {
                         if(tool === 'shuffle') {
-                            state.inventory.shuffle--;
-                            this.doShuffle();
-                            ui.updateShop();
+                            this.useInstant(tool);
                             return;
                         }
                         if(tool === 'cocoteddy') {
-                            state.inventory.cocoteddy--;
-                            ui.updateShop();
-                            this.doCocoTeddy();
+                            this.useInstant(tool);
                             return;
                         }
                         state.activeTool = tool;
                         document.getElementById('grid').classList.add('mode-active');
                     }
                 } else {
-                    alert("Buy more in the shop!");
+                    market.showMsg("Buy in Shop!", "red");
                 }
+            },
+            useInstant(tool) {
+                state.inventory[tool]--;
+                ui.updateShop();
+                if(tool === 'shuffle') this.doShuffle();
+                if(tool === 'cocoteddy') this.doCocoTeddy();
             },
             use(r, c) {
                 if(!state.activeTool) return;
@@ -1081,6 +1132,7 @@
                         if(grid[r][c]!==-1) {
                             grid[r][c] = flat[k++];
                             domGrid[r][c].innerText = emojis[grid[r][c]];
+                            domGrid[r][c].classList.remove('blaster'); // Reset special status on shuffle
                             domGrid[r][c].style.transform = `scale(0)`;
                             setTimeout(() => {
                                 domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
@@ -1129,13 +1181,7 @@
         };
 
         const market = {
-            prices: {
-                'hammer': 450,
-                'bomb': 999,
-                'shuffle': 350,
-                'cocoteddy': 799,
-                'candycane': 999
-            },
+            prices: { 'hammer': 450, 'bomb': 999, 'shuffle': 350, 'cocoteddy': 799, 'candycane': 999 },
             buy(type) {
                 const cost = this.prices[type];
                 if(state.coins >= cost) {
