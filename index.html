@@ -163,9 +163,6 @@
             touch-action: none; 
         }
 
-        /* FIX: tile-inner now handles 'position: relative' so children (pseudo-elements)
-           are positioned relative to the shaking/animated candy, not the static grid slot.
-        */
         .tile-inner {
             position: relative; 
             width: 100%;
@@ -181,7 +178,6 @@
 
         .tile.selected { z-index: 20; }
         
-        /* FIX: Moved selection glow to .tile-inner so it shakes with the candy */
         .tile.selected .tile-inner::after {
             content: '';
             position: absolute;
@@ -206,7 +202,6 @@
             z-index: 15;
         }
         
-        /* FIX: Moved blaster star to .tile-inner so it shakes with the candy */
         .tile.blaster .tile-inner::before {
             content: '⭐';
             position: absolute;
@@ -580,7 +575,6 @@
                 el.className = 'tile';
                 el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
                 
-                // Create separate inner element for animations
                 const inner = document.createElement('div');
                 inner.className = 'tile-inner';
                 inner.innerText = emojis[type];
@@ -599,12 +593,10 @@
                 el.ondragstart = () => false;
 
                 const start = (e) => {
-                    // Reset hint immediately on interaction
                     game.resetHint();
 
                     if(state.locked && !state.freeMove) return;
                     
-                    // Always get fresh coordinates
                     const r = parseInt(el.dataset.r);
                     const c = parseInt(el.dataset.c);
                     
@@ -696,12 +688,11 @@
             resetHint() {
                 clearTimeout(hintTimer);
                 document.querySelectorAll('.hint').forEach(e => e.classList.remove('hint'));
-                hintTimer = setTimeout(() => this.showHint(), 5000); // 5s timer
+                hintTimer = setTimeout(() => this.showHint(), 5000); 
             },
 
             showHint() {
                 if(state.locked) return;
-                // Simple logic: clone grid, test swap, check match
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
                         if(c<cfg.w-1) {
@@ -723,17 +714,12 @@
             },
 
             testSwap(r1, c1, r2, c2) {
-                // Logical swap only
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
-                
                 const hasMatch = this.findMatches().length > 0;
-                
-                // Swap back
                 grid[r2][c2] = grid[r1][c1];
                 grid[r1][c1] = temp;
-                
                 return hasMatch;
             },
 
@@ -752,7 +738,6 @@
                     await this.processMatches(matches);
                 } else {
                     audioSys.sfx('bad');
-                    // Undo
                     await this.animSwap(p1, p2); 
                     this.swapData(p1.r, p1.c, p2.r, p2.c); 
                     state.locked = false;
@@ -760,17 +745,12 @@
             },
 
             swapData(r1, c1, r2, c2) {
-                // Swap logic
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
-                
-                // Swap DOM references
                 let tEl = domGrid[r1][c1];
                 domGrid[r1][c1] = domGrid[r2][c2];
                 domGrid[r2][c2] = tEl;
-                
-                // Update datasets
                 if(domGrid[r1][c1]) { domGrid[r1][c1].dataset.r = r1; domGrid[r1][c1].dataset.c = c1; }
                 if(domGrid[r2][c2]) { domGrid[r2][c2].dataset.r = r2; domGrid[r2][c2].dataset.c = c2; }
             },
@@ -779,41 +759,32 @@
                 return new Promise(resolve => {
                     const t1 = domGrid[p1.r][p1.c]; 
                     const t2 = domGrid[p2.r][p2.c];
-                    
-                    // Visual Translation
                     t1.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
                     t2.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
-                    
                     setTimeout(() => resolve(), 250);
                 });
             },
 
             findMatches() {
                 let matched = new Set();
-                // Horizontal
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w-2; c++) {
                         let t = grid[r][c];
                         if(t === -1) continue;
                         let matchLen = 1;
-                        while(c+matchLen < cfg.w && grid[r][c+matchLen] === t) {
-                            matchLen++;
-                        }
+                        while(c+matchLen < cfg.w && grid[r][c+matchLen] === t) matchLen++;
                         if(matchLen >= 3) {
                             for(let k=0; k<matchLen; k++) matched.add(`${r},${c+k}`);
                             c += matchLen - 1; 
                         }
                     }
                 }
-                // Vertical
                 for(let c=0; c<cfg.w; c++) {
                     for(let r=0; r<cfg.h-2; r++) {
                         let t = grid[r][c];
                         if(t === -1) continue;
                         let matchLen = 1;
-                        while(r+matchLen < cfg.h && grid[r+matchLen][c] === t) {
-                            matchLen++;
-                        }
+                        while(r+matchLen < cfg.h && grid[r+matchLen][c] === t) matchLen++;
                         if(matchLen >= 3) {
                             for(let k=0; k<matchLen; k++) matched.add(`${r+k},${c}`);
                             r += matchLen - 1;
@@ -828,27 +799,19 @@
 
             async processMatches(matches) {
                 this.deselect();
-                
-                // BLASTER LOGIC: Check if this is a big match (4+)
-                // If matches.length >= 4, we spawn a blaster at the center of the match
                 let createBlaster = false;
                 let blasterPos = null;
-                let blasterType = -1;
 
                 if (matches.length >= 4) {
                     createBlaster = true;
-                    // Pick a random spot or the first one as the blaster origin
                     const m = matches[Math.floor(matches.length/2)];
                     blasterPos = {r: m.r, c: m.c};
-                    blasterType = grid[m.r][m.c];
                 }
 
-                // Scoring
                 let baseScore = matches.length * 10;
                 let bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
-                
-                // Check if we popped any existing Blasters
                 let blasterPopCount = 0;
+
                 for(let m of matches) {
                     const el = domGrid[m.r][m.c];
                     if(el.classList.contains('blaster')) {
@@ -856,36 +819,29 @@
                         baseScore += 150;
                         game.floatText(m.r, m.c, "BLAST! +150");
                         audioSys.sfx('blaster');
-                        createParticles(m.r, m.c, "⭐");
+                        // FIX: Added 'game.' prefix to createParticles
+                        game.createParticles(m.r, m.c, "⭐");
                     }
                 }
 
                 if(!blasterPopCount) audioSys.sfx('match');
-                
                 state.score += baseScore + bonus;
                 ui.updateStats();
 
                 const center = matches[Math.floor(matches.length/2)];
                 if(!blasterPopCount) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
 
-                // Visual removal
                 for(let m of matches) {
-                    // If we are creating a blaster, skip destroying the target tile
                     if(createBlaster && m.r === blasterPos.r && m.c === blasterPos.c) continue;
-
                     const el = domGrid[m.r][m.c];
-                    // el.innerText still works because it gets text content of children
-                    this.createParticles(m.r, m.c, el.innerText);
-                    // Scale parent (which has translate) is fine
+                    game.createParticles(m.r, m.c, el.querySelector('.tile-inner').innerText);
                     el.style.transform = `${el.style.transform} scale(0)`;
                     grid[m.r][m.c] = -1; 
                 }
 
-                // If creating blaster, update that specific tile
                 if(createBlaster) {
                      const el = domGrid[blasterPos.r][blasterPos.c];
                      el.classList.add('blaster');
-                     // Pulse animation reset
                      el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
                      setTimeout(() => {
                         el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
@@ -894,8 +850,6 @@
                 }
 
                 await this.wait(300);
-                
-                // Remove destroyed DOM elements formally
                 for(let r=0; r<cfg.h; r++){
                     for(let c=0; c<cfg.w; c++){
                         if(grid[r][c] === -1 && domGrid[r][c]) {
@@ -904,30 +858,23 @@
                         }
                     }
                 }
-
                 await this.applyGravity();
             },
 
             async applyGravity() {
                 let moved = false;
-                
                 for(let c=0; c<cfg.w; c++) {
                     let emptySlots = 0;
-                    // Scan column from bottom to top
                     for(let r=cfg.h-1; r>=0; r--) {
                         if(grid[r][c] === -1) {
                             emptySlots++;
                         } else if (emptySlots > 0) {
-                            // Move logic down
                             let targetR = r + emptySlots;
                             grid[targetR][c] = grid[r][c];
                             grid[r][c] = -1;
-                            
-                            // Move DOM
                             let el = domGrid[r][c];
                             domGrid[targetR][c] = el;
                             domGrid[r][c] = null;
-                            
                             if(el) {
                                 el.dataset.r = targetR;
                                 el.style.transform = `translate(${c*cfg.size}px, ${targetR*cfg.size}px)`;
@@ -935,26 +882,19 @@
                             }
                         }
                     }
-
-                    // Fill top empty slots
                     for(let r=0; r<emptySlots; r++) {
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
-                        
                         const el = this.createTile(r, c, type);
-                        // Start above board
                         el.style.transform = `translate(${c*cfg.size}px, -${cfg.size}px)`;
                         document.getElementById('grid').appendChild(el);
                         domGrid[r][c] = el;
-                        
-                        // Animate in
                         requestAnimationFrame(() => {
                             el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
                         });
                         moved = true;
                     }
                 }
-
                 if(moved) {
                     await this.wait(400);
                     const newMatches = this.findMatches();
@@ -976,7 +916,6 @@
             createParticles(r, c, char) {
                 const x = c * cfg.size + 20;
                 const y = r * cfg.size + 20;
-                
                 for(let i=0; i<6; i++) {
                     const p = document.createElement('div');
                     p.className = 'particle';
@@ -984,12 +923,10 @@
                     p.style.fontSize = '12px';
                     p.style.left = x + 'px';
                     p.style.top = y + 'px';
-                    
                     const angle = Math.random() * Math.PI * 2;
                     const vel = Math.random() * 50 + 20;
                     p.style.setProperty('--dx', Math.cos(angle)*vel + 'px');
                     p.style.setProperty('--dy', Math.sin(angle)*vel + 'px');
-                    
                     document.getElementById('grid').appendChild(p);
                     setTimeout(()=>p.remove(), 600);
                 }
@@ -1014,7 +951,6 @@
             },
 
             checkDeadlock() {
-                // Deadlock check should not modify DOM
                 let possible = false;
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
@@ -1023,7 +959,6 @@
                         if(possible) return;
                     }
                 }
-
                 if(!possible) {
                     game.floatText(3, 3, "No Moves! Shuffle!");
                     setTimeout(() => powerups.doShuffle(), 1000);
@@ -1036,23 +971,17 @@
                     const btnContainer = document.getElementById('res-btns');
                     ui.nav('screen-result');
                     btnContainer.innerHTML = '';
-                    
                     const btnMenu = document.createElement('button');
                     btnMenu.className = 'btn btn-pink';
                     btnMenu.innerText = 'Levels';
                     btnMenu.onclick = () => ui.nav('screen-levels');
-
                     if(win) {
                         audioSys.sfx('win');
                         const reward = levels[state.levelIdx] ? levels[state.levelIdx].reward : 100;
                         document.getElementById('res-title').innerText = "Sweet Victory!";
                         document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
                         state.coins += reward;
-                        
-                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) {
-                            state.maxUnlocked++;
-                        }
-
+                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) state.maxUnlocked++;
                         if((state.levelIdx + 1) < levels.length) {
                              const btnNext = document.createElement('button');
                              btnNext.className = 'btn';
@@ -1064,7 +993,6 @@
                     } else {
                         document.getElementById('res-title').innerText = "Out of Moves";
                         document.getElementById('res-msg').innerText = "Don't give up!";
-                        
                         const btnRetry = document.createElement('button');
                         btnRetry.className = 'btn';
                         btnRetry.innerText = 'Try Again';
@@ -1082,17 +1010,12 @@
         const powerups = {
             activate(tool) {
                 if(state.locked && !state.freeMove) return;
-                
                 if(state.inventory[tool] > 0) {
                     if(state.activeTool === tool) {
                         state.activeTool = null;
                         document.getElementById('grid').classList.remove('mode-active');
                     } else {
-                        if(tool === 'shuffle') {
-                            this.useInstant(tool);
-                            return;
-                        }
-                        if(tool === 'cocoteddy') {
+                        if(tool === 'shuffle' || tool === 'cocoteddy') {
                             this.useInstant(tool);
                             return;
                         }
@@ -1111,13 +1034,11 @@
             },
             use(r, c) {
                 if(!state.activeTool) return;
-                
                 const tool = state.activeTool;
                 state.inventory[tool]--;
                 state.activeTool = null;
                 document.getElementById('grid').classList.remove('mode-active');
                 ui.updateShop();
-                
                 if(tool === 'hammer') {
                     audioSys.sfx('match');
                     this.destroyAt(r, c);
@@ -1134,13 +1055,12 @@
                     audioSys.sfx('magic');
                     this.doCandyCane(r, c);
                 }
-
                 setTimeout(() => game.applyGravity(), 300);
             },
             destroyAt(r, c) {
                 if(grid[r][c] !== -1) {
                     const el = domGrid[r][c];
-                    game.createParticles(r, c, el.innerText);
+                    game.createParticles(r, c, el.querySelector('.tile-inner').innerText);
                     el.style.transform = `${el.style.transform} scale(0)`;
                     grid[r][c] = -1;
                 }
@@ -1149,20 +1069,17 @@
                 audioSys.sfx('shuffle');
                 let flat = [];
                 for(let r=0; r<cfg.h; r++) for(let c=0; c<cfg.w; c++) if(grid[r][c]!==-1) flat.push(grid[r][c]);
-                
                 for(let i=flat.length-1; i>0; i--) {
                     const j = Math.floor(Math.random() * (i+1));
                     [flat[i], flat[j]] = [flat[j], flat[i]];
                 }
-                
                 let k=0;
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
                         if(grid[r][c]!==-1) {
                             grid[r][c] = flat[k++];
-                            // Update inner text
                             domGrid[r][c].querySelector('.tile-inner').innerText = emojis[grid[r][c]];
-                            domGrid[r][c].classList.remove('blaster'); // Reset special status on shuffle
+                            domGrid[r][c].classList.remove('blaster');
                             domGrid[r][c].style.transform = `scale(0)`;
                             setTimeout(() => {
                                 domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
@@ -1177,7 +1094,6 @@
                 game.floatText(3, 3, "FREE MOVE 5s!");
                 state.freeMove = true;
                 document.getElementById('grid').classList.add('mode-free');
-                
                 let timeLeft = 5;
                 const timer = setInterval(() => {
                     timeLeft--;
@@ -1194,12 +1110,10 @@
             doCandyCane(r, c) {
                 const targetType = grid[r][c];
                 if(targetType === -1) return;
-
                 for(let i=r-1; i<=r+1; i++) {
                     for(let j=c-1; j<=c+1; j++) {
                         if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
                             grid[i][j] = targetType;
-                            // Update inner text
                             domGrid[i][j].querySelector('.tile-inner').innerText = emojis[targetType];
                             domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
                             setTimeout(() => {
