@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sugar Rush: Ultimate + New Items</title>
+    <title>Jelly PoP</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
@@ -182,6 +182,7 @@
             z-index: 10;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
             touch-action: none; 
+            backface-visibility: hidden; /* Fix for flickering */
         }
 
         .tile.selected { z-index: 20; }
@@ -360,28 +361,19 @@
     </div>
 
     <script>
-        // --- LEVEL CONFIGURATION (15 LEVELS + Extended) ---
-        const levels = [
-            { id: 1, moves: 15, target: 500,  reward: 50 },
-            { id: 2, moves: 20, target: 1200, reward: 75 },
-            { id: 3, moves: 25, target: 2000, reward: 100 },
-            { id: 4, moves: 35, target: 3500, reward: 150 },
-            { id: 5, moves: 40, target: 5000, reward: 200 },
-            { id: 6, moves: 45, target: 8000, reward: 250 },
-            { id: 7, moves: 40, target: 4500, reward: 300 }, 
-            { id: 8, moves: 75, target: 9000, reward: 350 },
-            { id: 9, moves: 90, target: 11000, reward: 400 },
-            { id: 10, moves: 140, target: 14000, reward: 450 },
-            { id: 11, moves: 125, target: 8000, reward: 500 }, 
-            { id: 12, moves: 170, target: 20000, reward: 1000 }, 
-            { id: 13, moves: 200, target: 20500, reward: 1100 },
-            { id: 14, moves: 290, target: 21000, reward: 1300 },
-            { id: 15, moves: 310, target: 30000, reward: 1500 },
-            // ... (Rest of levels from prompt implied, shortened here for brevity, logic handles array size)
-        ];
-        // Filling generic level data for the scroll demo if array length < 300
-        for(let i=16; i<=300; i++){
-            levels.push({id:i, moves: 300 + i, target: 30000 + (i*100), reward: 1500 + (i*10)});
+        // --- LEVEL CONFIGURATION ---
+        const levels = [];
+        // Generating levels 1 to 300
+        for(let i=1; i<=300; i++){
+            // Base difficulty curve
+            let moves = 15 + Math.floor(i * 1.5);
+            let target = 500 + (i * 200);
+            let reward = 50 + (i * 10);
+            
+            // Special bumps for "boss" levels
+            if(i % 5 === 0) { moves += 10; target += 1000; reward += 50; }
+            
+            levels.push({id:i, moves: moves, target: target, reward: reward});
         }
 
         const audioSys = {
@@ -464,8 +456,8 @@
             target: 0,
             levelIdx: 0, 
             maxUnlocked: 1, 
-            inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 }, // Added new items
-            coins: 1000, // Boosted start coins to test features
+            inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 },
+            coins: 1000, 
             activeTool: null,
             freeMove: false
         };
@@ -701,26 +693,22 @@
                 }
             },
 
-            // New: Check if any moves are possible
             checkDeadlock() {
                 if(state.locked) return;
                 let possible = false;
                 
-                // Brute force check virtual swaps
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
-                        // Check Right
                         if(c<cfg.w-1) {
                             this.swapData(r, c, r, c+1);
                             if(this.findMatches().length > 0) possible = true;
-                            this.swapData(r, c, r, c+1); // swap back
+                            this.swapData(r, c, r, c+1); 
                             if(possible) return;
                         }
-                        // Check Down
                         if(r<cfg.h-1) {
                             this.swapData(r, c, r+1, c);
                             if(this.findMatches().length > 0) possible = true;
-                            this.swapData(r, c, r+1, c); // swap back
+                            this.swapData(r, c, r+1, c); 
                             if(possible) return;
                         }
                     }
@@ -733,14 +721,12 @@
             },
 
             async attemptSwap(p1, p2) {
-                // If Coco Teddy is active (Free Move), allow swap without locking logic
                 if (state.freeMove) {
                     await this.animSwap(p1, p2);
                     this.swapData(p1.r, p1.c, p2.r, p2.c);
-                    // In free move mode, we check matches, but don't revert if fail
                     const matches = this.findMatches();
                     if(matches.length > 0) {
-                        state.moves--; // Consumes move only on success if you want, or not. 
+                        state.moves--;
                         ui.updateStats();
                         await this.processMatches(matches);
                     }
@@ -852,38 +838,51 @@
                 
                 for(let c=0; c<cfg.w; c++) {
                     let emptyCount = 0;
+                    // Scan bottom to top
                     for(let r=cfg.h-1; r>=0; r--) {
                         if(grid[r][c] === -1) {
                             emptyCount++;
                         } else if (emptyCount > 0) {
+                            // Move valid tile down
                             this.swapData(r, c, r+emptyCount, c);
                             const el = domGrid[r+emptyCount][c];
-                            el.style.transition = ""; 
-                            el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px)`;
+                            
+                            // BUG FIX: Ensure visibility when moving down
+                            el.style.opacity = '1';
+                            el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px) scale(1)`; 
+                            
                             moved = true;
                         }
                     }
                     
+                    // Spawn new candies at top
                     for(let r=0; r<emptyCount; r++) {
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
                         
                         let el = domGrid[r][c]; 
+                        // Recycle the element (which was likely swapped up)
                         el.innerText = emojis[type];
-                        el.style.transition = 'none';
-                        el.style.transform = `translate(${c*cfg.size}px, -50px)`;
+                        el.classList.remove('selected', 'hint'); // Clean state
                         
+                        // BUG FIX: Disable transition to "teleport" it to top invisible
+                        el.style.transition = 'none';
+                        el.style.opacity = '1';
+                        // Force scale(1) so it doesn't stay invisible from the pop
+                        el.style.transform = `translate(${c*cfg.size}px, -60px) scale(1)`;
+                        
+                        // Force Reflow
                         void el.offsetWidth;
                         
+                        // Re-enable transition for the fall
                         el.style.transition = ""; 
                         el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                        el.style.opacity = 1;
-                        el.style.zIndex = 10;
                         moved = true;
                     }
                 }
 
                 if(moved) {
+                    // Increased wait slightly to let animations finish before checking matches
                     await this.wait(400);
                     const newMatches = this.findMatches();
                     if(newMatches.length > 0) {
@@ -892,12 +891,12 @@
                         state.locked = false;
                         this.resetHint();
                         this.checkWin();
-                        if(!state.freeMove) this.checkDeadlock(); // Check for dead end
+                        if(!state.freeMove) this.checkDeadlock();
                     }
                 } else {
                     state.locked = false;
                     this.resetHint();
-                    if(!state.freeMove) this.checkDeadlock(); // Check for dead end
+                    if(!state.freeMove) this.checkDeadlock();
                 }
             },
 
@@ -955,12 +954,10 @@
                         document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
                         state.coins += reward;
                         
-                        // Unlock Next Level
                         if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) {
                             state.maxUnlocked++;
                         }
 
-                        // Button logic
                         btnContainer.innerHTML = '';
                         if((state.levelIdx + 1) < levels.length) {
                              const btnNext = document.createElement('button');
@@ -1009,23 +1006,18 @@
                         state.activeTool = null;
                         document.getElementById('grid').classList.remove('mode-active');
                     } else {
-                        // Activate Tool
                         if(tool === 'shuffle') {
                             state.inventory.shuffle--;
                             this.doShuffle();
                             ui.updateShop();
                             return;
                         }
-                        
-                        // NEW ITEM: COCO TEDDY
                         if(tool === 'cocoteddy') {
                             state.inventory.cocoteddy--;
                             ui.updateShop();
                             this.doCocoTeddy();
                             return;
                         }
-
-                        // Target-based tools (Hammer, Bomb, Candy Cane)
                         state.activeTool = tool;
                         document.getElementById('grid').classList.add('mode-active');
                     }
@@ -1054,7 +1046,6 @@
                         }
                     }
                 }
-                // NEW ITEM: CANDY CANE
                 if(tool === 'candycane') {
                     audioSys.sfx('magic');
                     this.doCandyCane(r, c);
@@ -1109,7 +1100,6 @@
                         state.freeMove = false;
                         document.getElementById('grid').classList.remove('mode-free');
                         game.floatText(3, 3, "Time's Up!");
-                        // Force a match check after time up
                         const matches = game.findMatches();
                         if(matches.length>0) game.processMatches(matches);
                     }
@@ -1119,13 +1109,11 @@
                 const targetType = grid[r][c];
                 if(targetType === -1) return;
 
-                // Turn 3x3 into targetType
                 for(let i=r-1; i<=r+1; i++) {
                     for(let j=c-1; j<=c+1; j++) {
                         if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
                             grid[i][j] = targetType;
                             domGrid[i][j].innerText = emojis[targetType];
-                            // Visual pop effect
                             domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
                             setTimeout(() => {
                                 domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1)`;
@@ -1136,24 +1124,6 @@
             }
         };
 
-        const market = {
-            buy(item) {
-                const prices = { hammer: 450, bomb: 999, shuffle: 350, cocoteddy: 799, candycane: 999 };
-                const msg = document.getElementById('shop-msg');
-                if(state.coins >= prices[item]) {
-                    state.coins -= prices[item];
-                    state.inventory[item]++;
-                    msg.innerText = "Purchased!";
-                    msg.style.color = "green";
-                    ui.updateShop();
-                } else {
-                    msg.innerText = "Not enough coins!";
-                    msg.style.color = "red";
-                }
-            }
-        };
-
-        // Initialize Level Screen UI on load
         ui.buildLevelSelect();
 
     </script>
