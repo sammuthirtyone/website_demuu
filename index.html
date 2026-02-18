@@ -323,17 +323,17 @@
     </div>
 
     <script>
-        // --- LEVEL CONFIGURATION ---
-        const levels = [];
+        // --- LEVEL CONFIGURATION - Only store as data, not as DOM elements ---
+        const levelData = [];
         for(let i=1; i<=300; i++){
             let moves = 25 + Math.floor(i * 2.5);
             let target = 500 + (i * 200);
             let reward = 50 + (i * 10);
             if(i % 5 === 0) { moves += 10; target += 1000; reward += 50; }
-            levels.push({id:i, moves: moves, target: target, reward: reward});
+            levelData.push({id:i, moves: moves, target: target, reward: reward});
         }
 
-        // Audio system - with background music restored
+        // Audio system - with background music
         const audioSys = {
             ctx: null,
             isMuted: true,
@@ -436,7 +436,8 @@
             inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 },
             coins: 1000, 
             activeTool: null,
-            freeMove: false
+            freeMove: false,
+            visibleLevels: 9 // Only show 9 levels at a time for instant loading
         };
         
         let hintTimer = null;
@@ -453,7 +454,13 @@
             buildLevelSelect() {
                 const con = document.getElementById('level-container');
                 con.innerHTML = '';
-                levels.forEach((lvl, idx) => {
+                
+                // Only load the first 9 levels initially for instant loading
+                const startIdx = 0;
+                const endIdx = Math.min(state.visibleLevels, levelData.length);
+                
+                for(let idx = startIdx; idx < endIdx; idx++) {
+                    const lvl = levelData[idx];
                     const btn = document.createElement('button');
                     const isLocked = (idx + 1) > state.maxUnlocked;
                     btn.className = `level-btn ${isLocked ? 'locked' : ''}`;
@@ -462,7 +469,21 @@
                         btn.onclick = () => game.startLevel(idx);
                     }
                     con.appendChild(btn);
-                });
+                }
+                
+                // Add a "More Levels" button if there are more
+                if(state.visibleLevels < levelData.length) {
+                    const moreBtn = document.createElement('button');
+                    moreBtn.className = 'level-btn';
+                    moreBtn.innerHTML = '➕';
+                    moreBtn.onclick = () => this.loadMoreLevels();
+                    con.appendChild(moreBtn);
+                }
+            },
+            
+            loadMoreLevels() {
+                state.visibleLevels += 9;
+                this.buildLevelSelect();
             },
             
             updateStats() {
@@ -490,7 +511,7 @@
         const game = {
             startLevel(idx) {
                 state.levelIdx = idx;
-                const config = levels[idx];
+                const config = levelData[idx];
                 state.moves = config.moves;
                 state.target = config.target;
                 state.score = 0;
@@ -1014,12 +1035,12 @@
                     
                     if(win) {
                         audioSys.sfx('win');
-                        const reward = levels[state.levelIdx] ? levels[state.levelIdx].reward : 100;
+                        const reward = levelData[state.levelIdx] ? levelData[state.levelIdx].reward : 100;
                         document.getElementById('res-title').innerText = "Sweet Victory!";
                         document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
                         state.coins += reward;
-                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) state.maxUnlocked++;
-                        if((state.levelIdx + 1) < levels.length) {
+                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levelData.length) state.maxUnlocked++;
+                        if((state.levelIdx + 1) < levelData.length) {
                              const btnNext = document.createElement('button');
                              btnNext.className = 'btn';
                              btnNext.innerText = 'Next Level';
@@ -1212,7 +1233,7 @@
             }
         };
 
-        // Initialize
+        // Initialize with only first batch of levels
         ui.buildLevelSelect();
         
         // Auto-unmute and play music on first interaction (browser policy)
