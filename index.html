@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Jelly PoP - Blaster Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
@@ -797,8 +797,17 @@
                 });
             },
 
+            // --------- FIXED processMatches: proper blaster explosion handling ----------
             async processMatches(matches) {
                 this.deselect();
+
+                // If no matches, simply return early
+                if(!matches || matches.length === 0) {
+                    state.locked = false;
+                    this.resetHint();
+                    return;
+                }
+
                 let createBlaster = false;
                 let blasterPos = null;
 
@@ -808,47 +817,79 @@
                     blasterPos = {r: m.r, c: m.c};
                 }
 
+                // Build a set of all cells that should be removed.
+                // Start with the matched cells.
+                const removals = new Set();
+                for (let m of matches) removals.add(`${m.r},${m.c}`);
+
                 let baseScore = matches.length * 10;
                 let bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
-                let blasterPopCount = 0;
+                let extraBlastSet = new Set(); // cells added by exploding blasters
 
-                for(let m of matches) {
-                    const el = domGrid[m.r][m.c];
-                    if(el.classList.contains('blaster')) {
-                        blasterPopCount++;
+                // First pass: detect existing blasters inside matches and mark their 3x3 area for removal
+                for (let m of matches) {
+                    const el = domGrid[m.r] ? domGrid[m.r][m.c] : null;
+                    if (el && el.classList.contains('blaster')) {
+                        // existing blaster activated: add extra score and mark 3x3 to remove
                         baseScore += 150;
                         game.floatText(m.r, m.c, "BLAST! +150");
                         audioSys.sfx('blaster');
-                        // FIX: Added 'game.' prefix to createParticles
                         game.createParticles(m.r, m.c, "⭐");
+
+                        for (let i = m.r - 1; i <= m.r + 1; i++) {
+                            for (let j = m.c - 1; j <= m.c + 1; j++) {
+                                if (i >= 0 && i < cfg.h && j >= 0 && j < cfg.w && grid[i][j] !== -1) {
+                                    extraBlastSet.add(`${i},${j}`);
+                                }
+                            }
+                        }
+                        // also remove the blaster center itself
+                        extraBlastSet.add(`${m.r},${m.c}`);
                     }
                 }
 
-                if(!blasterPopCount) audioSys.sfx('match');
+                // Merge blast targets into removals
+                for (let s of extraBlastSet) removals.add(s);
+
                 state.score += baseScore + bonus;
                 ui.updateStats();
 
+                // show float text for center of original match (if any)
                 const center = matches[Math.floor(matches.length/2)];
-                if(!blasterPopCount) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
+                if(center) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
 
-                for(let m of matches) {
-                    if(createBlaster && m.r === blasterPos.r && m.c === blasterPos.c) continue;
-                    const el = domGrid[m.r][m.c];
-                    game.createParticles(m.r, m.c, el.querySelector('.tile-inner').innerText);
-                    el.style.transform = `${el.style.transform} scale(0)`;
-                    grid[m.r][m.c] = -1; 
+                // Second pass: animate removals (BUT if creating a new blaster, do NOT remove the chosen blasterPos)
+                const removalsArray = Array.from(removals).map(s => s.split(',').map(Number));
+                for (let [r, c] of removalsArray) {
+                    if (createBlaster && blasterPos && r === blasterPos.r && c === blasterPos.c) {
+                        // keep this cell as the new blaster tile (don't remove)
+                        continue;
+                    }
+                    const el = domGrid[r] ? domGrid[r][c] : null;
+                    if (el) {
+                        const inner = el.querySelector('.tile-inner');
+                        const char = inner ? inner.innerText : '';
+                        game.createParticles(r, c, char || '•');
+                        // scale out visually
+                        el.style.transform = `${el.style.transform} scale(0)`;
+                    }
+                    grid[r][c] = -1;
                 }
 
-                if(createBlaster) {
-                     const el = domGrid[blasterPos.r][blasterPos.c];
-                     el.classList.add('blaster');
-                     el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
-                     setTimeout(() => {
-                        el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
-                     }, 200);
-                     game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
+                // If we are creating a new blaster, add the blaster class to that position
+                if (createBlaster && blasterPos) {
+                    const be = domGrid[blasterPos.r] ? domGrid[blasterPos.r][blasterPos.c] : null;
+                    if (be) {
+                        be.classList.add('blaster');
+                        be.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
+                        setTimeout(() => {
+                            be.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
+                        }, 200);
+                        game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
+                    }
                 }
 
+                // small wait to let animations show, then remove DOM nodes for emptied cells
                 await this.wait(300);
                 for(let r=0; r<cfg.h; r++){
                     for(let c=0; c<cfg.w; c++){
@@ -858,8 +899,11 @@
                         }
                     }
                 }
+
+                // apply gravity and continue chain reactions if any
                 await this.applyGravity();
             },
+            // -----------------------------------------------------------------------
 
             async applyGravity() {
                 let moved = false;
