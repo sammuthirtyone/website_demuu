@@ -4,16 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Jelly PoP - Blaster Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-
+        /* all original styles – unchanged */
         :root {
             --primary: #ff4081;
             --secondary: #00e5ff;
             --glass: rgba(255, 255, 255, 0.9);
             --tile-size: 45px;
         }
-
         body {
             margin: 0;
             background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
@@ -27,7 +26,6 @@
             align-items: center;
             height: 100vh;
         }
-
         .screen {
             position: absolute;
             width: 100%;
@@ -42,14 +40,12 @@
             transform: scale(0.9);
             z-index: 1;
         }
-
         .screen.active {
             opacity: 1;
             pointer-events: all;
             transform: scale(1);
             z-index: 10;
         }
-
         .panel {
             background: var(--glass);
             padding: 20px;
@@ -61,7 +57,6 @@
             backdrop-filter: blur(10px);
             animation: float 4s ease-in-out infinite;
         }
-
         h1 {
             font-size: 3rem;
             background: -webkit-linear-gradient(#ff00cc, #333399);
@@ -70,7 +65,6 @@
             margin: 0;
             filter: drop-shadow(2px 2px 0px #fff);
         }
-
         .btn {
             background: linear-gradient(to bottom, #ffeb3b, #ffc107);
             border: none;
@@ -90,7 +84,6 @@
         .btn-pink { background: linear-gradient(to bottom, #ff80ab, #f50057); color: white; box-shadow: 0 6px 0 #ad003d; }
         .btn-pink:active { box-shadow: 0 2px 0 #ad003d; }
         .btn-icon { padding: 10px; width: 50px; height: 50px; border-radius: 50%; font-size: 1.4rem; margin: 3px; }
-
         .level-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -101,7 +94,6 @@
             overflow-y: auto; 
             scrollbar-width: thin;
         }
-
         .level-btn {
             width: 70px;
             height: 70px;
@@ -122,7 +114,6 @@
         .level-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0081cb; }
         .level-btn.locked { background: #e0e0e0; color: #999; box-shadow: 0 5px 0 #bdbdbd; cursor: not-allowed; }
         .level-btn.locked:active { transform: none; }
-
         .header-stats {
             display: flex;
             justify-content: space-between;
@@ -136,7 +127,6 @@
         }
         .stat div:first-child { font-size: 0.8rem; color: #888; }
         .stat div:last-child { font-size: 1.4rem; color: #333; }
-
         #board-container {
             position: relative;
             background: rgba(0,0,0,0.1);
@@ -144,14 +134,12 @@
             padding: 10px;
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
         }
-
         .grid {
             position: relative;
             width: 320px;
             height: 320px;
             margin: 0 auto;
         }
-
         .tile {
             position: absolute;
             width: 40px;
@@ -162,7 +150,6 @@
             z-index: 10;
             touch-action: none; 
         }
-
         .tile-inner {
             position: relative; 
             width: 100%;
@@ -175,9 +162,7 @@
             backface-visibility: hidden;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
         }
-
         .tile.selected { z-index: 20; }
-        
         .tile.selected .tile-inner::after {
             content: '';
             position: absolute;
@@ -188,12 +173,10 @@
             pointer-events: none;
             left: 0; top: 0;
         }
-        
         .tile.hint .tile-inner { 
             animation: shake 2s infinite; 
             filter: brightness(1.3); 
         }
-
         .tile.blaster .tile-inner {
             background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,215,0,0.4) 70%);
             box-shadow: 0 0 10px 2px #fff, 0 0 15px 5px gold;
@@ -201,7 +184,6 @@
             animation: blastPulse 1s infinite alternate;
             z-index: 15;
         }
-        
         .tile.blaster .tile-inner::before {
             content: '⭐';
             position: absolute;
@@ -210,16 +192,13 @@
             text-shadow: 0 0 2px black;
             z-index: 20;
         }
-
         @keyframes blastPulse { 0% { transform: scale(1); filter: brightness(1); } 100% { transform: scale(1.1); filter: brightness(1.3); } }
-        
         .particle {
             position: absolute;
             pointer-events: none;
             border-radius: 50%;
             animation: pop 0.6s ease-out forwards;
         }
-
         .shop-item {
             display: flex;
             align-items: center;
@@ -232,12 +211,10 @@
         }
         .shop-item:hover { border-color: gold; transform: scale(1.02); }
         .shop-price { background: #ffd700; color: #8a6e02; padding: 5px 10px; border-radius: 10px; font-size: 0.9rem; white-space: nowrap; }
-
         @keyframes pulse { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(0.9); } }
         @keyframes pop { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-        
         .floater {
             position: absolute;
             color: #fff;
@@ -250,14 +227,11 @@
             white-space: nowrap;
         }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
-
         .mode-active { cursor: crosshair !important; border: 4px solid red; }
         .mode-free { border: 4px solid #ff4081; animation: pulse 0.5s infinite; }
-
     </style>
 </head>
 <body>
-
     <div style="position:absolute; top:10px; right:10px; z-index:100;">
         <button id="btn-sound" class="btn btn-icon" style="width:40px; height:40px; font-size:1.2rem; padding:0;" onclick="audioSys.toggle()">🔇</button>
     </div>
@@ -275,9 +249,7 @@
         <div class="panel">
             <h2>Select Level</h2>
             <div id="level-container" class="level-grid"></div>
-            <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">
-                Scroll for more 👇
-            </div>
+            <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">Scroll for more 👇</div>
             <button class="btn btn-pink" onclick="ui.nav('screen-home')" style="font-size:1rem; padding:10px 30px;">Back Home</button>
         </div>
     </div>
@@ -290,21 +262,18 @@
                 <div class="stat"><div>TARGET</div><div id="ui-target">1000</div></div>
                 <div class="stat"><div>SCORE</div><div id="ui-score">0</div></div>
             </div>
-            
             <div style="width:100%; height:10px; background:#ddd; border-radius:5px; margin-bottom:10px; overflow:hidden;">
                 <div id="score-bar" style="height:100%; width:0%; background:#00e5ff; transition:width 0.5s;"></div>
             </div>
-
             <div id="board-container">
                 <div id="grid" class="grid"></div>
             </div>
-
             <div style="margin-top:10px; display:flex; justify-content:center; flex-wrap:wrap; gap:5px;">
-                <button class="btn btn-pink btn-icon" id="btn-hammer" onclick="powerups.activate('hammer')">🔨</button>
-                <button class="btn btn-pink btn-icon" id="btn-bomb" onclick="powerups.activate('bomb')">💣</button>
-                <button class="btn btn-pink btn-icon" id="btn-shuffle" onclick="powerups.activate('shuffle')">🔄</button>
-                <button class="btn btn-pink btn-icon" id="btn-cocoteddy" onclick="powerups.activate('cocoteddy')">🧸</button>
-                <button class="btn btn-pink btn-icon" id="btn-candycane" onclick="powerups.activate('candycane')">🍭</button>
+                <button class="btn btn-pink btn-icon" id="btn-hammer" onclick="powerups.activate('hammer')">🔨<span style="font-size:0.6rem">1</span></button>
+                <button class="btn btn-pink btn-icon" id="btn-bomb" onclick="powerups.activate('bomb')">💣<span style="font-size:0.6rem">0</span></button>
+                <button class="btn btn-pink btn-icon" id="btn-shuffle" onclick="powerups.activate('shuffle')">🔄<span style="font-size:0.6rem">1</span></button>
+                <button class="btn btn-pink btn-icon" id="btn-cocoteddy" onclick="powerups.activate('cocoteddy')">🧸<span style="font-size:0.6rem">0</span></button>
+                <button class="btn btn-pink btn-icon" id="btn-candycane" onclick="powerups.activate('candycane')">🍭<span style="font-size:0.6rem">0</span></button>
             </div>
             <button style="margin-top:5px; background:transparent; border:none; color:#666;" onclick="game.gameOver(false)">Give Up</button>
         </div>
@@ -313,53 +282,32 @@
     <div id="screen-shop" class="screen">
         <div class="panel">
             <h2>Market</h2>
-            <div style="margin-bottom:10px;">Coins: <span id="shop-coins" style="color:#e6b800; font-size:1.5rem;">0</span></div>
-            
+            <div style="margin-bottom:10px;">Coins: <span id="shop-coins" style="color:#e6b800; font-size:1.5rem;">1000</span></div>
             <div class="shop-item" onclick="market.buy('hammer')">
                 <div style="font-size:2rem; margin-right:10px;">🔨</div>
-                <div style="text-align:left; flex:1">
-                    <div>Smash</div>
-                    <div style="font-size:0.7rem; color:#888;">Destroy 1 candy</div>
-                </div>
+                <div style="text-align:left; flex:1"><div>Smash</div><div style="font-size:0.7rem; color:#888;">Destroy 1 candy</div></div>
                 <div class="shop-price">450</div>
             </div>
-
             <div class="shop-item" onclick="market.buy('bomb')">
                 <div style="font-size:2rem; margin-right:10px;">💣</div>
-                <div style="text-align:left; flex:1">
-                    <div>Bomb</div>
-                    <div style="font-size:0.7rem; color:#888;">Destroy 3x3 area</div>
-                </div>
+                <div style="text-align:left; flex:1"><div>Bomb</div><div style="font-size:0.7rem; color:#888;">Destroy 3x3 area</div></div>
                 <div class="shop-price">999</div>
             </div>
-
             <div class="shop-item" onclick="market.buy('shuffle')">
                 <div style="font-size:2rem; margin-right:10px;">🔄</div>
-                <div style="text-align:left; flex:1">
-                    <div>Shuffle</div>
-                    <div style="font-size:0.7rem; color:#888;">Mix the board</div>
-                </div>
+                <div style="text-align:left; flex:1"><div>Shuffle</div><div style="font-size:0.7rem; color:#888;">Mix the board</div></div>
                 <div class="shop-price">350</div>
             </div>
-
             <div class="shop-item" onclick="market.buy('cocoteddy')">
                 <div style="font-size:2rem; margin-right:10px;">🧸</div>
-                <div style="text-align:left; flex:1">
-                    <div>Coco Teddy</div>
-                    <div style="font-size:0.7rem; color:#888;">5s Free Swaps</div>
-                </div>
+                <div style="text-align:left; flex:1"><div>Coco Teddy</div><div style="font-size:0.7rem; color:#888;">5s Free Swaps</div></div>
                 <div class="shop-price">799</div>
             </div>
-
             <div class="shop-item" onclick="market.buy('candycane')">
                 <div style="font-size:2rem; margin-right:10px;">🍭</div>
-                <div style="text-align:left; flex:1">
-                    <div>Candy Cane</div>
-                    <div style="font-size:0.7rem; color:#888;">Spawn 3x3 Match</div>
-                </div>
+                <div style="text-align:left; flex:1"><div>Candy Cane</div><div style="font-size:0.7rem; color:#888;">Spawn 3x3 Match</div></div>
                 <div class="shop-price">999</div>
             </div>
-
             <div id="shop-msg" style="height:20px; color:red; font-size:0.8rem; transition: opacity 0.5s;"></div>
             <button class="btn" onclick="ui.nav('screen-home')">Back</button>
         </div>
@@ -385,20 +333,23 @@
             levels.push({id:i, moves: moves, target: target, reward: reward});
         }
 
+        // Audio system - with background music restored
         const audioSys = {
             ctx: null,
             isMuted: true,
             isPlaying: false,
-
+            musicInterval: null,
+            
             init() {
                 if(!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if(this.ctx.state === 'suspended') {
-                    this.ctx.resume();
+                    try {
+                        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    } catch(e) {
+                        console.log('Audio not supported');
+                    }
                 }
             },
-
+            
             toggle() {
                 this.init();
                 this.isMuted = !this.isMuted;
@@ -406,21 +357,46 @@
                 if(!this.isMuted && !this.isPlaying) this.playMusic();
                 if(this.isMuted) this.stopMusic();
             },
-
+            
             playNote(freq, type, dur, vol=0.1) {
                 if(this.isMuted || !this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + dur);
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.value = vol;
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + dur);
+                } catch(e) {}
             },
-
+            
+            playMusic() {
+                if(this.isMuted || this.isPlaying) return;
+                this.isPlaying = true;
+                let note = 0;
+                const melody = [392, 523, 659, 783, 659, 523]; 
+                this.musicInterval = setInterval(() => {
+                    if(this.isMuted) { 
+                        this.stopMusic(); 
+                        return; 
+                    }
+                    this.playNote(melody[note % melody.length], 'sine', 0.5, 0.05);
+                    note++;
+                }, 400);
+            },
+            
+            stopMusic() {
+                this.isPlaying = false;
+                if(this.musicInterval) {
+                    clearInterval(this.musicInterval);
+                    this.musicInterval = null;
+                }
+            },
+            
             sfx(name) {
                 if(this.isMuted) return;
                 switch(name) {
@@ -440,31 +416,16 @@
                     case 'shuffle': this.playNote(300, 'sawtooth', 0.3); break;
                     case 'magic': this.playNote(900, 'sine', 0.5); break;
                 }
-            },
-
-            playMusic() {
-                if(this.isMuted || this.isPlaying) return;
-                this.isPlaying = true;
-                let note = 0;
-                const melody = [392, 523, 659, 783, 659, 523]; 
-                this.musicInterval = setInterval(() => {
-                    if(this.isMuted) { this.stopMusic(); return; }
-                    this.playNote(melody[note % melody.length], 'sine', 0.5, 0.05);
-                    note++;
-                }, 400);
-            },
-            stopMusic() {
-                this.isPlaying = false;
-                if(this.musicInterval) clearInterval(this.musicInterval);
             }
         };
 
         const cfg = { w: 8, h: 8, size: 40 };
         const emojis = ['🍇', '🍊', '🥥', '🍭', '🧁', '🍩','🍫','🍬']; 
         
+        // Game state
         let grid = []; 
         let domGrid = []; 
-        let state = {
+        const state = {
             selected: null,
             locked: false,
             score: 0,
@@ -480,6 +441,7 @@
         
         let hintTimer = null;
 
+        // UI Helper
         const ui = {
             nav(id) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -487,6 +449,7 @@
                 if(id === 'screen-shop') this.updateShop();
                 if(id === 'screen-levels') this.buildLevelSelect();
             },
+            
             buildLevelSelect() {
                 const con = document.getElementById('level-container');
                 con.innerHTML = '';
@@ -501,6 +464,7 @@
                     con.appendChild(btn);
                 });
             },
+            
             updateStats() {
                 document.getElementById('ui-lvl-num').innerText = state.levelIdx + 1;
                 document.getElementById('ui-score').innerText = state.score;
@@ -509,32 +473,35 @@
                 document.getElementById('score-bar').style.width = pct + '%';
                 document.getElementById('ui-target').innerText = state.target;
             },
+            
             updateShop() {
                 document.getElementById('shop-coins').innerText = state.coins;
                 ['hammer','bomb','shuffle','cocoteddy','candycane'].forEach(t => {
-                    const icon = t==='hammer'?'🔨':t==='bomb'?'💣':t==='shuffle'?'🔄':t==='cocoteddy'?'🧸':'🍭';
-                    document.getElementById(`btn-${t}`).innerHTML = `${icon} <span style="font-size:0.6rem">${state.inventory[t]}</span>`;
+                    const btn = document.getElementById(`btn-${t}`);
+                    if(btn) {
+                        const icon = t==='hammer'?'🔨':t==='bomb'?'💣':t==='shuffle'?'🔄':t==='cocoteddy'?'🧸':'🍭';
+                        btn.innerHTML = `${icon} <span style="font-size:0.6rem">${state.inventory[t]}</span>`;
+                    }
                 });
             }
         };
 
+        // Main Game Object
         const game = {
             startLevel(idx) {
                 state.levelIdx = idx;
-                const config = levels[idx] || levels[levels.length-1];
+                const config = levels[idx];
                 state.moves = config.moves;
                 state.target = config.target;
                 state.score = 0;
-                this.init();
-            },
-
-            init() {
                 state.locked = false;
                 state.activeTool = null;
                 state.freeMove = false;
                 document.getElementById('grid').classList.remove('mode-active', 'mode-free');
+                
+                // Start music when game begins (if unmuted)
                 audioSys.init();
-                audioSys.playMusic();
+                if(!audioSys.isMuted) audioSys.playMusic();
                 
                 ui.nav('screen-game');
                 this.buildGrid();
@@ -550,13 +517,14 @@
                 domGrid = [];
 
                 for(let r=0; r<cfg.h; r++) {
-                    let row = [], dRow = [];
+                    let row = [];
+                    let dRow = [];
                     for(let c=0; c<cfg.w; c++) {
                         let type;
                         do {
                             type = Math.floor(Math.random() * emojis.length);
                         } while(
-                            (r>=2 && grid[r-1][c]===type && grid[r-2][c]===type) ||
+                            (r>=2 && grid[r-1] && grid[r-1][c]===type && grid[r-2][c]===type) ||
                             (c>=2 && row[c-1]===type && row[c-2]===type)
                         );
                         
@@ -593,6 +561,7 @@
                 el.ondragstart = () => false;
 
                 const start = (e) => {
+                    e.preventDefault();
                     game.resetHint();
 
                     if(state.locked && !state.freeMove) return;
@@ -619,7 +588,7 @@
                         const dr = Math.abs(state.selected.r - r);
                         const dc = Math.abs(state.selected.c - c);
                         if(dr + dc === 1) {
-                            const oldSel = state.selected;
+                            const oldSel = {...state.selected};
                             this.deselect();
                             this.attemptSwap(oldSel, {r, c});
                             isDragging = false;
@@ -630,6 +599,7 @@
                 };
 
                 const move = (e) => {
+                    e.preventDefault();
                     if(!isDragging || !state.selected || (state.locked && !state.freeMove)) return;
                     
                     const r = parseInt(el.dataset.r);
@@ -673,13 +643,17 @@
             select(r, c) {
                 this.deselect();
                 state.selected = {r, c};
-                domGrid[r][c].classList.add('selected');
+                if(domGrid[r] && domGrid[r][c]) {
+                    domGrid[r][c].classList.add('selected');
+                }
                 audioSys.sfx('swap');
             },
+            
             deselect() {
                 if(state.selected) {
-                    if(domGrid[state.selected.r] && domGrid[state.selected.r][state.selected.c]) {
-                        domGrid[state.selected.r][state.selected.c].classList.remove('selected');
+                    const {r, c} = state.selected;
+                    if(domGrid[r] && domGrid[r][c]) {
+                        domGrid[r][c].classList.remove('selected');
                     }
                     state.selected = null;
                 }
@@ -697,15 +671,19 @@
                     for(let c=0; c<cfg.w; c++) {
                         if(c<cfg.w-1) {
                             if(this.testSwap(r, c, r, c+1)) {
-                                domGrid[r][c].classList.add('hint');
-                                domGrid[r][c+1].classList.add('hint');
+                                if(domGrid[r] && domGrid[r][c] && domGrid[r][c+1]) {
+                                    domGrid[r][c].classList.add('hint');
+                                    domGrid[r][c+1].classList.add('hint');
+                                }
                                 return;
                             }
                         }
                         if(r<cfg.h-1) {
                             if(this.testSwap(r, c, r+1, c)) {
-                                domGrid[r][c].classList.add('hint');
-                                domGrid[r+1][c].classList.add('hint');
+                                if(domGrid[r] && domGrid[r][c] && domGrid[r+1] && domGrid[r+1][c]) {
+                                    domGrid[r][c].classList.add('hint');
+                                    domGrid[r+1][c].classList.add('hint');
+                                }
                                 return;
                             }
                         }
@@ -714,6 +692,7 @@
             },
 
             testSwap(r1, c1, r2, c2) {
+                if(!grid[r1] || !grid[r2]) return false;
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
@@ -741,22 +720,39 @@
                     await this.animSwap(p1, p2); 
                     this.swapData(p1.r, p1.c, p2.r, p2.c); 
                     state.locked = false;
+                    this.resetHint();
                 }
             },
 
             swapData(r1, c1, r2, c2) {
+                if(!grid[r1] || !grid[r2]) return;
+                // Swap grid data
                 let temp = grid[r1][c1];
                 grid[r1][c1] = grid[r2][c2];
                 grid[r2][c2] = temp;
+                
+                // Swap DOM references
                 let tEl = domGrid[r1][c1];
                 domGrid[r1][c1] = domGrid[r2][c2];
                 domGrid[r2][c2] = tEl;
-                if(domGrid[r1][c1]) { domGrid[r1][c1].dataset.r = r1; domGrid[r1][c1].dataset.c = c1; }
-                if(domGrid[r2][c2]) { domGrid[r2][c2].dataset.r = r2; domGrid[r2][c2].dataset.c = c2; }
+                
+                // Update data attributes
+                if(domGrid[r1][c1]) { 
+                    domGrid[r1][c1].dataset.r = r1; 
+                    domGrid[r1][c1].dataset.c = c1; 
+                }
+                if(domGrid[r2][c2]) { 
+                    domGrid[r2][c2].dataset.r = r2; 
+                    domGrid[r2][c2].dataset.c = c2; 
+                }
             },
 
             animSwap(p1, p2) {
                 return new Promise(resolve => {
+                    if(!domGrid[p1.r] || !domGrid[p1.r][p1.c] || !domGrid[p2.r] || !domGrid[p2.r][p2.c]) {
+                        resolve();
+                        return;
+                    }
                     const t1 = domGrid[p1.r][p1.c]; 
                     const t2 = domGrid[p2.r][p2.c];
                     t1.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
@@ -769,8 +765,8 @@
                 let matched = new Set();
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w-2; c++) {
+                        if(!grid[r] || grid[r][c] === -1) continue;
                         let t = grid[r][c];
-                        if(t === -1) continue;
                         let matchLen = 1;
                         while(c+matchLen < cfg.w && grid[r][c+matchLen] === t) matchLen++;
                         if(matchLen >= 3) {
@@ -781,8 +777,8 @@
                 }
                 for(let c=0; c<cfg.w; c++) {
                     for(let r=0; r<cfg.h-2; r++) {
+                        if(!grid[r] || grid[r][c] === -1) continue;
                         let t = grid[r][c];
-                        if(t === -1) continue;
                         let matchLen = 1;
                         while(r+matchLen < cfg.h && grid[r+matchLen][c] === t) matchLen++;
                         if(matchLen >= 3) {
@@ -797,11 +793,9 @@
                 });
             },
 
-            // --------- FIXED processMatches: proper blaster explosion handling ----------
             async processMatches(matches) {
                 this.deselect();
 
-                // If no matches, simply return early
                 if(!matches || matches.length === 0) {
                     state.locked = false;
                     this.resetHint();
@@ -817,103 +811,95 @@
                     blasterPos = {r: m.r, c: m.c};
                 }
 
-                // Build a set of all cells that should be removed.
-                // Start with the matched cells.
                 const removals = new Set();
                 for (let m of matches) removals.add(`${m.r},${m.c}`);
 
                 let baseScore = matches.length * 10;
                 let bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
-                let extraBlastSet = new Set(); // cells added by exploding blasters
+                let extraBlastSet = new Set();
 
-                // First pass: detect existing blasters inside matches and mark their 3x3 area for removal
                 for (let m of matches) {
                     const el = domGrid[m.r] ? domGrid[m.r][m.c] : null;
                     if (el && el.classList.contains('blaster')) {
-                        // existing blaster activated: add extra score and mark 3x3 to remove
                         baseScore += 150;
-                        game.floatText(m.r, m.c, "BLAST! +150");
+                        this.floatText(m.r, m.c, "BLAST! +150");
                         audioSys.sfx('blaster');
-                        game.createParticles(m.r, m.c, "⭐");
+                        this.createParticles(m.r, m.c, "⭐");
 
                         for (let i = m.r - 1; i <= m.r + 1; i++) {
                             for (let j = m.c - 1; j <= m.c + 1; j++) {
-                                if (i >= 0 && i < cfg.h && j >= 0 && j < cfg.w && grid[i][j] !== -1) {
+                                if (i >= 0 && i < cfg.h && j >= 0 && j < cfg.w && grid[i] && grid[i][j] !== -1) {
                                     extraBlastSet.add(`${i},${j}`);
                                 }
                             }
                         }
-                        // also remove the blaster center itself
                         extraBlastSet.add(`${m.r},${m.c}`);
                     }
                 }
 
-                // Merge blast targets into removals
                 for (let s of extraBlastSet) removals.add(s);
 
                 state.score += baseScore + bonus;
                 ui.updateStats();
 
-                // show float text for center of original match (if any)
                 const center = matches[Math.floor(matches.length/2)];
                 if(center) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
 
-                // Second pass: animate removals (BUT if creating a new blaster, do NOT remove the chosen blasterPos)
                 const removalsArray = Array.from(removals).map(s => s.split(',').map(Number));
                 for (let [r, c] of removalsArray) {
                     if (createBlaster && blasterPos && r === blasterPos.r && c === blasterPos.c) {
-                        // keep this cell as the new blaster tile (don't remove)
                         continue;
                     }
                     const el = domGrid[r] ? domGrid[r][c] : null;
                     if (el) {
                         const inner = el.querySelector('.tile-inner');
                         const char = inner ? inner.innerText : '';
-                        game.createParticles(r, c, char || '•');
-                        // scale out visually
+                        this.createParticles(r, c, char || '•');
                         el.style.transform = `${el.style.transform} scale(0)`;
                     }
-                    grid[r][c] = -1;
+                    if(grid[r]) grid[r][c] = -1;
                 }
 
-                // If we are creating a new blaster, add the blaster class to that position
                 if (createBlaster && blasterPos) {
                     const be = domGrid[blasterPos.r] ? domGrid[blasterPos.r][blasterPos.c] : null;
                     if (be) {
                         be.classList.add('blaster');
                         be.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
                         setTimeout(() => {
-                            be.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
+                            if(be) {
+                                be.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
+                            }
                         }, 200);
-                        game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
+                        this.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
                     }
                 }
 
-                // small wait to let animations show, then remove DOM nodes for emptied cells
                 await this.wait(300);
+                
+                // Clean up null DOM elements
                 for(let r=0; r<cfg.h; r++){
                     for(let c=0; c<cfg.w; c++){
-                        if(grid[r][c] === -1 && domGrid[r][c]) {
+                        if(grid[r] && grid[r][c] === -1 && domGrid[r] && domGrid[r][c]) {
                             domGrid[r][c].remove();
                             domGrid[r][c] = null;
                         }
                     }
                 }
 
-                // apply gravity and continue chain reactions if any
                 await this.applyGravity();
             },
-            // -----------------------------------------------------------------------
 
             async applyGravity() {
                 let moved = false;
                 for(let c=0; c<cfg.w; c++) {
                     let emptySlots = 0;
                     for(let r=cfg.h-1; r>=0; r--) {
+                        if(!grid[r]) continue;
                         if(grid[r][c] === -1) {
                             emptySlots++;
                         } else if (emptySlots > 0) {
                             let targetR = r + emptySlots;
+                            if(!grid[targetR]) continue;
                             grid[targetR][c] = grid[r][c];
                             grid[r][c] = -1;
                             let el = domGrid[r][c];
@@ -927,6 +913,7 @@
                         }
                     }
                     for(let r=0; r<emptySlots; r++) {
+                        if(!grid[r]) continue;
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
                         const el = this.createTile(r, c, type);
@@ -958,6 +945,8 @@
             },
 
             createParticles(r, c, char) {
+                const gridEl = document.getElementById('grid');
+                if(!gridEl) return;
                 const x = c * cfg.size + 20;
                 const y = r * cfg.size + 20;
                 for(let i=0; i<6; i++) {
@@ -971,18 +960,20 @@
                     const vel = Math.random() * 50 + 20;
                     p.style.setProperty('--dx', Math.cos(angle)*vel + 'px');
                     p.style.setProperty('--dy', Math.sin(angle)*vel + 'px');
-                    document.getElementById('grid').appendChild(p);
+                    gridEl.appendChild(p);
                     setTimeout(()=>p.remove(), 600);
                 }
             },
 
             floatText(r, c, txt) {
+                const gridEl = document.getElementById('grid');
+                if(!gridEl) return;
                 const el = document.createElement('div');
                 el.className = 'floater';
                 el.innerText = txt;
                 el.style.left = (c*cfg.size + 10) + 'px';
                 el.style.top = (r*cfg.size) + 'px';
-                document.getElementById('grid').appendChild(el);
+                gridEl.appendChild(el);
                 setTimeout(()=>el.remove(), 1500);
             },
 
@@ -1004,21 +995,23 @@
                     }
                 }
                 if(!possible) {
-                    game.floatText(3, 3, "No Moves! Shuffle!");
+                    this.floatText(3, 3, "No Moves! Shuffle!");
                     setTimeout(() => powerups.doShuffle(), 1000);
                 }
             },
 
             gameOver(win) {
                 state.locked = true;
+                audioSys.stopMusic(); // Stop music when game ends
                 setTimeout(() => {
                     const btnContainer = document.getElementById('res-btns');
-                    ui.nav('screen-result');
                     btnContainer.innerHTML = '';
+                    
                     const btnMenu = document.createElement('button');
                     btnMenu.className = 'btn btn-pink';
                     btnMenu.innerText = 'Levels';
                     btnMenu.onclick = () => ui.nav('screen-levels');
+                    
                     if(win) {
                         audioSys.sfx('win');
                         const reward = levels[state.levelIdx] ? levels[state.levelIdx].reward : 100;
@@ -1044,6 +1037,7 @@
                         btnContainer.appendChild(btnRetry);
                         btnContainer.appendChild(btnMenu);
                     }
+                    ui.nav('screen-result');
                     ui.updateShop();
                 }, 500);
             },
@@ -1051,6 +1045,7 @@
             wait(ms) { return new Promise(r => setTimeout(r, ms)); }
         };
 
+        // Powerups
         const powerups = {
             activate(tool) {
                 if(state.locked && !state.freeMove) return;
@@ -1070,12 +1065,14 @@
                     market.showMsg("Buy in Shop!", "red");
                 }
             },
+            
             useInstant(tool) {
                 state.inventory[tool]--;
                 ui.updateShop();
                 if(tool === 'shuffle') this.doShuffle();
                 if(tool === 'cocoteddy') this.doCocoTeddy();
             },
+            
             use(r, c) {
                 if(!state.activeTool) return;
                 const tool = state.activeTool;
@@ -1101,18 +1098,26 @@
                 }
                 setTimeout(() => game.applyGravity(), 300);
             },
+            
             destroyAt(r, c) {
-                if(grid[r][c] !== -1) {
+                if(grid[r] && grid[r][c] !== -1) {
                     const el = domGrid[r][c];
-                    game.createParticles(r, c, el.querySelector('.tile-inner').innerText);
-                    el.style.transform = `${el.style.transform} scale(0)`;
+                    if(el) {
+                        game.createParticles(r, c, el.querySelector('.tile-inner').innerText);
+                        el.style.transform = `${el.style.transform} scale(0)`;
+                    }
                     grid[r][c] = -1;
                 }
             },
+            
             doShuffle() {
                 audioSys.sfx('shuffle');
                 let flat = [];
-                for(let r=0; r<cfg.h; r++) for(let c=0; c<cfg.w; c++) if(grid[r][c]!==-1) flat.push(grid[r][c]);
+                for(let r=0; r<cfg.h; r++) {
+                    for(let c=0; c<cfg.w; c++) {
+                        if(grid[r] && grid[r][c] !== -1) flat.push(grid[r][c]);
+                    }
+                }
                 for(let i=flat.length-1; i>0; i--) {
                     const j = Math.floor(Math.random() * (i+1));
                     [flat[i], flat[j]] = [flat[j], flat[i]];
@@ -1120,19 +1125,25 @@
                 let k=0;
                 for(let r=0; r<cfg.h; r++) {
                     for(let c=0; c<cfg.w; c++) {
-                        if(grid[r][c]!==-1) {
+                        if(grid[r] && grid[r][c] !== -1) {
                             grid[r][c] = flat[k++];
-                            domGrid[r][c].querySelector('.tile-inner').innerText = emojis[grid[r][c]];
-                            domGrid[r][c].classList.remove('blaster');
-                            domGrid[r][c].style.transform = `scale(0)`;
-                            setTimeout(() => {
-                                domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
-                            }, 50 + k*10);
+                            if(domGrid[r] && domGrid[r][c]) {
+                                const inner = domGrid[r][c].querySelector('.tile-inner');
+                                if(inner) inner.innerText = emojis[grid[r][c]];
+                                domGrid[r][c].classList.remove('blaster');
+                                domGrid[r][c].style.transform = `scale(0)`;
+                                setTimeout(() => {
+                                    if(domGrid[r] && domGrid[r][c]) {
+                                        domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
+                                    }
+                                }, 50 + k*10);
+                            }
                         }
                     }
                 }
                 game.resetHint();
             },
+            
             doCocoTeddy() {
                 audioSys.sfx('magic');
                 game.floatText(3, 3, "FREE MOVE 5s!");
@@ -1151,24 +1162,32 @@
                     }
                 }, 1000);
             },
+            
             doCandyCane(r, c) {
+                if(!grid[r]) return;
                 const targetType = grid[r][c];
                 if(targetType === -1) return;
                 for(let i=r-1; i<=r+1; i++) {
                     for(let j=c-1; j<=c+1; j++) {
-                        if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
+                        if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i] && grid[i][j] !== -1) {
                             grid[i][j] = targetType;
-                            domGrid[i][j].querySelector('.tile-inner').innerText = emojis[targetType];
-                            domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
-                            setTimeout(() => {
-                                domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1)`;
-                            }, 150);
+                            if(domGrid[i] && domGrid[i][j]) {
+                                const inner = domGrid[i][j].querySelector('.tile-inner');
+                                if(inner) inner.innerText = emojis[targetType];
+                                domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
+                                setTimeout(() => {
+                                    if(domGrid[i] && domGrid[i][j]) {
+                                        domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1)`;
+                                    }
+                                }, 150);
+                            }
                         }
                     }
                 }
             }
         };
 
+        // Market
         const market = {
             prices: { 'hammer': 450, 'bomb': 999, 'shuffle': 350, 'cocoteddy': 799, 'candycane': 999 },
             buy(type) {
@@ -1193,8 +1212,17 @@
             }
         };
 
+        // Initialize
         ui.buildLevelSelect();
-
+        
+        // Auto-unmute and play music on first interaction (browser policy)
+        document.body.addEventListener('click', function initAudioOnFirstClick() {
+            audioSys.init();
+            if(!audioSys.isMuted) {
+                audioSys.playMusic();
+            }
+            document.body.removeEventListener('click', initAudioOnFirstClick);
+        }, { once: true });
     </script>
 </body>
 </html>
