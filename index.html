@@ -152,21 +152,22 @@
             margin: 0 auto;
         }
 
-        /* UPDATED TILE CSS TO FIX BUG */
         .tile {
             position: absolute;
             width: 40px;
             height: 40px;
             left: 0; top: 0;
-            /* Flex moved to tile-inner */
             cursor: pointer;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
             touch-action: none; 
-            /* Pointer events are handled here for dragging */
         }
 
+        /* FIX: tile-inner now handles 'position: relative' so children (pseudo-elements)
+           are positioned relative to the shaking/animated candy, not the static grid slot.
+        */
         .tile-inner {
+            position: relative; 
             width: 100%;
             height: 100%;
             display: flex;
@@ -176,11 +177,12 @@
             border-radius: 50%;
             backface-visibility: hidden;
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-            /* All visual animations happen here */
         }
 
         .tile.selected { z-index: 20; }
-        .tile.selected::after {
+        
+        /* FIX: Moved selection glow to .tile-inner so it shakes with the candy */
+        .tile.selected .tile-inner::after {
             content: '';
             position: absolute;
             width: 100%; height: 100%;
@@ -188,15 +190,14 @@
             background: rgba(255, 255, 255, 0.5);
             animation: pulse 0.8s infinite;
             pointer-events: none;
+            left: 0; top: 0;
         }
         
-        /* HINT now applies to tile-inner to avoid breaking position */
         .tile.hint .tile-inner { 
             animation: shake 2s infinite; 
             filter: brightness(1.3); 
         }
 
-        /* BLASTER STYLE moved to tile-inner */
         .tile.blaster .tile-inner {
             background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,215,0,0.4) 70%);
             box-shadow: 0 0 10px 2px #fff, 0 0 15px 5px gold;
@@ -204,7 +205,9 @@
             animation: blastPulse 1s infinite alternate;
             z-index: 15;
         }
-        .tile.blaster::before {
+        
+        /* FIX: Moved blaster star to .tile-inner so it shakes with the candy */
+        .tile.blaster .tile-inner::before {
             content: '⭐';
             position: absolute;
             font-size: 10px;
@@ -577,7 +580,7 @@
                 el.className = 'tile';
                 el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
                 
-                // FIXED: Create separate inner element for animations
+                // Create separate inner element for animations
                 const inner = document.createElement('div');
                 inner.className = 'tile-inner';
                 inner.innerText = emojis[type];
@@ -596,7 +599,7 @@
                 el.ondragstart = () => false;
 
                 const start = (e) => {
-                    // FIXED: Reset hint immediately on interaction
+                    // Reset hint immediately on interaction
                     game.resetHint();
 
                     if(state.locked && !state.freeMove) return;
@@ -827,7 +830,6 @@
                 this.deselect();
                 
                 // BLASTER LOGIC: Check if this is a big match (4+)
-                // Since matches is a flat list, we need to guess grouping or use simple heuristic
                 // If matches.length >= 4, we spawn a blaster at the center of the match
                 let createBlaster = false;
                 let blasterPos = null;
@@ -1158,7 +1160,7 @@
                     for(let c=0; c<cfg.w; c++) {
                         if(grid[r][c]!==-1) {
                             grid[r][c] = flat[k++];
-                            // FIXED: Update inner text
+                            // Update inner text
                             domGrid[r][c].querySelector('.tile-inner').innerText = emojis[grid[r][c]];
                             domGrid[r][c].classList.remove('blaster'); // Reset special status on shuffle
                             domGrid[r][c].style.transform = `scale(0)`;
@@ -1197,7 +1199,7 @@
                     for(let j=c-1; j<=c+1; j++) {
                         if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
                             grid[i][j] = targetType;
-                            // FIXED: Update inner text
+                            // Update inner text
                             domGrid[i][j].querySelector('.tile-inner').innerText = emojis[targetType];
                             domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
                             setTimeout(() => {
