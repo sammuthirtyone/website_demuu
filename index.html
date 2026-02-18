@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jelly PoP - Blaster Edition</title>
+    <title>Jelly PoP - Blaster Fix</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
         :root {
             --primary: #ff4081;
             --secondary: #00e5ff;
-            --glass: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.95);
             --tile-size: 45px;
         }
 
         body {
             margin: 0;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            background-image: radial-gradient(circle at 10% 20%, rgb(255, 197, 218) 0%, rgb(255, 120, 189) 90.1%);
+            background: radial-gradient(circle at 50% 10%, #ffecb3 0%, #ffcc80 100%);
             font-family: 'Fredoka One', cursive;
             overflow: hidden;
             touch-action: none;
@@ -39,7 +38,7 @@
             transition: 0.3s;
             opacity: 0;
             pointer-events: none;
-            transform: scale(0.9);
+            transform: scale(0.95);
             z-index: 1;
         }
 
@@ -53,96 +52,46 @@
         .panel {
             background: var(--glass);
             padding: 20px;
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2), inset 0 0 0 5px rgba(255,255,255,0.5);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             text-align: center;
             width: 90%;
             max-width: 400px;
-            backdrop-filter: blur(10px);
-            animation: float 4s ease-in-out infinite;
+            border: 4px solid #fff;
         }
 
         h1 {
             font-size: 3rem;
-            background: -webkit-linear-gradient(#ff00cc, #333399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ff4081;
             margin: 0;
-            filter: drop-shadow(2px 2px 0px #fff);
+            text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1);
         }
 
         .btn {
-            background: linear-gradient(to bottom, #ffeb3b, #ffc107);
+            background: linear-gradient(to bottom, #ffeb3b, #fdd835);
             border: none;
             border-radius: 50px;
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            color: #d32f2f;
+            padding: 12px 30px;
+            font-size: 1.4rem;
+            color: #d84315;
             font-family: inherit;
             cursor: pointer;
-            margin: 10px;
-            box-shadow: 0 6px 0 #c69403, 0 10px 10px rgba(0,0,0,0.1);
+            margin: 8px;
+            box-shadow: 0 5px 0 #f9a825, 0 10px 10px rgba(0,0,0,0.1);
             transition: transform 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #f9a825; }
+        .btn-pink { background: linear-gradient(to bottom, #ff80ab, #f50057); color: white; box-shadow: 0 5px 0 #c51162; }
+        .btn-pink:active { box-shadow: 0 1px 0 #c51162; }
+
+        /* --- Game Board --- */
+        #board-wrapper {
             position: relative;
-            overflow: hidden;
-        }
-        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #c69403; }
-        .btn-pink { background: linear-gradient(to bottom, #ff80ab, #f50057); color: white; box-shadow: 0 6px 0 #ad003d; }
-        .btn-pink:active { box-shadow: 0 2px 0 #ad003d; }
-        .btn-icon { padding: 10px; width: 50px; height: 50px; border-radius: 50%; font-size: 1.4rem; margin: 3px; }
-
-        .level-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-            padding: 10px;
-            max-height: 250px; 
-            overflow-y: auto; 
-            scrollbar-width: thin;
-        }
-
-        .level-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            border: none;
-            font-family: inherit;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-            background: linear-gradient(to bottom, #00e5ff, #00b0ff);
-            box-shadow: 0 5px 0 #0081cb, 0 5px 10px rgba(0,0,0,0.2);
-            transition: 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto; 
-        }
-        .level-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0081cb; }
-        .level-btn.locked { background: #e0e0e0; color: #999; box-shadow: 0 5px 0 #bdbdbd; cursor: not-allowed; }
-        .level-btn.locked:active { transform: none; }
-
-        .header-stats {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-bottom: 10px;
-            background: white;
-            padding: 10px;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
-        .stat div:first-child { font-size: 0.8rem; color: #888; }
-        .stat div:last-child { font-size: 1.4rem; color: #333; }
-
-        #board-container {
-            position: relative;
-            background: rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.5);
             border-radius: 15px;
             padding: 10px;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            margin: 10px 0;
         }
 
         .grid {
@@ -156,104 +105,102 @@
             position: absolute;
             width: 40px;
             height: 40px;
-            left: 0; top: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 28px;
             cursor: pointer;
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1.2);
             z-index: 10;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-            touch-action: none; 
-            backface-visibility: hidden;
-            border-radius: 50%;
+            filter: drop-shadow(0 3px 2px rgba(0,0,0,0.2));
+            will-change: transform;
         }
 
-        .tile.selected { z-index: 20; }
-        .tile.selected::after {
+        .tile.selected { 
+            z-index: 20; 
+            transform: scale(1.15) !important;
+            filter: brightness(1.2) drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+        
+        /* BLASTER STYLES */
+        .tile.blaster {
+            z-index: 15;
+        }
+        .tile.blaster::after {
+            content: '⭐';
+            position: absolute;
+            font-size: 16px;
+            top: -5px; right: -5px;
+            animation: spin 2s linear infinite;
+        }
+        .tile.blaster::before {
             content: '';
             position: absolute;
             width: 100%; height: 100%;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            animation: pulse 0.8s infinite;
-        }
-        .tile.hint { animation: shake 2s infinite; filter: brightness(1.3); }
-
-        /* BLASTER STYLE */
-        .tile.blaster {
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,215,0,0.4) 70%);
-            box-shadow: 0 0 10px 2px #fff, 0 0 15px 5px gold;
-            border: 2px solid #fff;
-            animation: blastPulse 1s infinite alternate;
-            z-index: 15;
-        }
-        .tile.blaster::before {
-            content: '⭐';
-            position: absolute;
-            font-size: 10px;
-            top: 0; right: 0;
-            text-shadow: 0 0 2px black;
+            border: 3px solid #ffd700;
+            box-sizing: border-box;
+            animation: pulse-ring 1s infinite;
         }
 
-        @keyframes blastPulse { 0% { transform: scale(1); filter: brightness(1); } 100% { transform: scale(1.1); filter: brightness(1.3); } }
-        
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            border-radius: 50%;
-            animation: pop 0.6s ease-out forwards;
-        }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.4); opacity: 0; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity:1; } 100% { transform: translateY(-50px); opacity:0; } }
 
-        .shop-item {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 15px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        .shop-item:hover { border-color: gold; transform: scale(1.02); }
-        .shop-price { background: #ffd700; color: #8a6e02; padding: 5px 10px; border-radius: 10px; font-size: 0.9rem; white-space: nowrap; }
-
-        @keyframes pulse { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(0.9); } }
-        @keyframes pop { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-        
         .floater {
             position: absolute;
             color: #fff;
+            font-weight: 900;
+            font-size: 20px;
             text-shadow: 2px 2px 0 #000;
-            font-weight: bold;
-            font-size: 1.5rem;
             pointer-events: none;
-            animation: floatUp 1.5s forwards;
             z-index: 100;
+            animation: floatUp 1s forwards;
             white-space: nowrap;
         }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
 
-        .mode-active { cursor: crosshair !important; border: 4px solid red; }
-        .mode-free { border: 4px solid #ff4081; animation: pulse 0.5s infinite; }
+        .header-stats {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 15px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .stat-val { font-size: 1.2rem; color: #333; }
 
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        .lvl-btn {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 12px;
+            background: #e0e0e0;
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .lvl-btn.unlocked { background: #00e5ff; color: #fff; box-shadow: 0 4px 0 #00b8d4; }
+        .lvl-btn.unlocked:active { transform: translateY(2px); box-shadow: 0 0 0; }
     </style>
 </head>
 <body>
 
-    <div style="position:absolute; top:10px; right:10px; z-index:100;">
-        <button id="btn-sound" class="btn btn-icon" style="width:40px; height:40px; font-size:1.2rem; padding:0;" onclick="audioSys.toggle()">🔇</button>
-    </div>
-
     <div id="screen-home" class="screen active">
         <div class="panel">
-            <h1>Jelly<br>Pop</h1>
-            <p>Blaster Edition</p>
-            <button class="btn" onclick="ui.nav('screen-levels')">PLAY</button>
-            <button class="btn btn-pink" onclick="ui.nav('screen-shop')">SHOP</button>
+            <h1>Jelly Pop</h1>
+            <p style="color:#666;">Blaster Edition</p>
+            <button class="btn" onclick="game.openLevels()">Play</button>
         </div>
     </div>
 
@@ -261,950 +208,459 @@
         <div class="panel">
             <h2>Select Level</h2>
             <div id="level-container" class="level-grid"></div>
-            <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">
-                Scroll for more 👇
-            </div>
-            <button class="btn btn-pink" onclick="ui.nav('screen-home')" style="font-size:1rem; padding:10px 30px;">Back Home</button>
+            <button class="btn btn-pink" onclick="ui.nav('screen-home')" style="margin-top:15px;">Back</button>
         </div>
     </div>
 
     <div id="screen-game" class="screen">
-        <div class="panel" style="width: 100%; max-width: 380px; padding: 10px; background: rgba(255,255,255,0.7);">
+        <div class="panel" style="padding:10px; width:95%; max-width:360px;">
             <div class="header-stats">
-                <div class="stat"><div>LVL</div><div id="ui-lvl-num">1</div></div>
-                <div class="stat"><div>MOVES</div><div id="ui-moves">20</div></div>
-                <div class="stat"><div>TARGET</div><div id="ui-target">1000</div></div>
-                <div class="stat"><div>SCORE</div><div id="ui-score">0</div></div>
-            </div>
-            
-            <div style="width:100%; height:10px; background:#ddd; border-radius:5px; margin-bottom:10px; overflow:hidden;">
-                <div id="score-bar" style="height:100%; width:0%; background:#00e5ff; transition:width 0.5s;"></div>
+                <div class="stat-box"><span class="stat-label">Moves</span><span class="stat-val" id="ui-moves">0</span></div>
+                <div class="stat-box"><span class="stat-label">Target</span><span class="stat-val" id="ui-target">0</span></div>
+                <div class="stat-box"><span class="stat-label">Score</span><span class="stat-val" id="ui-score">0</span></div>
             </div>
 
-            <div id="board-container">
+            <div style="width:100%; height:8px; background:#eee; border-radius:4px; margin:10px 0; overflow:hidden;">
+                <div id="progress-bar" style="width:0%; height:100%; background:#00e5ff; transition:width 0.5s;"></div>
+            </div>
+
+            <div id="board-wrapper">
                 <div id="grid" class="grid"></div>
             </div>
 
-            <div style="margin-top:10px; display:flex; justify-content:center; flex-wrap:wrap; gap:5px;">
-                <button class="btn btn-pink btn-icon" id="btn-hammer" onclick="powerups.activate('hammer')">🔨</button>
-                <button class="btn btn-pink btn-icon" id="btn-bomb" onclick="powerups.activate('bomb')">💣</button>
-                <button class="btn btn-pink btn-icon" id="btn-shuffle" onclick="powerups.activate('shuffle')">🔄</button>
-                <button class="btn btn-pink btn-icon" id="btn-cocoteddy" onclick="powerups.activate('cocoteddy')">🧸</button>
-                <button class="btn btn-pink btn-icon" id="btn-candycane" onclick="powerups.activate('candycane')">🍭</button>
-            </div>
-            <button style="margin-top:5px; background:transparent; border:none; color:#666;" onclick="game.gameOver(false)">Give Up</button>
+            <button class="btn btn-pink" onclick="game.quit()" style="font-size:1rem; padding:8px 20px;">Exit Level</button>
         </div>
     </div>
 
-    <div id="screen-shop" class="screen">
+    <div id="screen-result" class="screen" style="background: rgba(0,0,0,0.8);">
         <div class="panel">
-            <h2>Market</h2>
-            <div style="margin-bottom:10px;">Coins: <span id="shop-coins" style="color:#e6b800; font-size:1.5rem;">0</span></div>
-            
-            <div class="shop-item" onclick="market.buy('hammer')">
-                <div style="font-size:2rem; margin-right:10px;">🔨</div>
-                <div style="text-align:left; flex:1">
-                    <div>Smash</div>
-                    <div style="font-size:0.7rem; color:#888;">Destroy 1 candy</div>
-                </div>
-                <div class="shop-price">450</div>
-            </div>
-
-            <div class="shop-item" onclick="market.buy('bomb')">
-                <div style="font-size:2rem; margin-right:10px;">💣</div>
-                <div style="text-align:left; flex:1">
-                    <div>Bomb</div>
-                    <div style="font-size:0.7rem; color:#888;">Destroy 3x3 area</div>
-                </div>
-                <div class="shop-price">999</div>
-            </div>
-
-            <div class="shop-item" onclick="market.buy('shuffle')">
-                <div style="font-size:2rem; margin-right:10px;">🔄</div>
-                <div style="text-align:left; flex:1">
-                    <div>Shuffle</div>
-                    <div style="font-size:0.7rem; color:#888;">Mix the board</div>
-                </div>
-                <div class="shop-price">350</div>
-            </div>
-
-            <div class="shop-item" onclick="market.buy('cocoteddy')">
-                <div style="font-size:2rem; margin-right:10px;">🧸</div>
-                <div style="text-align:left; flex:1">
-                    <div>Coco Teddy</div>
-                    <div style="font-size:0.7rem; color:#888;">5s Free Swaps</div>
-                </div>
-                <div class="shop-price">799</div>
-            </div>
-
-            <div class="shop-item" onclick="market.buy('candycane')">
-                <div style="font-size:2rem; margin-right:10px;">🍭</div>
-                <div style="text-align:left; flex:1">
-                    <div>Candy Cane</div>
-                    <div style="font-size:0.7rem; color:#888;">Spawn 3x3 Match</div>
-                </div>
-                <div class="shop-price">999</div>
-            </div>
-
-            <div id="shop-msg" style="height:20px; color:red; font-size:0.8rem; transition: opacity 0.5s;"></div>
-            <button class="btn" onclick="ui.nav('screen-home')">Back</button>
-        </div>
-    </div>
-
-    <div id="screen-result" class="screen" style="z-index:20; background:rgba(0,0,0,0.8);">
-        <div class="panel">
-            <h1 id="res-title">Won!</h1>
-            <div id="res-stars" style="font-size:3rem;">⭐⭐⭐</div>
-            <p id="res-msg">Score: 5000</p>
-            <div id="res-btns"></div>
+            <h1 id="res-title">Win!</h1>
+            <div id="res-msg" style="margin:20px 0; font-size:1.2rem;"></div>
+            <button class="btn" onclick="game.openLevels()">Levels</button>
+            <button class="btn btn-pink" onclick="game.retry()">Retry</button>
         </div>
     </div>
 
     <script>
-        // --- LEVEL CONFIGURATION ---
-        const levels = [];
-        for(let i=1; i<=300; i++){
-            let moves = 15 + Math.floor(i * 1.5);
-            let target = 500 + (i * 200);
-            let reward = 50 + (i * 10);
-            if(i % 5 === 0) { moves += 10; target += 1000; reward += 50; }
-            levels.push({id:i, moves: moves, target: target, reward: reward});
-        }
-
-        const audioSys = {
-            ctx: null,
-            isMuted: true,
-            isPlaying: false,
-
-            init() {
-                if(!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if(this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
-            },
-
-            toggle() {
-                this.init();
-                this.isMuted = !this.isMuted;
-                document.getElementById('btn-sound').innerText = this.isMuted ? '🔇' : '🔊';
-                if(!this.isMuted && !this.isPlaying) this.playMusic();
-                if(this.isMuted) this.stopMusic();
-            },
-
-            playNote(freq, type, dur, vol=0.1) {
-                if(this.isMuted || !this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + dur);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + dur);
-            },
-
-            sfx(name) {
-                if(this.isMuted) return;
-                switch(name) {
-                    case 'swap': this.playNote(400, 'sine', 0.1); break;
-                    case 'match': 
-                        this.playNote(600, 'triangle', 0.1); 
-                        setTimeout(()=>this.playNote(800, 'triangle', 0.1), 100);
-                        break;
-                    case 'blaster':
-                        this.playNote(200, 'sawtooth', 0.2);
-                        setTimeout(()=>this.playNote(100, 'square', 0.4), 100);
-                        break;
-                    case 'bad': this.playNote(150, 'sawtooth', 0.3); break;
-                    case 'win': 
-                        [0, 0.2, 0.4].forEach((t, i) => setTimeout(() => this.playNote(500 + i*200, 'square', 0.3), t*1000));
-                        break;
-                    case 'shuffle': this.playNote(300, 'sawtooth', 0.3); break;
-                    case 'magic': this.playNote(900, 'sine', 0.5); break;
-                }
-            },
-
-            playMusic() {
-                if(this.isMuted || this.isPlaying) return;
-                this.isPlaying = true;
-                let note = 0;
-                const melody = [392, 523, 659, 783, 659, 523]; 
-                this.musicInterval = setInterval(() => {
-                    if(this.isMuted) { this.stopMusic(); return; }
-                    this.playNote(melody[note % melody.length], 'sine', 0.5, 0.05);
-                    note++;
-                }, 400);
-            },
-            stopMusic() {
-                this.isPlaying = false;
-                if(this.musicInterval) clearInterval(this.musicInterval);
-            }
-        };
-
-        const cfg = { w: 8, h: 8, size: 40 };
-        const emojis = ['🍇', '🍊', '🥥', '🍭', '🧁', '🍩','🍫','🍬']; 
-        
-        let grid = []; 
-        let domGrid = []; 
-        let state = {
-            selected: null,
-            locked: false,
+        // --- CONFIG & STATE ---
+        const CFG = { w: 8, h: 8, size: 40, colors: ['🔴','🟠','🟡','🟢','🔵','🟣'] };
+        const STATE = {
+            grid: [],     // Internal numbers
+            domGrid: [],  // DOM Elements
             score: 0,
             moves: 0,
             target: 0,
-            levelIdx: 0, 
-            maxUnlocked: 1, 
-            inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 },
-            coins: 1000, 
-            activeTool: null,
-            freeMove: false
+            level: 1,
+            maxLevel: 1,
+            selected: null,
+            locked: false,
+            blasters: []  // Tracks blaster positions
         };
-        
-        let hintTimer = null;
+
+        const AUDIO = {
+            ctx: new (window.AudioContext || window.webkitAudioContext)(),
+            play(type) {
+                if(this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                const now = this.ctx.currentTime;
+                if(type === 'swap') {
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(500, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                    osc.start(now); osc.stop(now + 0.1);
+                } else if (type === 'match') {
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(900, now + 0.15);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.15);
+                    osc.start(now); osc.stop(now + 0.15);
+                } else if (type === 'blaster') {
+                    // Blaster sound
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    osc.start(now); osc.stop(now + 0.3);
+                }
+            }
+        };
 
         const ui = {
             nav(id) {
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(id).classList.add('active');
-                if(id === 'screen-shop') this.updateShop();
-                if(id === 'screen-levels') this.buildLevelSelect();
             },
-            buildLevelSelect() {
-                const con = document.getElementById('level-container');
-                con.innerHTML = '';
-                levels.forEach((lvl, idx) => {
-                    const btn = document.createElement('button');
-                    const isLocked = (idx + 1) > state.maxUnlocked;
-                    btn.className = `level-btn ${isLocked ? 'locked' : ''}`;
-                    btn.innerHTML = isLocked ? '🔒' : (idx + 1);
-                    if(!isLocked) {
-                        btn.onclick = () => game.startLevel(idx);
-                    }
-                    con.appendChild(btn);
-                });
-            },
-            updateStats() {
-                document.getElementById('ui-lvl-num').innerText = state.levelIdx + 1;
-                document.getElementById('ui-score').innerText = state.score;
-                document.getElementById('ui-moves').innerText = state.moves;
-                const pct = Math.min(100, (state.score / state.target) * 100);
-                document.getElementById('score-bar').style.width = pct + '%';
-                document.getElementById('ui-target').innerText = state.target;
-            },
-            updateShop() {
-                document.getElementById('shop-coins').innerText = state.coins;
-                ['hammer','bomb','shuffle','cocoteddy','candycane'].forEach(t => {
-                    const icon = t==='hammer'?'🔨':t==='bomb'?'💣':t==='shuffle'?'🔄':t==='cocoteddy'?'🧸':'🍭';
-                    document.getElementById(`btn-${t}`).innerHTML = `${icon} <span style="font-size:0.6rem">${state.inventory[t]}</span>`;
-                });
+            update() {
+                document.getElementById('ui-score').innerText = STATE.score;
+                document.getElementById('ui-moves').innerText = STATE.moves;
+                document.getElementById('ui-target').innerText = STATE.target;
+                const pct = Math.min(100, (STATE.score / STATE.target) * 100);
+                document.getElementById('progress-bar').style.width = pct + '%';
             }
         };
 
         const game = {
-            startLevel(idx) {
-                state.levelIdx = idx;
-                const config = levels[idx] || levels[levels.length-1];
-                state.moves = config.moves;
-                state.target = config.target;
-                state.score = 0;
-                this.init();
+            openLevels() {
+                const c = document.getElementById('level-container');
+                c.innerHTML = '';
+                for(let i=1; i<=20; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `lvl-btn ${i <= STATE.maxLevel ? 'unlocked' : ''}`;
+                    btn.innerText = i;
+                    if(i <= STATE.maxLevel) btn.onclick = () => this.start(i);
+                    c.appendChild(btn);
+                }
+                ui.nav('screen-levels');
             },
-
-            init() {
-                state.locked = false;
-                state.activeTool = null;
-                state.freeMove = false;
-                document.getElementById('grid').classList.remove('mode-active', 'mode-free');
-                audioSys.init();
-                audioSys.playMusic();
+            
+            start(lvl) {
+                STATE.level = lvl;
+                STATE.moves = 15 + Math.floor(lvl * 1.5);
+                STATE.target = 500 + (lvl * 200);
+                STATE.score = 0;
+                STATE.locked = false;
+                STATE.selected = null;
+                STATE.blasters = []; // Reset blasters
                 
-                ui.nav('screen-game');
                 this.buildGrid();
-                ui.updateStats();
-                ui.updateShop();
-                this.resetHint();
+                ui.update();
+                ui.nav('screen-game');
             },
 
             buildGrid() {
-                const con = document.getElementById('grid');
-                con.innerHTML = '';
-                grid = [];
-                domGrid = [];
+                const gridEl = document.getElementById('grid');
+                gridEl.innerHTML = '';
+                STATE.grid = [];
+                STATE.domGrid = [];
 
-                for(let r=0; r<cfg.h; r++) {
-                    let row = [], dRow = [];
-                    for(let c=0; c<cfg.w; c++) {
+                for(let r=0; r<CFG.h; r++) {
+                    let row = [], domRow = [];
+                    for(let c=0; c<CFG.w; c++) {
                         let type;
-                        do {
-                            type = Math.floor(Math.random() * emojis.length);
-                        } while(
-                            (r>=2 && grid[r-1][c]===type && grid[r-2][c]===type) ||
+                        do { type = Math.floor(Math.random() * CFG.colors.length); }
+                        while (
+                            (r>=2 && STATE.grid[r-1][c]===type && STATE.grid[r-2][c]===type) ||
                             (c>=2 && row[c-1]===type && row[c-2]===type)
                         );
-                        
                         row.push(type);
                         const el = this.createTile(r, c, type);
-                        con.appendChild(el);
-                        dRow.push(el);
+                        gridEl.appendChild(el);
+                        domRow.push(el);
                     }
-                    grid.push(row);
-                    domGrid.push(dRow);
+                    STATE.grid.push(row);
+                    STATE.domGrid.push(domRow);
                 }
+                STATE.blasters = Array(CFG.h).fill().map(() => Array(CFG.w).fill(false));
             },
 
             createTile(r, c, type) {
                 const el = document.createElement('div');
                 el.className = 'tile';
-                el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                el.innerText = emojis[type];
+                el.innerText = CFG.colors[type];
+                el.style.transform = `translate(${c * CFG.size}px, ${r * CFG.size}px)`;
                 el.dataset.r = r;
                 el.dataset.c = c;
-                this.attachInput(el);
+                
+                // Input Handling
+                const handleStart = (e) => {
+                    if(STATE.locked) return;
+                    e.preventDefault();
+                    const t = e.touches ? e.touches[0] : e;
+                    this.handleInput(parseInt(el.dataset.r), parseInt(el.dataset.c));
+                };
+                
+                el.onmousedown = handleStart;
+                el.ontouchstart = handleStart;
                 return el;
             },
 
-            attachInput(el) {
-                let startX, startY;
-                let isDragging = false;
+            handleInput(r, c) {
+                if(!STATE.selected) {
+                    STATE.selected = {r, c};
+                    STATE.domGrid[r][c].classList.add('selected');
+                    AUDIO.play('swap');
+                } else {
+                    const prev = STATE.selected;
+                    STATE.domGrid[prev.r][prev.c].classList.remove('selected');
+                    STATE.selected = null;
 
-                el.ondragstart = () => false;
-
-                const start = (e) => {
-                    if(state.locked && !state.freeMove) return;
+                    const dr = Math.abs(prev.r - r);
+                    const dc = Math.abs(prev.c - c);
                     
-                    // Always get fresh coordinates
-                    const r = parseInt(el.dataset.r);
-                    const c = parseInt(el.dataset.c);
-                    
-                    if(state.activeTool) {
-                        powerups.use(r, c);
-                        return;
-                    }
-
-                    isDragging = true;
-                    const t = e.touches ? e.touches[0] : e;
-                    startX = t.clientX;
-                    startY = t.clientY;
-                    
-                    if(!state.selected) {
-                        this.select(r, c);
-                    } else if (state.selected.r === r && state.selected.c === c) {
-                        this.deselect();
-                        isDragging = false;
-                    } else {
-                        const dr = Math.abs(state.selected.r - r);
-                        const dc = Math.abs(state.selected.c - c);
-                        if(dr + dc === 1) {
-                            const oldSel = state.selected;
-                            this.deselect();
-                            this.attemptSwap(oldSel, {r, c});
-                            isDragging = false;
-                        } else {
-                            this.select(r, c); 
-                        }
-                    }
-                };
-
-                const move = (e) => {
-                    if(!isDragging || !state.selected || (state.locked && !state.freeMove)) return;
-                    
-                    const r = parseInt(el.dataset.r);
-                    const c = parseInt(el.dataset.c);
-                    
-                    if(state.selected.r !== r || state.selected.c !== c) return; 
-
-                    const t = e.touches ? e.touches[0] : e;
-                    const dx = t.clientX - startX;
-                    const dy = t.clientY - startY;
-                    
-                    if(Math.abs(dx) > 15 || Math.abs(dy) > 15) {
-                        isDragging = false;
-                        let targetR = r;
-                        let targetC = c;
-                        
-                        if(Math.abs(dx) > Math.abs(dy)) {
-                            targetC += dx > 0 ? 1 : -1;
-                        } else {
-                            targetR += dy > 0 ? 1 : -1;
-                        }
-                        
-                        if(targetR >=0 && targetR < cfg.h && targetC >= 0 && targetC < cfg.w) {
-                            this.attemptSwap({r, c}, {r:targetR, c:targetC});
-                        }
-                        this.deselect(); 
-                    }
-                };
-
-                const end = () => { isDragging = false; };
-
-                el.addEventListener('mousedown', start);
-                el.addEventListener('touchstart', start, {passive: false});
-                el.addEventListener('mousemove', move); 
-                el.addEventListener('touchmove', move, {passive: false});
-                el.addEventListener('mouseup', end);
-                el.addEventListener('mouseleave', end);
-                el.addEventListener('touchend', end);
-            },
-
-            select(r, c) {
-                this.deselect();
-                state.selected = {r, c};
-                domGrid[r][c].classList.add('selected');
-                audioSys.sfx('swap');
-            },
-            deselect() {
-                if(state.selected) {
-                    if(domGrid[state.selected.r] && domGrid[state.selected.r][state.selected.c]) {
-                        domGrid[state.selected.r][state.selected.c].classList.remove('selected');
-                    }
-                    state.selected = null;
-                }
-            },
-
-            resetHint() {
-                clearTimeout(hintTimer);
-                document.querySelectorAll('.hint').forEach(e => e.classList.remove('hint'));
-                hintTimer = setTimeout(() => this.showHint(), 5000);
-            },
-
-            showHint() {
-                if(state.locked) return;
-                // Simple logic: clone grid, test swap, check match
-                for(let r=0; r<cfg.h; r++) {
-                    for(let c=0; c<cfg.w; c++) {
-                        if(c<cfg.w-1) {
-                            if(this.testSwap(r, c, r, c+1)) {
-                                domGrid[r][c].classList.add('hint');
-                                domGrid[r][c+1].classList.add('hint');
-                                return;
-                            }
-                        }
-                        if(r<cfg.h-1) {
-                            if(this.testSwap(r, c, r+1, c)) {
-                                domGrid[r][c].classList.add('hint');
-                                domGrid[r+1][c].classList.add('hint');
-                                return;
-                            }
-                        }
+                    if(dr + dc === 1) {
+                        this.attemptSwap(prev, {r, c});
+                    } else if (prev.r !== r || prev.c !== c) {
+                        // If clicked far away, select new
+                        STATE.selected = {r, c};
+                        STATE.domGrid[r][c].classList.add('selected');
                     }
                 }
-            },
-
-            testSwap(r1, c1, r2, c2) {
-                // Logical swap only
-                let temp = grid[r1][c1];
-                grid[r1][c1] = grid[r2][c2];
-                grid[r2][c2] = temp;
-                
-                const hasMatch = this.findMatches().length > 0;
-                
-                // Swap back
-                grid[r2][c2] = grid[r1][c1];
-                grid[r1][c1] = temp;
-                
-                return hasMatch;
             },
 
             async attemptSwap(p1, p2) {
-                state.locked = true;
-                this.resetHint();
-                
+                STATE.locked = true;
                 await this.animSwap(p1, p2);
-                this.swapData(p1.r, p1.c, p2.r, p2.c);
                 
+                // Logical Swap
+                [STATE.grid[p1.r][p1.c], STATE.grid[p2.r][p2.c]] = [STATE.grid[p2.r][p2.c], STATE.grid[p1.r][p1.c]];
+                [STATE.blasters[p1.r][p1.c], STATE.blasters[p2.r][p2.c]] = [STATE.blasters[p2.r][p2.c], STATE.blasters[p1.r][p1.c]];
+                this.updateDomIds(p1, p2);
+
                 const matches = this.findMatches();
-                
-                if(matches.length > 0 || state.freeMove) {
-                    if(!state.freeMove) state.moves--;
-                    ui.updateStats();
+                if(matches.length > 0) {
+                    STATE.moves--;
+                    ui.update();
                     await this.processMatches(matches);
                 } else {
-                    audioSys.sfx('bad');
                     // Undo
-                    await this.animSwap(p1, p2); 
-                    this.swapData(p1.r, p1.c, p2.r, p2.c); 
-                    state.locked = false;
+                    await this.animSwap(p1, p2);
+                    [STATE.grid[p1.r][p1.c], STATE.grid[p2.r][p2.c]] = [STATE.grid[p2.r][p2.c], STATE.grid[p1.r][p1.c]];
+                    [STATE.blasters[p1.r][p1.c], STATE.blasters[p2.r][p2.c]] = [STATE.blasters[p2.r][p2.c], STATE.blasters[p1.r][p1.c]];
+                    this.updateDomIds(p1, p2);
+                    STATE.locked = false;
                 }
             },
 
-            swapData(r1, c1, r2, c2) {
-                // Swap logic
-                let temp = grid[r1][c1];
-                grid[r1][c1] = grid[r2][c2];
-                grid[r2][c2] = temp;
+            async animSwap(p1, p2) {
+                const el1 = STATE.domGrid[p1.r][p1.c];
+                const el2 = STATE.domGrid[p2.r][p2.c];
                 
-                // Swap DOM references
-                let tEl = domGrid[r1][c1];
-                domGrid[r1][c1] = domGrid[r2][c2];
-                domGrid[r2][c2] = tEl;
+                el1.style.transform = `translate(${p2.c * CFG.size}px, ${p2.r * CFG.size}px)`;
+                el2.style.transform = `translate(${p1.c * CFG.size}px, ${p1.r * CFG.size}px)`;
                 
-                // Update datasets
-                if(domGrid[r1][c1]) { domGrid[r1][c1].dataset.r = r1; domGrid[r1][c1].dataset.c = c1; }
-                if(domGrid[r2][c2]) { domGrid[r2][c2].dataset.r = r2; domGrid[r2][c2].dataset.c = c2; }
+                // Swap DOM refs
+                STATE.domGrid[p1.r][p1.c] = el2;
+                STATE.domGrid[p2.r][p2.c] = el1;
+
+                return new Promise(r => setTimeout(r, 250));
             },
 
-            animSwap(p1, p2) {
-                return new Promise(resolve => {
-                    const t1 = domGrid[p1.r][p1.c]; 
-                    const t2 = domGrid[p2.r][p2.c];
-                    
-                    // Visual Translation
-                    t1.style.transform = `translate(${p2.c*cfg.size}px, ${p2.r*cfg.size}px)`;
-                    t2.style.transform = `translate(${p1.c*cfg.size}px, ${p1.r*cfg.size}px)`;
-                    
-                    setTimeout(() => resolve(), 250);
-                });
+            updateDomIds(p1, p2) {
+                const el1 = STATE.domGrid[p1.r][p1.c];
+                const el2 = STATE.domGrid[p2.r][p2.c];
+                el1.dataset.r = p1.r; el1.dataset.c = p1.c;
+                el2.dataset.r = p2.r; el2.dataset.c = p2.c;
             },
 
+            // --- CORE LOGIC: MATCHING ---
             findMatches() {
-                let matched = new Set();
+                const groups = [];
+                const visitedH = new Set();
+                const visitedV = new Set();
+
                 // Horizontal
-                for(let r=0; r<cfg.h; r++) {
-                    for(let c=0; c<cfg.w-2; c++) {
-                        let t = grid[r][c];
-                        if(t === -1) continue;
-                        let matchLen = 1;
-                        while(c+matchLen < cfg.w && grid[r][c+matchLen] === t) {
-                            matchLen++;
+                for(let r=0; r<CFG.h; r++) {
+                    for(let c=0; c<CFG.w-2; c++) {
+                        let type = STATE.grid[r][c];
+                        if(type === -1) continue;
+                        let match = [{r,c}];
+                        while(c+match.length < CFG.w && STATE.grid[r][c+match.length] === type) {
+                            match.push({r, c: c+match.length});
                         }
-                        if(matchLen >= 3) {
-                            for(let k=0; k<matchLen; k++) matched.add(`${r},${c+k}`);
-                            c += matchLen - 1; 
+                        if(match.length >= 3) {
+                            groups.push(match);
+                            c += match.length - 1;
                         }
                     }
                 }
+                
                 // Vertical
-                for(let c=0; c<cfg.w; c++) {
-                    for(let r=0; r<cfg.h-2; r++) {
-                        let t = grid[r][c];
-                        if(t === -1) continue;
-                        let matchLen = 1;
-                        while(r+matchLen < cfg.h && grid[r+matchLen][c] === t) {
-                            matchLen++;
+                for(let c=0; c<CFG.w; c++) {
+                    for(let r=0; r<CFG.h-2; r++) {
+                        let type = STATE.grid[r][c];
+                        if(type === -1) continue;
+                        let match = [{r,c}];
+                        while(r+match.length < CFG.h && STATE.grid[r+match.length][c] === type) {
+                            match.push({r: r+match.length, c});
                         }
-                        if(matchLen >= 3) {
-                            for(let k=0; k<matchLen; k++) matched.add(`${r+k},${c}`);
-                            r += matchLen - 1;
+                        if(match.length >= 3) {
+                            groups.push(match);
+                            r += match.length - 1;
                         }
                     }
                 }
-                return Array.from(matched).map(s => {
-                    const [r, c] = s.split(',').map(Number);
-                    return {r, c};
-                });
+                return groups;
             },
 
-            async processMatches(matches) {
-                this.deselect();
-                
-                // BLASTER LOGIC: Check if this is a big match (4+)
-                // Since matches is a flat list, we need to guess grouping or use simple heuristic
-                // If matches.length >= 4, we spawn a blaster at the center of the match
-                let createBlaster = false;
-                let blasterPos = null;
-                let blasterType = -1;
+            async processMatches(groups) {
+                const uniqueTilesToRemove = new Set();
+                const blastersToCreate = [];
 
-                if (matches.length >= 4) {
-                    createBlaster = true;
-                    // Pick a random spot or the first one as the blaster origin
-                    const m = matches[Math.floor(matches.length/2)];
-                    blasterPos = {r: m.r, c: m.c};
-                    blasterType = grid[m.r][m.c];
-                }
-
-                // Scoring
-                let baseScore = matches.length * 10;
-                let bonus = matches.length > 3 ? (matches.length-3)*10 : 0;
-                
-                // Check if we popped any existing Blasters
-                let blasterPopCount = 0;
-                for(let m of matches) {
-                    const el = domGrid[m.r][m.c];
-                    if(el.classList.contains('blaster')) {
-                        blasterPopCount++;
-                        baseScore += 150;
-                        game.floatText(m.r, m.c, "BLAST! +150");
-                        audioSys.sfx('blaster');
-                        createParticles(m.r, m.c, "⭐");
+                for(let group of groups) {
+                    // FEATURE: If match is 4+, mark center for Blaster creation
+                    if(group.length >= 4) {
+                        const center = group[Math.floor(group.length/2)];
+                        blastersToCreate.push({r: center.r, c: center.c});
+                        // Remove center from destruction list if it was added by another crossing match
+                        uniqueTilesToRemove.delete(`${center.r},${center.c}`);
                     }
-                }
-
-                if(!blasterPopCount) audioSys.sfx('match');
-                
-                state.score += baseScore + bonus;
-                ui.updateStats();
-
-                const center = matches[Math.floor(matches.length/2)];
-                if(!blasterPopCount) this.floatText(center.r, center.c, `+${baseScore+bonus}`);
-
-                // Visual removal
-                for(let m of matches) {
-                    // If we are creating a blaster, skip destroying the target tile
-                    if(createBlaster && m.r === blasterPos.r && m.c === blasterPos.c) continue;
-
-                    const el = domGrid[m.r][m.c];
-                    this.createParticles(m.r, m.c, el.innerText);
-                    el.style.transform = `${el.style.transform} scale(0)`;
-                    grid[m.r][m.c] = -1; 
-                }
-
-                // If creating blaster, update that specific tile
-                if(createBlaster) {
-                     const el = domGrid[blasterPos.r][blasterPos.c];
-                     el.classList.add('blaster');
-                     // Pulse animation reset
-                     el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
-                     setTimeout(() => {
-                        el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
-                     }, 200);
-                     game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
-                }
-
-                await this.wait(300);
-                
-                // Remove destroyed DOM elements formally
-                for(let r=0; r<cfg.h; r++){
-                    for(let c=0; c<cfg.w; c++){
-                        if(grid[r][c] === -1 && domGrid[r][c]) {
-                            domGrid[r][c].remove();
-                            domGrid[r][c] = null;
+                    
+                    for(let tile of group) {
+                        // Don't destroy if it's becoming a blaster
+                        const isBecomingBlaster = blastersToCreate.some(b => b.r === tile.r && b.c === tile.c);
+                        if(!isBecomingBlaster) {
+                            uniqueTilesToRemove.add(`${tile.r},${tile.c}`);
                         }
                     }
                 }
+
+                // Execute Logic
+                let scoreGain = uniqueTilesToRemove.size * 10;
+                let blasterTriggered = false;
+
+                // 1. Create Blasters
+                for(let b of blastersToCreate) {
+                    STATE.blasters[b.r][b.c] = true;
+                    const el = STATE.domGrid[b.r][b.c];
+                    el.classList.add('blaster');
+                    this.floatText(b.r, b.c, "BLASTER!");
+                    AUDIO.play('blaster');
+                }
+
+                // 2. Remove Tiles
+                uniqueTilesToRemove.forEach(key => {
+                    const [r, c] = key.split(',').map(Number);
+                    
+                    // CHECK: Was this a blaster?
+                    if(STATE.blasters[r][c]) {
+                        scoreGain += 150; // BONUS
+                        this.floatText(r, c, "+150 BLAST!");
+                        AUDIO.play('blaster');
+                        blasterTriggered = true;
+                        STATE.blasters[r][c] = false; // Consume it
+                    }
+
+                    STATE.grid[r][c] = -1;
+                    const el = STATE.domGrid[r][c];
+                    el.style.transform += " scale(0)";
+                    el.style.opacity = 0;
+                });
+
+                if(!blasterTriggered && uniqueTilesToRemove.size > 0) AUDIO.play('match');
+                
+                STATE.score += scoreGain;
+                ui.update();
+
+                await new Promise(r => setTimeout(r, 300));
+
+                // 3. Clean DOM
+                uniqueTilesToRemove.forEach(key => {
+                    const [r, c] = key.split(',').map(Number);
+                    if(STATE.domGrid[r][c]) {
+                        STATE.domGrid[r][c].remove();
+                        STATE.domGrid[r][c] = null;
+                    }
+                });
 
                 await this.applyGravity();
             },
 
             async applyGravity() {
                 let moved = false;
-                
-                for(let c=0; c<cfg.w; c++) {
-                    let emptySlots = 0;
-                    // Scan column from bottom to top
-                    for(let r=cfg.h-1; r>=0; r--) {
-                        if(grid[r][c] === -1) {
-                            emptySlots++;
-                        } else if (emptySlots > 0) {
-                            // Move logic down
-                            let targetR = r + emptySlots;
-                            grid[targetR][c] = grid[r][c];
-                            grid[r][c] = -1;
-                            
-                            // Move DOM
-                            let el = domGrid[r][c];
-                            domGrid[targetR][c] = el;
-                            domGrid[r][c] = null;
-                            
-                            if(el) {
-                                el.dataset.r = targetR;
-                                el.style.transform = `translate(${c*cfg.size}px, ${targetR*cfg.size}px)`;
+
+                // Column by column
+                for(let c=0; c<CFG.w; c++) {
+                    let writeRow = CFG.h - 1;
+                    
+                    // 1. Shift existing items down
+                    for(let readRow = CFG.h - 1; readRow >= 0; readRow--) {
+                        if(STATE.grid[readRow][c] !== -1) {
+                            if(writeRow !== readRow) {
+                                // Move Logic
+                                STATE.grid[writeRow][c] = STATE.grid[readRow][c];
+                                STATE.grid[readRow][c] = -1;
+                                STATE.blasters[writeRow][c] = STATE.blasters[readRow][c]; // Move blaster status
+                                STATE.blasters[readRow][c] = false;
+
+                                // Move Visuals
+                                const el = STATE.domGrid[readRow][c];
+                                STATE.domGrid[writeRow][c] = el;
+                                STATE.domGrid[readRow][c] = null;
+                                
+                                if(el) {
+                                    el.dataset.r = writeRow;
+                                    el.style.transform = `translate(${c*CFG.size}px, ${writeRow*CFG.size}px)`;
+                                }
                                 moved = true;
                             }
+                            writeRow--;
                         }
                     }
 
-                    // Fill top empty slots
-                    for(let r=0; r<emptySlots; r++) {
-                        const type = Math.floor(Math.random() * emojis.length);
-                        grid[r][c] = type;
+                    // 2. Fill top with new
+                    while(writeRow >= 0) {
+                        const type = Math.floor(Math.random() * CFG.colors.length);
+                        STATE.grid[writeRow][c] = type;
+                        STATE.blasters[writeRow][c] = false;
                         
-                        const el = this.createTile(r, c, type);
-                        // Start above board
-                        el.style.transform = `translate(${c*cfg.size}px, -${cfg.size}px)`;
+                        const el = this.createTile(writeRow, c, type);
+                        el.style.transform = `translate(${c*CFG.size}px, -${CFG.size}px)`; // Start above
                         document.getElementById('grid').appendChild(el);
-                        domGrid[r][c] = el;
+                        STATE.domGrid[writeRow][c] = el;
+
+                        // Animate drop
+                        // Force reflow
+                        void el.offsetWidth; 
+                        el.style.transform = `translate(${c*CFG.size}px, ${writeRow*CFG.size}px)`;
                         
-                        // Animate in
-                        requestAnimationFrame(() => {
-                            el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                        });
+                        writeRow--;
                         moved = true;
                     }
                 }
 
                 if(moved) {
-                    await this.wait(400);
+                    await new Promise(r => setTimeout(r, 400));
                     const newMatches = this.findMatches();
                     if(newMatches.length > 0) {
                         await this.processMatches(newMatches);
                     } else {
-                        state.locked = false;
-                        this.resetHint();
-                        this.checkWin();
-                        if(!state.freeMove) this.checkDeadlock();
+                        STATE.locked = false;
+                        this.checkWinLoss();
                     }
                 } else {
-                    state.locked = false;
-                    this.resetHint();
-                    if(!state.freeMove) this.checkDeadlock();
-                }
-            },
-
-            createParticles(r, c, char) {
-                const x = c * cfg.size + 20;
-                const y = r * cfg.size + 20;
-                
-                for(let i=0; i<6; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'particle';
-                    p.innerText = char; 
-                    p.style.fontSize = '12px';
-                    p.style.left = x + 'px';
-                    p.style.top = y + 'px';
-                    
-                    const angle = Math.random() * Math.PI * 2;
-                    const vel = Math.random() * 50 + 20;
-                    p.style.setProperty('--dx', Math.cos(angle)*vel + 'px');
-                    p.style.setProperty('--dy', Math.sin(angle)*vel + 'px');
-                    
-                    document.getElementById('grid').appendChild(p);
-                    setTimeout(()=>p.remove(), 600);
+                    STATE.locked = false;
+                    this.checkWinLoss();
                 }
             },
 
             floatText(r, c, txt) {
-                const el = document.createElement('div');
-                el.className = 'floater';
-                el.innerText = txt;
-                el.style.left = (c*cfg.size + 10) + 'px';
-                el.style.top = (r*cfg.size) + 'px';
-                document.getElementById('grid').appendChild(el);
-                setTimeout(()=>el.remove(), 1500);
+                const div = document.createElement('div');
+                div.className = 'floater';
+                div.innerText = txt;
+                div.style.left = (c*CFG.size) + 'px';
+                div.style.top = (r*CFG.size) + 'px';
+                document.getElementById('grid').appendChild(div);
+                setTimeout(() => div.remove(), 1000);
             },
 
-            checkWin() {
-                if(state.score >= state.target) {
-                    this.gameOver(true);
-                } else if (state.moves <= 0) {
-                    this.gameOver(false);
+            checkWinLoss() {
+                if(STATE.score >= STATE.target) {
+                    if(STATE.level === STATE.maxLevel) STATE.maxLevel++;
+                    this.endGame(true);
+                } else if (STATE.moves <= 0) {
+                    this.endGame(false);
                 }
             },
 
-            checkDeadlock() {
-                // Deadlock check should not modify DOM
-                let possible = false;
-                for(let r=0; r<cfg.h; r++) {
-                    for(let c=0; c<cfg.w; c++) {
-                        if(c<cfg.w-1 && this.testSwap(r, c, r, c+1)) possible = true;
-                        if(r<cfg.h-1 && this.testSwap(r, c, r+1, c)) possible = true;
-                        if(possible) return;
-                    }
-                }
-
-                if(!possible) {
-                    game.floatText(3, 3, "No Moves! Shuffle!");
-                    setTimeout(() => powerups.doShuffle(), 1000);
-                }
+            endGame(win) {
+                document.getElementById('res-title').innerText = win ? "Level Complete!" : "Out of Moves";
+                document.getElementById('res-msg').innerText = win ? `Score: ${STATE.score}` : "Try Again?";
+                document.getElementById('res-title').style.color = win ? "#00e676" : "#ff1744";
+                ui.nav('screen-result');
             },
-
-            gameOver(win) {
-                state.locked = true;
-                setTimeout(() => {
-                    const btnContainer = document.getElementById('res-btns');
-                    ui.nav('screen-result');
-                    btnContainer.innerHTML = '';
-                    
-                    const btnMenu = document.createElement('button');
-                    btnMenu.className = 'btn btn-pink';
-                    btnMenu.innerText = 'Levels';
-                    btnMenu.onclick = () => ui.nav('screen-levels');
-
-                    if(win) {
-                        audioSys.sfx('win');
-                        const reward = levels[state.levelIdx] ? levels[state.levelIdx].reward : 100;
-                        document.getElementById('res-title').innerText = "Sweet Victory!";
-                        document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
-                        state.coins += reward;
-                        
-                        if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levels.length) {
-                            state.maxUnlocked++;
-                        }
-
-                        if((state.levelIdx + 1) < levels.length) {
-                             const btnNext = document.createElement('button');
-                             btnNext.className = 'btn';
-                             btnNext.innerText = 'Next Level';
-                             btnNext.onclick = () => game.startLevel(state.levelIdx + 1);
-                             btnContainer.appendChild(btnNext);
-                        }
-                        btnContainer.appendChild(btnMenu);
-                    } else {
-                        document.getElementById('res-title').innerText = "Out of Moves";
-                        document.getElementById('res-msg').innerText = "Don't give up!";
-                        
-                        const btnRetry = document.createElement('button');
-                        btnRetry.className = 'btn';
-                        btnRetry.innerText = 'Try Again';
-                        btnRetry.onclick = () => game.startLevel(state.levelIdx);
-                        btnContainer.appendChild(btnRetry);
-                        btnContainer.appendChild(btnMenu);
-                    }
-                    ui.updateShop();
-                }, 500);
-            },
-
-            wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+            
+            quit() { ui.nav('screen-home'); },
+            retry() { this.start(STATE.level); }
         };
 
-        const powerups = {
-            activate(tool) {
-                if(state.locked && !state.freeMove) return;
-                
-                if(state.inventory[tool] > 0) {
-                    if(state.activeTool === tool) {
-                        state.activeTool = null;
-                        document.getElementById('grid').classList.remove('mode-active');
-                    } else {
-                        if(tool === 'shuffle') {
-                            this.useInstant(tool);
-                            return;
-                        }
-                        if(tool === 'cocoteddy') {
-                            this.useInstant(tool);
-                            return;
-                        }
-                        state.activeTool = tool;
-                        document.getElementById('grid').classList.add('mode-active');
-                    }
-                } else {
-                    market.showMsg("Buy in Shop!", "red");
-                }
-            },
-            useInstant(tool) {
-                state.inventory[tool]--;
-                ui.updateShop();
-                if(tool === 'shuffle') this.doShuffle();
-                if(tool === 'cocoteddy') this.doCocoTeddy();
-            },
-            use(r, c) {
-                if(!state.activeTool) return;
-                
-                const tool = state.activeTool;
-                state.inventory[tool]--;
-                state.activeTool = null;
-                document.getElementById('grid').classList.remove('mode-active');
-                ui.updateShop();
-                
-                if(tool === 'hammer') {
-                    audioSys.sfx('match');
-                    this.destroyAt(r, c);
-                }
-                if(tool === 'bomb') {
-                    audioSys.sfx('match');
-                    for(let i=r-1; i<=r+1; i++) {
-                        for(let j=c-1; j<=c+1; j++) {
-                            if(i>=0 && i<cfg.h && j>=0 && j<cfg.w) this.destroyAt(i, j);
-                        }
-                    }
-                }
-                if(tool === 'candycane') {
-                    audioSys.sfx('magic');
-                    this.doCandyCane(r, c);
-                }
-
-                setTimeout(() => game.applyGravity(), 300);
-            },
-            destroyAt(r, c) {
-                if(grid[r][c] !== -1) {
-                    const el = domGrid[r][c];
-                    game.createParticles(r, c, el.innerText);
-                    el.style.transform = `${el.style.transform} scale(0)`;
-                    grid[r][c] = -1;
-                }
-            },
-            doShuffle() {
-                audioSys.sfx('shuffle');
-                let flat = [];
-                for(let r=0; r<cfg.h; r++) for(let c=0; c<cfg.w; c++) if(grid[r][c]!==-1) flat.push(grid[r][c]);
-                
-                for(let i=flat.length-1; i>0; i--) {
-                    const j = Math.floor(Math.random() * (i+1));
-                    [flat[i], flat[j]] = [flat[j], flat[i]];
-                }
-                
-                let k=0;
-                for(let r=0; r<cfg.h; r++) {
-                    for(let c=0; c<cfg.w; c++) {
-                        if(grid[r][c]!==-1) {
-                            grid[r][c] = flat[k++];
-                            domGrid[r][c].innerText = emojis[grid[r][c]];
-                            domGrid[r][c].classList.remove('blaster'); // Reset special status on shuffle
-                            domGrid[r][c].style.transform = `scale(0)`;
-                            setTimeout(() => {
-                                domGrid[r][c].style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px) scale(1)`;
-                            }, 50 + k*10);
-                        }
-                    }
-                }
-                game.resetHint();
-            },
-            doCocoTeddy() {
-                audioSys.sfx('magic');
-                game.floatText(3, 3, "FREE MOVE 5s!");
-                state.freeMove = true;
-                document.getElementById('grid').classList.add('mode-free');
-                
-                let timeLeft = 5;
-                const timer = setInterval(() => {
-                    timeLeft--;
-                    if(timeLeft <= 0) {
-                        clearInterval(timer);
-                        state.freeMove = false;
-                        document.getElementById('grid').classList.remove('mode-free');
-                        game.floatText(3, 3, "Time's Up!");
-                        const matches = game.findMatches();
-                        if(matches.length>0) game.processMatches(matches);
-                    }
-                }, 1000);
-            },
-            doCandyCane(r, c) {
-                const targetType = grid[r][c];
-                if(targetType === -1) return;
-
-                for(let i=r-1; i<=r+1; i++) {
-                    for(let j=c-1; j<=c+1; j++) {
-                        if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
-                            grid[i][j] = targetType;
-                            domGrid[i][j].innerText = emojis[targetType];
-                            domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
-                            setTimeout(() => {
-                                domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1)`;
-                            }, 150);
-                        }
-                    }
-                }
-            }
-        };
-
-        const market = {
-            prices: { 'hammer': 450, 'bomb': 999, 'shuffle': 350, 'cocoteddy': 799, 'candycane': 999 },
-            buy(type) {
-                const cost = this.prices[type];
-                if(state.coins >= cost) {
-                    state.coins -= cost;
-                    state.inventory[type]++;
-                    audioSys.sfx('win');
-                    ui.updateShop();
-                    this.showMsg("Purchased!", "#00c853");
-                } else {
-                    audioSys.sfx('bad');
-                    this.showMsg("Not enough coins!", "#d50000");
-                }
-            },
-            showMsg(text, color) {
-                const el = document.getElementById('shop-msg');
-                el.style.color = color;
-                el.innerText = text;
-                el.style.opacity = 1;
-                setTimeout(() => el.style.opacity = 0, 1500);
-            }
-        };
-
-        ui.buildLevelSelect();
+        // Init
+        ui.nav('screen-home');
 
     </script>
 </body>
