@@ -5,6 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Jelly PoP - Blaster Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    
+    <!-- ===============================
+         CRAZYGAMES SDK v3 (REQUIRED)
+    ================================ -->
+    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    
+    <!-- ===============================
+         CRAZYGAMES v3 SAFE WRAPPER
+    ================================ -->
+    <script>
+    window.CrazySDKSafe = {
+        ready: false,
+        isAdShowing: false,
+
+        async init() {
+            try {
+                // Wait for SDK to be available
+                if (!window.CrazyGames || !window.CrazyGames.SDK) {
+                    console.log("⏳ Waiting for SDK to load...");
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    if (!window.CrazyGames || !window.CrazyGames.SDK) {
+                        throw new Error("SDK not available");
+                    }
+                }
+                
+                await window.CrazyGames.SDK.init();
+                this.ready = true;
+                console.log("✅ CrazyGames SDK v3 initialized");
+                return true;
+            } catch (e) {
+                console.warn("❌ SDK init failed (game will still work)", e);
+                return false;
+            }
+        },
+
+        env() {
+            try {
+                return window.CrazyGames?.SDK?.environment || "disabled";
+            } catch {
+                return "disabled";
+            }
+        },
+
+        loadingStart() {
+            try {
+                if (this.env() !== "disabled" && window.CrazyGames?.SDK?.game?.loadingStart) {
+                    window.CrazyGames.SDK.game.loadingStart();
+                }
+            } catch (e) {}
+        },
+
+        loadingStop() {
+            try {
+                if (this.env() !== "disabled" && window.CrazyGames?.SDK?.game?.loadingStop) {
+                    window.CrazyGames.SDK.game.loadingStop();
+                }
+            } catch (e) {}
+        },
+
+        gameplayStart() {
+            try {
+                if (this.env() !== "disabled" && window.CrazyGames?.SDK?.game?.gameplayStart) {
+                    window.CrazyGames.SDK.game.gameplayStart();
+                }
+            } catch (e) {}
+        },
+
+        gameplayStop() {
+            try {
+                if (this.env() !== "disabled" && window.CrazyGames?.SDK?.game?.gameplayStop) {
+                    window.CrazyGames.SDK.game.gameplayStop();
+                }
+            } catch (e) {}
+        },
+
+        async interstitialAd() {
+            if (this.env() !== "crazygames" || this.isAdShowing) return;
+            try {
+                this.isAdShowing = true;
+                await window.CrazyGames.SDK.ad.showInterstitialAd();
+            } catch (e) {
+                console.log("Interstitial skipped", e);
+            } finally {
+                this.isAdShowing = false;
+            }
+        },
+
+        async rewardedAd(onReward) {
+            if (this.env() !== "crazygames" || this.isAdShowing) return;
+            try {
+                this.isAdShowing = true;
+                await window.CrazyGames.SDK.ad.showRewardedAd();
+                if (onReward) onReward();
+            } catch (e) {
+                console.log("Rewarded failed", e);
+            } finally {
+                this.isAdShowing = false;
+            }
+        },
+
+        async saveData(data) {
+            if (this.env() !== "crazygames") return false;
+            try {
+                await window.CrazyGames.SDK.game.saveProgress(data);
+                return true;
+            } catch {
+                return false;
+            }
+        },
+
+        async loadData() {
+            if (this.env() !== "crazygames") return null;
+            try {
+                return await window.CrazyGames.SDK.game.loadProgress();
+            } catch {
+                return null;
+            }
+        },
+
+        submitScore(score) {
+            try {
+                if (this.env() === "crazygames" && window.CrazyGames?.SDK?.game?.submitScore) {
+                    window.CrazyGames.SDK.game.submitScore(score);
+                }
+            } catch (e) {}
+        }
+    };
+    </script>
+    
     <style>
         /* all original styles – unchanged */
         :root {
@@ -25,6 +154,57 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+        }
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background-image: radial-gradient(circle at 10% 20%, rgb(255, 197, 218) 0%, rgb(255, 120, 189) 90.1%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255,255,255,0.3);
+            border-top-color: #ff4081;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        .loading-text {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 600;
+        }
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .loading-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #ff4081;
+            transition: width 0.3s;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         .screen {
             position: absolute;
@@ -229,11 +409,70 @@
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
         .mode-active { cursor: crosshair !important; border: 4px solid red; }
         .mode-free { border: 4px solid #ff4081; animation: pulse 0.5s infinite; }
+        
+        /* Exit Fullscreen Button */
+        .exit-fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid #ff4081;
+            color: #ff4081;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .exit-fullscreen-btn.visible {
+            display: flex;
+        }
+        
+        .sync-indicator {
+            position: fixed;
+            top: 20px;
+            right: 80px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #ff4081;
+            border: 1px solid #ff4081;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            font-family: 'Fredoka One', cursive;
+            pointer-events: none;
+        }
+        .sync-indicator.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Jelly Pop...</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loadingProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="sdk-status" style="margin-top:10px; color:#666; font-size:0.9rem;" id="sdkStatus">🚀 Starting game...</div>
+    </div>
+
+    <!-- Exit Fullscreen Button -->
+    <button class="exit-fullscreen-btn" id="exitFullscreenBtn" aria-label="Exit Fullscreen">⤬</button>
+
+    <!-- Sync Indicator -->
+    <div class="sync-indicator" id="syncIndicator">💾 Saved to Cloud</div>
+
     <div style="position:absolute; top:10px; right:10px; z-index:100;">
-        <button id="btn-sound" class="btn btn-icon" style="width:40px; height:40px; font-size:1.2rem; padding:0;" onclick="audioSys.toggle()">🔇</button>
+        <button id="btn-sound" class="btn btn-icon" style="width:40px; height:40px; font-size:1.2rem; padding:0;">🔇</button>
     </div>
 
     <div id="screen-home" class="screen active">
@@ -323,6 +562,35 @@
     </div>
 
     <script>
+        /* ===============================
+           REQUIRED: DISABLE PAGE SCROLL
+        ================================ */
+        window.addEventListener("wheel", e => e.preventDefault(), { passive: false });
+        window.addEventListener("keydown", e => {
+            if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))
+                e.preventDefault();
+        });
+
+        // Force hide loading screen after timeout (fallback)
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                console.log("⚠️ Force hiding loading screen");
+                loadingScreen.classList.add('hidden');
+            }
+        }, 5000);
+    </script>
+
+    <script>
+        // Helper function to update loading status
+        function updateLoadingStatus(text, progress) {
+            const statusEl = document.getElementById('sdkStatus');
+            const progressBar = document.getElementById('loadingProgressBar');
+            
+            if (statusEl) statusEl.textContent = text;
+            if (progressBar) progressBar.style.width = progress + '%';
+        }
+
         // --- LEVEL CONFIGURATION - Only store as data, not as DOM elements ---
         const levelData = [];
         for(let i=1; i<=300; i++){
@@ -523,6 +791,9 @@
                 // Start music when game begins (if unmuted)
                 audioSys.init();
                 if(!audioSys.isMuted) audioSys.playMusic();
+                
+                // Tell CrazyGames gameplay has started
+                CrazySDKSafe.gameplayStart();
                 
                 ui.nav('screen-game');
                 this.buildGrid();
@@ -1021,9 +1292,18 @@
                 }
             },
 
-            gameOver(win) {
+            async gameOver(win) {
                 state.locked = true;
                 audioSys.stopMusic(); // Stop music when game ends
+                
+                // Tell CrazyGames gameplay has stopped
+                CrazySDKSafe.gameplayStop();
+                
+                // Show an ad between levels (not too frequent)
+                if (win) {
+                    CrazySDKSafe.interstitialAd();
+                }
+                
                 setTimeout(() => {
                     const btnContainer = document.getElementById('res-btns');
                     btnContainer.innerHTML = '';
@@ -1039,6 +1319,24 @@
                         document.getElementById('res-title').innerText = "Sweet Victory!";
                         document.getElementById('res-msg').innerText = `Level Complete! Earned ${reward} Coins!`;
                         state.coins += reward;
+                        
+                        // Save progress to cloud
+                        CrazySDKSafe.saveData({
+                            coins: state.coins,
+                            maxUnlocked: state.maxUnlocked,
+                            inventory: state.inventory
+                        }).then(saved => {
+                            if (saved) {
+                                document.getElementById('syncIndicator').classList.add('visible');
+                                setTimeout(() => {
+                                    document.getElementById('syncIndicator').classList.remove('visible');
+                                }, 2000);
+                            }
+                        });
+                        
+                        // Submit score to leaderboard
+                        CrazySDKSafe.submitScore(state.score);
+                        
                         if((state.levelIdx + 1) === state.maxUnlocked && state.maxUnlocked < levelData.length) state.maxUnlocked++;
                         if((state.levelIdx + 1) < levelData.length) {
                              const btnNext = document.createElement('button');
@@ -1219,6 +1517,13 @@
                     audioSys.sfx('win');
                     ui.updateShop();
                     this.showMsg("Purchased!", "#00c853");
+                    
+                    // Save to cloud after purchase
+                    CrazySDKSafe.saveData({
+                        coins: state.coins,
+                        maxUnlocked: state.maxUnlocked,
+                        inventory: state.inventory
+                    });
                 } else {
                     audioSys.sfx('bad');
                     this.showMsg("Not enough coins!", "#d50000");
@@ -1233,17 +1538,83 @@
             }
         };
 
-        // Initialize with only first batch of levels
-        ui.buildLevelSelect();
-        
-        // Auto-unmute and play music on first interaction (browser policy)
-        document.body.addEventListener('click', function initAudioOnFirstClick() {
-            audioSys.init();
-            if(!audioSys.isMuted) {
-                audioSys.playMusic();
+        /* ===============================
+           GAME BOOTSTRAP - FIXED SOUND BUTTON
+        ================================ */
+        window.onload = async () => {
+            console.log('🚀 Game loading...');
+            
+            // Tell CrazyGames loading has started
+            CrazySDKSafe.loadingStart();
+            
+            // Initialize SDK (async, non-blocking)
+            updateLoadingStatus('Initializing CrazyGames...', 20);
+            await CrazySDKSafe.init();
+
+            // Load saved data from cloud
+            updateLoadingStatus('Loading cloud saves...', 40);
+            try {
+                const savedData = await CrazySDKSafe.loadData();
+                if (savedData) {
+                    state.coins = savedData.coins || 1000;
+                    state.maxUnlocked = savedData.maxUnlocked || 1;
+                    state.inventory = savedData.inventory || { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 };
+                    console.log('✅ Cloud data loaded successfully');
+                }
+            } catch (e) {
+                console.warn('Failed to load cloud data:', e);
             }
-            document.body.removeEventListener('click', initAudioOnFirstClick);
-        }, { once: true });
+
+            // Initialize audio
+            updateLoadingStatus('Initializing audio...', 60);
+            audioSys.init();
+
+            // Initialize with only first batch of levels
+            ui.buildLevelSelect();
+            
+            // Hide loading screen
+            updateLoadingStatus('Ready to play!', 100);
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                CrazySDKSafe.loadingStop();
+                console.log('✅ Game ready');
+            }, 500);
+
+            // FIXED: Set up sound button event listener properly
+            const soundBtn = document.getElementById('btn-sound');
+            soundBtn.onclick = function(e) {
+                e.preventDefault();
+                audioSys.toggle();
+            };
+
+            // Auto-unmute and play music on first interaction (browser policy)
+            document.body.addEventListener('click', function initAudioOnFirstClick() {
+                audioSys.init();
+                if(!audioSys.isMuted) {
+                    audioSys.playMusic();
+                }
+                document.body.removeEventListener('click', initAudioOnFirstClick);
+            }, { once: true });
+            
+            // Fullscreen handling
+            const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+            
+            function updateFullscreenButton() {
+                if (document.fullscreenElement) {
+                    exitFullscreenBtn.classList.add('visible');
+                } else {
+                    exitFullscreenBtn.classList.remove('visible');
+                }
+            }
+            
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+            
+            exitFullscreenBtn.onclick = () => {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            };
+        };
     </script>
 </body>
 </html>
