@@ -742,7 +742,7 @@
                 const matches = this.findMatches();
                 
                 if(matches.length > 0) {
-                    state.moves--;
+                    state.moves--; // Logic check: This reduces moves.
                     ui.updateStats();
                     await this.processMatches(matches);
                 } else {
@@ -846,43 +846,47 @@
                             // Move valid tile down
                             this.swapData(r, c, r+emptyCount, c);
                             const el = domGrid[r+emptyCount][c];
-                            
-                            // BUG FIX: Ensure visibility when moving down
                             el.style.opacity = '1';
                             el.style.transform = `translate(${c*cfg.size}px, ${(r+emptyCount)*cfg.size}px) scale(1)`; 
-                            
                             moved = true;
                         }
                     }
                     
-                    // Spawn new candies at top
+                    // Spawn new candies at top with FRESH ELEMENTS (Fixes Glitch)
                     for(let r=0; r<emptyCount; r++) {
                         const type = Math.floor(Math.random() * emojis.length);
                         grid[r][c] = type;
                         
-                        let el = domGrid[r][c]; 
-                        // Recycle the element (which was likely swapped up)
+                        // FIX: Clean up the old recycling element that caused flickering
+                        if(domGrid[r][c]) domGrid[r][c].remove();
+
+                        // Create brand new element
+                        const el = document.createElement('div');
+                        el.className = 'tile';
                         el.innerText = emojis[type];
-                        el.classList.remove('selected', 'hint'); // Clean state
+                        el.dataset.r = r;
+                        el.dataset.c = c;
                         
-                        // BUG FIX: Disable transition to "teleport" it to top invisible
-                        el.style.transition = 'none';
-                        el.style.opacity = '1';
-                        // Force scale(1) so it doesn't stay invisible from the pop
-                        el.style.transform = `translate(${c*cfg.size}px, -60px) scale(1)`;
+                        // Start position: Above the board
+                        el.style.transform = `translate(${c*cfg.size}px, -${cfg.size}px)`;
+                        el.style.opacity = '0';
+                        
+                        game.attachInput(el); // Attach events to new element
+                        document.getElementById('grid').appendChild(el);
+                        domGrid[r][c] = el;
                         
                         // Force Reflow
                         void el.offsetWidth;
                         
-                        // Re-enable transition for the fall
-                        el.style.transition = ""; 
+                        // Animate In
+                        el.style.opacity = '1';
                         el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
+                        
                         moved = true;
                     }
                 }
 
                 if(moved) {
-                    // Increased wait slightly to let animations finish before checking matches
                     await this.wait(400);
                     const newMatches = this.findMatches();
                     if(newMatches.length > 0) {
