@@ -838,6 +838,15 @@
                     el.style.transform = `${el.style.transform} scale(0)`;
                     grid[m.r][m.c] = -1; 
                 }
+
+                if(createBlaster) {
+                     const el = domGrid[blasterPos.r][blasterPos.c];
+                     el.classList.add('blaster');
+                     el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1.2)`;
+                     setTimeout(() => {
+                        el.style.transform = `translate(${blasterPos.c*cfg.size}px, ${blasterPos.r*cfg.size}px) scale(1)`;
+                     }, 200);
+                     game.floatText(blasterPos.r, blasterPos.c, "BLASTER!");
                 }
 
                 await this.wait(300);
