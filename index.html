@@ -152,22 +152,31 @@
             margin: 0 auto;
         }
 
+        /* UPDATED TILE CSS TO FIX BUG */
         .tile {
             position: absolute;
             width: 40px;
             height: 40px;
             left: 0; top: 0;
+            /* Flex moved to tile-inner */
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            touch-action: none; 
+            /* Pointer events are handled here for dragging */
+        }
+
+        .tile-inner {
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 28px;
-            cursor: pointer;
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-            touch-action: none; 
-            backface-visibility: hidden;
             border-radius: 50%;
+            backface-visibility: hidden;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+            /* All visual animations happen here */
         }
 
         .tile.selected { z-index: 20; }
@@ -178,11 +187,17 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             animation: pulse 0.8s infinite;
+            pointer-events: none;
         }
-        .tile.hint { animation: shake 2s infinite; filter: brightness(1.3); }
+        
+        /* HINT now applies to tile-inner to avoid breaking position */
+        .tile.hint .tile-inner { 
+            animation: shake 2s infinite; 
+            filter: brightness(1.3); 
+        }
 
-        /* BLASTER STYLE */
-        .tile.blaster {
+        /* BLASTER STYLE moved to tile-inner */
+        .tile.blaster .tile-inner {
             background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,215,0,0.4) 70%);
             box-shadow: 0 0 10px 2px #fff, 0 0 15px 5px gold;
             border: 2px solid #fff;
@@ -195,6 +210,7 @@
             font-size: 10px;
             top: 0; right: 0;
             text-shadow: 0 0 2px black;
+            z-index: 20;
         }
 
         @keyframes blastPulse { 0% { transform: scale(1); filter: brightness(1); } 100% { transform: scale(1.1); filter: brightness(1.3); } }
@@ -560,7 +576,13 @@
                 const el = document.createElement('div');
                 el.className = 'tile';
                 el.style.transform = `translate(${c*cfg.size}px, ${r*cfg.size}px)`;
-                el.innerText = emojis[type];
+                
+                // FIXED: Create separate inner element for animations
+                const inner = document.createElement('div');
+                inner.className = 'tile-inner';
+                inner.innerText = emojis[type];
+                el.appendChild(inner);
+
                 el.dataset.r = r;
                 el.dataset.c = c;
                 this.attachInput(el);
@@ -574,6 +596,9 @@
                 el.ondragstart = () => false;
 
                 const start = (e) => {
+                    // FIXED: Reset hint immediately on interaction
+                    game.resetHint();
+
                     if(state.locked && !state.freeMove) return;
                     
                     // Always get fresh coordinates
@@ -668,7 +693,7 @@
             resetHint() {
                 clearTimeout(hintTimer);
                 document.querySelectorAll('.hint').forEach(e => e.classList.remove('hint'));
-                hintTimer = setTimeout(() => this.showHint(), 5000);
+                hintTimer = setTimeout(() => this.showHint(), 5000); // 5s timer
             },
 
             showHint() {
@@ -847,7 +872,9 @@
                     if(createBlaster && m.r === blasterPos.r && m.c === blasterPos.c) continue;
 
                     const el = domGrid[m.r][m.c];
+                    // el.innerText still works because it gets text content of children
                     this.createParticles(m.r, m.c, el.innerText);
+                    // Scale parent (which has translate) is fine
                     el.style.transform = `${el.style.transform} scale(0)`;
                     grid[m.r][m.c] = -1; 
                 }
@@ -1131,7 +1158,8 @@
                     for(let c=0; c<cfg.w; c++) {
                         if(grid[r][c]!==-1) {
                             grid[r][c] = flat[k++];
-                            domGrid[r][c].innerText = emojis[grid[r][c]];
+                            // FIXED: Update inner text
+                            domGrid[r][c].querySelector('.tile-inner').innerText = emojis[grid[r][c]];
                             domGrid[r][c].classList.remove('blaster'); // Reset special status on shuffle
                             domGrid[r][c].style.transform = `scale(0)`;
                             setTimeout(() => {
@@ -1169,7 +1197,8 @@
                     for(let j=c-1; j<=c+1; j++) {
                         if(i>=0 && i<cfg.h && j>=0 && j<cfg.w && grid[i][j] !== -1) {
                             grid[i][j] = targetType;
-                            domGrid[i][j].innerText = emojis[targetType];
+                            // FIXED: Update inner text
+                            domGrid[i][j].querySelector('.tile-inner').innerText = emojis[targetType];
                             domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1.2)`;
                             setTimeout(() => {
                                 domGrid[i][j].style.transform = `translate(${j*cfg.size}px, ${i*cfg.size}px) scale(1)`;
