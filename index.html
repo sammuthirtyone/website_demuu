@@ -344,7 +344,7 @@
                 <div class="shop-price">999</div>
             </div>
 
-            <div id="shop-msg" style="height:20px; color:red; font-size:0.8rem;"></div>
+            <div id="shop-msg" style="height:20px; color:red; font-size:0.8rem; transition: opacity 0.5s;"></div>
             <button class="btn" onclick="ui.nav('screen-home')">Back</button>
         </div>
     </div>
@@ -1121,6 +1121,36 @@
                         }
                     }
                 }
+            }
+        };
+
+        const market = {
+            prices: {
+                'hammer': 450,
+                'bomb': 999,
+                'shuffle': 350,
+                'cocoteddy': 799,
+                'candycane': 999
+            },
+            buy(type) {
+                const cost = this.prices[type];
+                if(state.coins >= cost) {
+                    state.coins -= cost;
+                    state.inventory[type]++;
+                    audioSys.sfx('win');
+                    ui.updateShop();
+                    this.showMsg("Purchased!", "#00c853");
+                } else {
+                    audioSys.sfx('bad');
+                    this.showMsg("Not enough coins!", "#d50000");
+                }
+            },
+            showMsg(text, color) {
+                const el = document.getElementById('shop-msg');
+                el.style.color = color;
+                el.innerText = text;
+                el.style.opacity = 1;
+                setTimeout(() => el.style.opacity = 0, 1500);
             }
         };
 
