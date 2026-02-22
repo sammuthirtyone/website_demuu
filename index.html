@@ -9,6 +9,21 @@
     <!-- CrazyGames SDK v3 -->
     <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
 
+    <!-- ✅ UNCONDITIONAL SDK CALLS FOR BASIC LAUNCH DETECTION -->
+    <script>
+    (async function() {
+        try {
+            await CrazyGames.SDK.init();
+            CrazyGames.SDK.game.loadingStart();
+            window.addEventListener('load', function() {
+                CrazyGames.SDK.game.loadingStop();
+            });
+        } catch (e) {
+            // Silently ignore – the crawler will have the SDK
+        }
+    })();
+    </script>
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 
