@@ -9,18 +9,18 @@
     <!-- CrazyGames SDK v3 -->
     <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
 
-    <!-- ✅ UNCONDITIONAL SDK CALLS FOR BASIC LAUNCH DETECTION -->
+    <!-- CrazyGames: loadingStart must fire as early as possible -->
     <script>
-    (async function() {
-        try {
-            await CrazyGames.SDK.init();
-            CrazyGames.SDK.game.loadingStart();
-            window.addEventListener('load', function() {
-                CrazyGames.SDK.game.loadingStop();
-            });
-        } catch (e) {
-            // Silently ignore – the crawler will have the SDK
+    (function() {
+        function _tryLS() {
+            try {
+                if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.game) {
+                    window.CrazyGames.SDK.game.loadingStart();
+                }
+            } catch(e) {}
         }
+        _tryLS();
+        setTimeout(_tryLS, 0);
     })();
     </script>
 
@@ -475,107 +475,79 @@
 </div>
 
 <script>
-/* =============================
-   DIRECT SDK CALL - HELPER (non-breaking)
-   ============================= */
-(function() {
-    // If the CrazyGames object exists early, try to call loadingStart safely
-    try {
-        if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.loadingStart) {
-            window.CrazyGames.SDK.game.loadingStart();
-        }
-    } catch (e) {
-        // ignore
-    }
-})();
+/* loadingStart already sent from <head> script */
 
-/* =============================
-   CRAZYGAMES SDK v3 – SAFE WRAPPER
-   ============================= */
-
+/* =====================================================
+   CRAZYGAMES SDK v3 — COMPLIANT SAFE WRAPPER
+   - loadingStart fired immediately in <head> (above)
+   - SDK.init() has hard 5s timeout — never blocks game
+   - loadingStop fires synchronously when game is ready
+   - _lsDone / _lsStopDone prevent duplicate calls
+   ===================================================== */
 window.CrazySDKSafe = {
     ready: false,
+    _lsDone: false,
+    _lsStopDone: false,
+
+    _safeLoadingStart() {
+        if (this._lsDone) return;
+        this._lsDone = true;
+        try {
+            if (window.CrazyGames?.SDK?.game?.loadingStart)
+                window.CrazyGames.SDK.game.loadingStart();
+        } catch(e) {}
+    },
+
+    loadingStop() {
+        if (this._lsStopDone) return;
+        this._lsStopDone = true;
+        try {
+            if (window.CrazyGames?.SDK?.game?.loadingStop)
+                window.CrazyGames.SDK.game.loadingStop();
+        } catch(e) {}
+    },
 
     async init() {
+        this._safeLoadingStart(); // belt+braces in case <head> call failed
         try {
-            if (!window.CrazyGames || !window.CrazyGames.SDK) {
-                console.warn("CrazyGames SDK not available in this environment.");
-                updateLoadingStatus('No CrazyGames SDK (local test)', 40);
-                return false;
-            }
-
-            updateLoadingStatus('Initializing CrazyGames SDK...', 30);
-            await window.CrazyGames.SDK.init();
+            if (!window.CrazyGames?.SDK) return false;
+            await Promise.race([
+                window.CrazyGames.SDK.init(),
+                new Promise((_, r) => setTimeout(() => r(new Error('SDK init timeout')), 5000))
+            ]);
             this.ready = true;
-            console.log("✅ CrazyGames SDK initialized");
-            updateLoadingStatus('CrazyGames SDK ready', 50);
+            console.log('[CG] SDK ready');
             return true;
-        } catch (e) {
-            console.warn("CrazyGames SDK init failed:", e);
-            updateLoadingStatus('SDK init failed', 50);
+        } catch(e) {
+            console.warn('[CG] SDK init skipped:', e.message);
             return false;
         }
     },
 
-    loadingStart() {
-        try {
-            if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.loadingStart) {
-                window.CrazyGames.SDK.game.loadingStart();
-            }
-        } catch (e) {}
-    },
-
-    loadingStop() {
-        try {
-            if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.loadingStop) {
-                window.CrazyGames.SDK.game.loadingStop();
-            }
-        } catch (e) {}
-    },
-
     gameplayStart() {
-        try {
-            if (this.ready && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.gameplayStart) {
-                window.CrazyGames.SDK.game.gameplayStart();
-            } else {
-                // safe: do nothing if not ready
-            }
-        } catch (e) { console.warn('gameplayStart error', e); }
+        try { if (this.ready) window.CrazyGames.SDK.game.gameplayStart(); } catch(e) {}
     },
 
     gameplayStop() {
-        try {
-            if (this.ready && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.gameplayStop) {
-                window.CrazyGames.SDK.game.gameplayStop();
-            }
-        } catch (e) {}
+        try { if (this.ready) window.CrazyGames.SDK.game.gameplayStop(); } catch(e) {}
     },
 
     async saveData(data) {
         try {
-            if (this.ready && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.saveProgress) {
-                await window.CrazyGames.SDK.game.saveProgress(data);
-                return true;
-            }
-        } catch (e) { console.warn('saveData failed', e); }
+            if (this.ready) { await window.CrazyGames.SDK.game.saveProgress(data); return true; }
+        } catch(e) {}
         return false;
     },
 
     async loadData() {
         try {
-            if (this.ready && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.loadProgress) {
-                return await window.CrazyGames.SDK.game.loadProgress();
-            }
-        } catch (e) { console.warn('loadData failed', e); }
+            if (this.ready) return await window.CrazyGames.SDK.game.loadProgress();
+        } catch(e) {}
         return null;
     },
 
     submitScore(score) {
-        try {
-            if (this.ready && window.CrazyGames.SDK.game && window.CrazyGames.SDK.game.submitScore) {
-                window.CrazyGames.SDK.game.submitScore(score);
-            }
-        } catch (e) {}
+        try { if (this.ready) window.CrazyGames.SDK.game.submitScore(score); } catch(e) {}
     }
 };
 
@@ -1621,112 +1593,80 @@ const market = {
    ============================= */
 
 window.onload = async () => {
-    console.log('🚀 Jelly Pop loading...');
-    
+    console.log('🚀 Jelly Pop loading…');
+
+    // Hard 8s fallback — game will never stay stuck on loading screen
+    const _hardFallback = setTimeout(() => {
+        const ls = document.getElementById('loadingScreen');
+        if (ls && !ls.classList.contains('hidden')) {
+            ls.classList.add('hidden');
+            CrazySDKSafe.loadingStop();
+            console.warn('[CG] Hard fallback triggered');
+        }
+    }, 8000);
+
     try {
-        updateLoadingStatus('Initializing CrazyGames...', 10);
+        updateLoadingStatus('Connecting to CrazyGames…', 15);
+        await CrazySDKSafe.init();   // 5s timeout built-in
 
-        // Attempt to init the CrazyGames SDK (await)
-        const sdkOk = await CrazySDKSafe.init();
-
-        updateLoadingStatus('Loading cloud saves...', 35);
-        try {
-            const savedData = await CrazySDKSafe.loadData();
-            if (savedData) {
-                state.coins = savedData.coins || state.coins;
-                state.maxUnlocked = savedData.maxUnlocked || state.maxUnlocked;
-                state.inventory = savedData.inventory || state.inventory;
-                console.log('✅ Cloud data loaded successfully');
-            } else {
-                // Fallback to local storage
-                const localSave = localStorage.getItem('jellyPop_save');
-                if (localSave) {
-                    const parsed = JSON.parse(localSave);
-                    state.coins = parsed.coins || state.coins;
-                    state.maxUnlocked = parsed.maxUnlocked || state.maxUnlocked;
-                    state.inventory = parsed.inventory || state.inventory;
-                }
-            }
-        } catch (e) {
-            console.warn('Failed to load cloud data:', e);
+        updateLoadingStatus('Loading saved progress…', 40);
+        let savedData = null;
+        try { savedData = await CrazySDKSafe.loadData(); } catch(e) {}
+        if (savedData) {
+            state.coins       = savedData.coins       || state.coins;
+            state.maxUnlocked = savedData.maxUnlocked || state.maxUnlocked;
+            state.inventory   = savedData.inventory   || state.inventory;
+        } else {
             try {
-                const localSave = localStorage.getItem('jellyPop_save');
-                if (localSave) {
-                    const parsed = JSON.parse(localSave);
-                    state.coins = parsed.coins || state.coins;
-                    state.maxUnlocked = parsed.maxUnlocked || state.maxUnlocked;
-                    state.inventory = parsed.inventory || state.inventory;
+                const raw = localStorage.getItem('jellyPop_save');
+                if (raw) {
+                    const p = JSON.parse(raw);
+                    state.coins       = p.coins       || state.coins;
+                    state.maxUnlocked = p.maxUnlocked || state.maxUnlocked;
+                    state.inventory   = p.inventory   || state.inventory;
                 }
-            } catch (localError) {}
+            } catch(e) {}
         }
 
-        // Initialize audio
-        updateLoadingStatus('Initializing audio...', 65);
+        updateLoadingStatus('Initialising audio…', 70);
         audioSys.init();
-
-        // Update UI and prepare
         ui.updateShop();
         ui.buildLevelSelect();
 
-        // Set up sound button
         const soundBtn = document.getElementById('btn-sound');
-        if (soundBtn) {
-            soundBtn.onclick = (e) => {
-                e.preventDefault();
-                audioSys.toggle();
-            };
-        }
-
-        // Unlock audio on first interaction
-        document.body.addEventListener('click', () => audioSys.unlockAudio(), { once: true });
+        if (soundBtn) soundBtn.onclick = e => { e.preventDefault(); audioSys.toggle(); };
+        document.body.addEventListener('click',      () => audioSys.unlockAudio(), { once: true });
         document.body.addEventListener('touchstart', () => audioSys.unlockAudio(), { once: true });
 
-        // Fullscreen handling
-        const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
-        
-        function updateFullscreenButton() {
-            if (document.fullscreenElement) {
-                exitFullscreenBtn.classList.add('visible');
-            } else {
-                exitFullscreenBtn.classList.remove('visible');
-            }
-        }
-        
-        document.addEventListener('fullscreenchange', updateFullscreenButton);
-        
-        exitFullscreenBtn.onclick = () => {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        };
+        const exitBtn = document.getElementById('exitFullscreenBtn');
+        document.addEventListener('fullscreenchange', () => {
+            exitBtn.classList.toggle('visible', !!document.fullscreenElement);
+        });
+        exitBtn.onclick = () => document.exitFullscreen?.();
 
-        // Finalize loading
-        updateLoadingStatus('Ready to play!', 100);
-        setTimeout(() => {
-            document.getElementById('loadingScreen').classList.add('hidden');
-            CrazySDKSafe.loadingStop();
-            console.log('✅ Jelly Pop ready - SDK init attempted');
-        }, 500);
+        updateLoadingStatus('Ready!', 100);
 
-    } catch (error) {
-        console.error('Error during initialization:', error);
-        // Attempt to load local save and continue gracefully
+    } catch(err) {
+        console.error('Init error:', err);
         try {
-            const localSave = localStorage.getItem('jellyPop_save');
-            if (localSave) {
-                const parsed = JSON.parse(localSave);
-                state.coins = parsed.coins || state.coins;
-                state.maxUnlocked = parsed.maxUnlocked || state.maxUnlocked;
-                state.inventory = parsed.inventory || state.inventory;
+            const raw = localStorage.getItem('jellyPop_save');
+            if (raw) {
+                const p = JSON.parse(raw);
+                state.coins       = p.coins       || state.coins;
+                state.maxUnlocked = p.maxUnlocked || state.maxUnlocked;
+                state.inventory   = p.inventory   || state.inventory;
             }
-        } catch (e) {}
-        
+        } catch(e) {}
         ui.updateShop();
         ui.buildLevelSelect();
-        document.getElementById('loadingScreen').classList.add('hidden');
-        try { CrazySDKSafe.loadingStop(); } catch (e) {}
     }
-};
+
+    // Always run — hide loading screen and call loadingStop
+    clearTimeout(_hardFallback);
+    document.getElementById('loadingScreen').classList.add('hidden');
+    CrazySDKSafe.loadingStop();  // called synchronously, not delayed
+    console.log('✅ Jelly Pop ready');
+}
 </script>
 
 </body>
