@@ -1077,7 +1077,7 @@ function buildLevelData() {
 
         // Rotate objective type: first 3 levels always score to ease player in
         let objType;
-        if (i <= 3) {
+        if (i <= 3 || i === 6) {
             objType = 'score';
         } else {
             objType = objTypes[(i - 4) % objTypes.length];
@@ -1101,7 +1101,7 @@ function buildLevelData() {
             case 'row':
                 obj.targetRow  = 3 + (i % 3); // rows 3, 4, or 5
                 obj.label      = `Clear Row ${obj.targetRow + 1}`;
-                obj.moves      = i === 6 ? baseMoves + 5 : Math.max(15, baseMoves - 8);
+                obj.moves      = Math.max(15, baseMoves - 8);
                 break;
             case 'ice':
                 obj.iceCount   = 4 + phase * 2 + (isBonus ? 4 : 0);
