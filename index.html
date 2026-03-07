@@ -5,6 +5,8 @@
     <title>Jelly Poppys - Blast</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="crazygames" content="true">
+    <meta name="description" content="Jelly Poppys Blast — candy match-3 puzzle game with clash battles, aura cards and live events!">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23c026d3'/><text y='.9em' font-size='72' x='50%' text-anchor='middle'>🍬</text></svg>">
 
     <!-- CrazyGames SDK v3 — async so a slow/blocked CDN never stalls the page -->
     <script>window._cgSDKFailed=false;</script>
@@ -1546,6 +1548,46 @@ html,body{
 }
 #game-panel.shaking{animation:screenShake .38s ease-out}
 
+/* ══════════════════════════════════════════
+   EVENTS SYSTEM
+══════════════════════════════════════════ */
+#screen-events{background:linear-gradient(145deg,#0a1628,#1a2a4a,#0d1f3c)}
+.ev-panel{max-width:480px;margin:0 auto;padding:16px;min-height:100vh;display:flex;flex-direction:column;gap:12px}
+.ev-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ev-header-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#fff}
+.ev-tabs{display:flex;gap:6px;margin-bottom:4px}
+.ev-tab{flex:1;padding:8px 6px;border:none;border-radius:10px;font-size:.75rem;font-weight:700;cursor:pointer;transition:.2s;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+.ev-tab.active{background:rgba(255,255,255,.18);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ev-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.ev-card:hover{background:rgba(255,255,255,.11);transform:translateY(-2px)}
+.ev-card-banner{position:absolute;top:0;left:0;right:0;height:4px;border-radius:18px 18px 0 0}
+.ev-card-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.ev-card-icon{font-size:2.4rem;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.ev-card-title{font-family:'Fredoka One',cursive;font-size:1.05rem;color:#fff;line-height:1.2}
+.ev-card-type{font-size:.65rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.ev-card-desc{font-size:.8rem;color:rgba(255,255,255,.65);margin-bottom:12px;line-height:1.5}
+.ev-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ev-timer{font-size:.72rem;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:4px}
+.ev-rewards{display:flex;gap:6px}
+.ev-reward-chip{background:rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#fbbf24;font-weight:700}
+.ev-play-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:10px;padding:7px 16px;color:#fff;font-weight:700;font-size:.8rem;cursor:pointer;transition:.2s;white-space:nowrap}
+.ev-play-btn:hover{filter:brightness(1.15)}
+.ev-play-btn:disabled{opacity:.45;cursor:default}
+.ev-play-btn.done{background:rgba(74,222,128,.2);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
+.ev-progress-bar{height:6px;background:rgba(255,255,255,.1);border-radius:4px;margin:8px 0 4px;overflow:hidden}
+.ev-progress-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.ev-progress-label{font-size:.65rem;color:rgba(255,255,255,.4);text-align:right}
+.ev-empty{text-align:center;padding:40px 16px;color:rgba(255,255,255,.35);font-size:.88rem}
+.ev-season-banner{background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(239,68,68,.1));border:1px solid rgba(251,191,36,.25);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.ev-season-icon{font-size:2rem}
+.ev-season-text{flex:1}
+.ev-season-title{color:#fbbf24;font-family:'Fredoka One',cursive;font-size:1rem}
+.ev-season-sub{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px}
+.ev-season-pts{font-family:'Fredoka One',cursive;color:#fbbf24;font-size:1.3rem}
+/* Flash badge on event button */
+@keyframes evPulse{0%,100%{box-shadow:0 4px 0 #1e3a5f,0 6px 18px rgba(99,102,241,.3)}50%{box-shadow:0 4px 0 #1e3a5f,0 6px 28px rgba(99,102,241,.7)}}
+.ev-home-btn{animation:evPulse 2s ease-in-out infinite}
+
 /* ── DAILY CHALLENGE BUTTON ── */
 .daily-btn{
     width:100%;padding:14px 20px;border:none;
@@ -1831,7 +1873,7 @@ html,body{
 .aura-active-crystal .tile-inner{box-shadow:0 0 12px 4px rgba(8,145,178,.6),0 3px 0 rgba(0,0,0,.18)!important;animation:auraCrystal 2s ease-in-out infinite alternate}
 .aura-active-nature  .tile-inner{box-shadow:0 0 8px 2px rgba(22,163,74,.55),0 3px 0 rgba(0,0,0,.18)!important}
 .aura-active-galaxy  .tile-inner{box-shadow:0 0 16px 5px rgba(99,102,241,.75),0 3px 0 rgba(0,0,0,.18)!important;animation:auraGalaxy 1.2s ease-in-out infinite alternate}
-.aura-active-blood   .tile-inner{box-shadow:0 0 12px 4px rgba(159,18,57,.7),0 3px 0 rgba(0,0,0,.18)!important;animation:auraBlood 1s ease-in-out infinite alternate}
+.aura-active-rose   .tile-inner{box-shadow:0 0 12px 4px rgba(159,18,57,.7),0 3px 0 rgba(0,0,0,.18)!important;animation:auraRose 1s ease-in-out infinite alternate}
 @keyframes auraFirePulse  {from{box-shadow:0 0 6px 2px rgba(239,68,68,.5),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 14px 5px rgba(251,146,60,.9),0 3px 0 rgba(0,0,0,.18)}}
 @keyframes auraThunderPulse{from{box-shadow:0 0 4px 1px rgba(253,224,71,.4),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 18px 6px rgba(253,224,71,1),0 3px 0 rgba(0,0,0,.18)}}
 @keyframes auraCosmic    {from{box-shadow:0 0 8px 2px rgba(124,58,237,.5),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 18px 6px rgba(196,181,253,.8),0 3px 0 rgba(0,0,0,.18)}}
@@ -1839,7 +1881,7 @@ html,body{
 @keyframes auraAngel     {from{box-shadow:0 0 10px 4px rgba(224,242,254,.6),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 22px 8px rgba(255,255,255,.95),0 3px 0 rgba(0,0,0,.18)}}
 @keyframes auraCrystal   {from{box-shadow:0 0 8px 2px rgba(8,145,178,.4),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 16px 5px rgba(165,243,252,.9),0 3px 0 rgba(0,0,0,.18)}}
 @keyframes auraGalaxy    {from{box-shadow:0 0 10px 3px rgba(99,102,241,.55),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 22px 8px rgba(167,139,250,.95),0 3px 0 rgba(0,0,0,.18)}}
-@keyframes auraBlood     {from{box-shadow:0 0 6px 2px rgba(159,18,57,.5),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 16px 5px rgba(244,63,94,.8),0 3px 0 rgba(0,0,0,.18)}}
+@keyframes auraRose     {from{box-shadow:0 0 6px 2px rgba(159,18,57,.5),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 16px 5px rgba(244,63,94,.8),0 3px 0 rgba(0,0,0,.18)}}
 /* Wave 3 aura animations */
 @keyframes auraStorm     {0%{box-shadow:0 0 6px 2px rgba(100,116,139,.5),0 3px 0 rgba(0,0,0,.18)}50%{box-shadow:0 0 18px 7px rgba(226,232,240,.9),0 3px 0 rgba(0,0,0,.18)}100%{box-shadow:0 0 6px 2px rgba(100,116,139,.5),0 3px 0 rgba(0,0,0,.18)}}
 @keyframes auraVolcano   {from{box-shadow:0 0 8px 3px rgba(194,65,12,.6),0 3px 0 rgba(0,0,0,.18)}to{box-shadow:0 0 20px 7px rgba(254,215,170,.9),0 3px 0 rgba(0,0,0,.18)}}
@@ -2304,6 +2346,18 @@ html,body{
             <span class="daily-badge" id="daily-badge">PLAY</span>
         </button>
 
+        <!-- Events -->
+        <button class="daily-btn ev-home-btn" onclick="events.open()" style="background:linear-gradient(135deg,#1e3a8a,#3730a3);box-shadow:0 4px 0 #1e3a5f,0 6px 18px rgba(99,102,241,.3)">
+            <div class="daily-left">
+                <span class="daily-icon">⚡</span>
+                <div class="daily-text">
+                    <span class="daily-title">Live Events</span>
+                    <span class="daily-sub" id="ev-home-sub">Special challenges &amp; big rewards!</span>
+                </div>
+            </div>
+            <span class="daily-badge" id="ev-home-badge" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">GO!</span>
+        </button>
+
         <!-- 2×2 nav grid -->
         <div class="home-nav-grid">
             <button class="hn-btn hn-levels" onclick="ui.nav('screen-levels')">
@@ -2676,7 +2730,7 @@ window.CrazySDKSafe = {
 
     // ── Score ─────────────────────────────────────────────
     submitScore(score) {
-        try { if (this.ready) this._sdk().user.submitScore({ score }); } catch(e) {}
+        try { if (this.ready) this._sdk().user.submitScore({ slug: 'jelly-poppys-blast', score }); } catch(e) {}
     },
 
     // ── Data (cloud save with localStorage fallback) ─────
@@ -2844,6 +2898,14 @@ const kb = {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 this._confirmSelect();
+            }
+        });
+
+        // Auto-pause when player switches tab or minimises window
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                const gameActive = document.getElementById('screen-game')?.classList.contains('active');
+                if (gameActive && !pause.active) pause.open();
             }
         });
     },
@@ -3787,6 +3849,7 @@ const game = {
         state.activeTool = null;
         state.freeMove = false;
         cascadeDepth = 0;
+        state._lastMaxCascade = 0;
 
         // Deep-copy objective so collected/iceLeft counters reset each play
         state.obj = JSON.parse(JSON.stringify(config.obj));
@@ -4480,30 +4543,36 @@ const game = {
 
     checkWin() {
         const obj = state.obj;
-        let won = false;
+        let objectiveMet = false;
 
         if (!obj) {
-            won = state.score >= state.target;
+            objectiveMet = state.score >= state.target;
         } else {
             switch(obj.type) {
                 case 'score':
                 case 'survival':
-                    won = state.score >= (obj.target || state.target);
+                    objectiveMet = state.score >= (obj.target || state.target);
                     break;
                 case 'collect':
-                    won = (obj.collected || 0) >= obj.amount;
+                    objectiveMet = (obj.collected || 0) >= obj.amount;
                     break;
                 case 'row':
-                    won = obj.clearedCells && obj.clearedCells.size >= cfg.w;
+                    objectiveMet = obj.clearedCells && obj.clearedCells.size >= cfg.w;
                     break;
                 case 'ice':
-                    won = (obj.iceLeft || 0) <= 0;
+                    objectiveMet = (obj.iceLeft || 0) <= 0;
                     break;
                 case 'cascade':
-                    won = (obj.achieved || 0) >= obj.required;
+                    objectiveMet = (obj.achieved || 0) >= obj.required;
                     break;
             }
         }
+
+        // For non-score objectives, also require score target to be met
+        const scoreMet = state.score >= state.target;
+        const won = obj && obj.type !== 'score' && obj.type !== 'survival'
+            ? objectiveMet && scoreMet
+            : objectiveMet;
 
         if (won) {
             this.gameOver(true);
@@ -4532,7 +4601,7 @@ const game = {
         }
     },
 
-    async gameOver(win) {
+    async gameOver(win, reason) {
         state.locked = true;
         audioSys.stopMusic();
         
@@ -4568,7 +4637,7 @@ const game = {
                 // movesRatio: how many moves you had left vs total moves (0.0–1.0)
                 // Combined: lets players earn 3 stars by being efficient even at exact target
                 const scoreRatio = state.score / state.target;
-                const totalMoves = levelData[state.levelIdx].moves;
+                const totalMoves = levelData[state.levelIdx]?.moves || state.moves || 20;
                 const movesRatio = state.moves / totalMoves; // leftover / total
                 // 3 stars: score ≥ target AND ≥ 40% moves left, OR score ≥ 1.6× target
                 // 2 stars: score ≥ target AND ≥ 15% moves left, OR score ≥ 1.2× target
@@ -4627,6 +4696,8 @@ const game = {
                     bestScore: state.bestScore,
                     streak: state.streak,
                     lastPlayDate: state.lastPlayDate,
+                    auraOwned: state.auraOwned, auraEquipped: state.auraEquipped,
+                    spinLastMs: state.spinLastMs, elixir: state.elixir,
                 };
                 CrazySDKSafe.dataSet('jellyPoppysBlast_save', JSON.stringify(saveData));
                 const indicator = document.getElementById('syncIndicator');
@@ -4643,11 +4714,26 @@ const game = {
                 btnContainer.appendChild(btnMenu);
             } else {
                 audioSys.sfx('levelFail');
-                document.getElementById('res-title').innerText = "Out of Moves!";
-                document.getElementById('res-msg').innerText = "So close! Give it another shot 💪";
-                document.getElementById('res-stars').innerText = '💔';
                 const resMascot = document.getElementById('res-mascot');
                 if (resMascot) resMascot.textContent = '😢';
+                document.getElementById('res-stars').innerText = '💔';
+
+                const scoreMet   = state.score >= state.target;
+                const scoreShort = state.target - state.score;
+
+                if (reason === 'hp') {
+                    document.getElementById('res-title').innerText = '💀 Defeated!';
+                    document.getElementById('res-msg').innerText =
+                        `The enemy destroyed you! Score: ${state.score.toLocaleString()} / ${state.target.toLocaleString()} needed. Gear up and try again! ⚔️`;
+                } else if (!scoreMet) {
+                    document.getElementById('res-title').innerText = '🎯 Score Too Low!';
+                    document.getElementById('res-msg').innerText =
+                        `You needed ${state.target.toLocaleString()} pts but only scored ${state.score.toLocaleString()}. ` +
+                        `${scoreShort.toLocaleString()} more needed — try again!`;
+                } else {
+                    document.getElementById('res-title').innerText = '😮 Out of Moves!';
+                    document.getElementById('res-msg').innerText = "So close! Give it another shot 💪";
+                }
                 
                 // "Watch ad for extra moves" — rewarded ad pattern required by CrazyGames
                 const btnContinue = document.createElement('button');
@@ -4979,6 +5065,8 @@ const market = {
                 bestScore: state.bestScore,
                 streak: state.streak,
                 lastPlayDate: state.lastPlayDate,
+                auraOwned: state.auraOwned, auraEquipped: state.auraEquipped,
+                spinLastMs: state.spinLastMs, elixir: state.elixir,
             };
             CrazySDKSafe.dataSet('jellyPoppysBlast_save', JSON.stringify(saveData));
             const indicator = document.getElementById('syncIndicator');
@@ -5522,14 +5610,14 @@ game.processMatches = async function(matches) {
 
 /* ─── Patch gameOver to handle daily challenge completion ── */
 const _origGameOver = game.gameOver.bind(game);
-game.gameOver = async function(win) {
+game.gameOver = async function(win, reason) {
     if (state._isDaily) {
         dailyChallenge.onComplete(win, state.score);
         if (win) audioSys.sfx('daily');
     } else if (win) {
         audioSys.sfx('levelUp');
     }
-    await _origGameOver(win);
+    await _origGameOver(win, reason);
 };
 
 /* ─── Patch startLevel to reinit bomb countdown display ── */
@@ -5648,6 +5736,383 @@ audioSys.playMusic = function() {
 };
 
 /* ═══════════════════════════════════════════════════════
+   LIVE EVENTS SYSTEM
+   4 rotating event types, each with unique rules/rewards.
+   Progress saved to localStorage. Season points accumulate.
+═══════════════════════════════════════════════════════ */
+const events = {
+
+    // ── Event definitions (rotate weekly by day-of-week) ──
+    EVENTS: [
+        {
+            id: 'blitz',
+            type: 'live',
+            icon: '⚡',
+            title: 'Score Blitz',
+            desc: 'Reach 5,000 points in a single level. Move fast — every match counts!',
+            banner: 'linear-gradient(90deg,#f97316,#ef4444)',
+            goal: 5000,
+            unit: 'pts',
+            reward: { coins: 300, sp: 50 },
+            levelHint: 'Any level — best score counts',
+            checkFn: score => score,
+        },
+        {
+            id: 'surgeon',
+            type: 'live',
+            icon: '🎯',
+            title: 'Precision Surgeon',
+            desc: 'Win a level using 10 moves or fewer. No wasted swaps!',
+            banner: 'linear-gradient(90deg,#3b82f6,#6366f1)',
+            goal: 10,
+            unit: 'moves left',
+            reward: { coins: 250, sp: 40 },
+            levelHint: 'Use ≤10 total moves in any level',
+            checkFn: (score, movesUsed) => movesUsed,
+            invert: true, // lower is better
+        },
+        {
+            id: 'combo',
+            type: 'weekly',
+            icon: '🔥',
+            title: 'Combo King',
+            desc: 'Chain 5 matches in a single cascade. Chain reactions count!',
+            banner: 'linear-gradient(90deg,#ec4899,#f43f5e)',
+            goal: 5,
+            unit: 'chain',
+            reward: { coins: 200, sp: 35 },
+            levelHint: 'Trigger a 5× cascade in any level',
+            checkFn: (score, moves, chain) => chain,
+        },
+        {
+            id: 'raid',
+            type: 'weekly',
+            icon: '🏰',
+            title: 'Total Raid',
+            desc: 'Destroy all buildings and earn a 3-star victory. Full destruction only!',
+            banner: 'linear-gradient(90deg,#f59e0b,#eab308)',
+            goal: 3,
+            unit: 'stars',
+            reward: { coins: 400, sp: 75 },
+            levelHint: '3-star any level with full destruction',
+            checkFn: (score, moves, chain, stars) => stars,
+        },
+        {
+            id: 'collector',
+            type: 'live',
+            icon: '🧲',
+            title: 'Jelly Collector',
+            desc: 'Play 3 minigames back to back. Any game, any score!',
+            banner: 'linear-gradient(90deg,#10b981,#06b6d4)',
+            goal: 3,
+            unit: 'games played',
+            reward: { coins: 150, sp: 25 },
+            levelHint: 'Play 3 minigames (Training menu)',
+            checkFn: null, // tracked separately
+        },
+        {
+            id: 'survivor',
+            type: 'live',
+            icon: '🛡️',
+            title: 'Survivor',
+            desc: 'Finish a level with more than 200 HP remaining. Keep your shields up!',
+            banner: 'linear-gradient(90deg,#8b5cf6,#6366f1)',
+            goal: 200,
+            unit: 'HP left',
+            reward: { coins: 200, sp: 30 },
+            levelHint: 'Finish any level with >200 HP',
+            checkFn: (score, moves, chain, stars, hp) => hp,
+        },
+    ],
+
+    // ── State ─────────────────────────────────────────────
+    _tab: 'live',
+
+    _saveKey: 'jpb_events_v2',
+
+    _load() {
+        try { return JSON.parse(localStorage.getItem(this._saveKey) || '{}'); } catch(e) { return {}; }
+    },
+    _save(data) {
+        const s = JSON.stringify(data);
+        try { localStorage.setItem(this._saveKey, s); } catch(e) {}
+        CrazySDKSafe.dataSet(this._saveKey, s);
+    },
+
+    seasonPoints() {
+        const d = this._load();
+        return d.sp || 0;
+    },
+
+    isCompleted(id) {
+        const d = this._load();
+        const week = this._weekKey();
+        return !!(d[week] && d[week][id]);
+    },
+
+    markComplete(id, rewardCoins, rewardSp) {
+        const d   = this._load();
+        const week = this._weekKey();
+        if (!d[week]) d[week] = {};
+        d[week][id] = { ts: Date.now() };
+        d.sp = (d.sp || 0) + rewardSp;
+        this._save(d);
+
+        // Award coins
+        state.coins += rewardCoins;
+        audioSys.sfx('coin');
+        const saveData = { coins:state.coins, maxUnlocked:state.maxUnlocked, inventory:state.inventory,
+            levelStars:state.levelStars, bestScore:state.bestScore, streak:state.streak, lastPlayDate:state.lastPlayDate,
+            auraOwned:state.auraOwned, auraEquipped:state.auraEquipped, spinLastMs:state.spinLastMs, elixir:state.elixir };
+        CrazySDKSafe.dataSet('jellyPoppysBlast_save', JSON.stringify(saveData));
+    },
+
+    // Minigame play counter
+    addMiniplay() {
+        const d = this._load();
+        const week = this._weekKey();
+        if (!d[week]) d[week] = {};
+        d[week]._miniPlays = (d[week]._miniPlays || 0) + 1;
+        this._save(d);
+
+        // Check collector event
+        if (d[week]._miniPlays >= 3 && !d[week]['collector']) {
+            this.markComplete('collector', 150, 25);
+            this._toastReward('🧲 Jelly Collector complete!', 150);
+            this.refreshUI();
+        }
+    },
+
+    miniPlayCount() {
+        const d = this._load();
+        const week = this._weekKey();
+        return (d[week] && d[week]._miniPlays) || 0;
+    },
+
+    // Called from game.gameOver(true, ...) after a win
+    onLevelWin({ score, movesUsed, maxCascade, stars, hpLeft }) {
+        const toCheck = [
+            { id:'blitz',    val: score },
+            { id:'surgeon',  val: movesUsed, invert:true, goal:10 },
+            { id:'combo',    val: maxCascade },
+            { id:'raid',     val: stars },
+            { id:'survivor', val: hpLeft },
+        ];
+        let anyNew = false;
+        toCheck.forEach(({ id, val, invert, goal }) => {
+            if (this.isCompleted(id)) return;
+            const ev = this.EVENTS.find(e => e.id === id);
+            if (!ev) return;
+            const passed = invert ? val <= (goal || ev.goal) : val >= ev.goal;
+            if (passed) {
+                this.markComplete(id, ev.reward.coins, ev.reward.sp);
+                this._toastReward(`${ev.icon} ${ev.title} complete!`, ev.reward.coins);
+                anyNew = true;
+            }
+        });
+        if (anyNew) this.refreshUI();
+        this._updateHomeBadge();
+    },
+
+    _toastReward(msg, coins) {
+        const t = document.createElement('div');
+        t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:700;font-size:.9rem;padding:10px 20px;border-radius:30px;z-index:9999;box-shadow:0 4px 20px rgba(99,102,241,.5);animation:floatUp 2.5s forwards';
+        t.textContent = `${msg} +${coins} 🪙`;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2600);
+    },
+
+    _weekKey() {
+        const d   = new Date();
+        const jan = new Date(d.getFullYear(), 0, 1);
+        const week = Math.ceil(((d - jan) / 86400000 + jan.getDay() + 1) / 7);
+        return `w${d.getFullYear()}_${week}`;
+    },
+
+    // Which events are "active" this week (3 live + 2 weekly, rotate by week number)
+    _activeEvents() {
+        const d   = new Date();
+        const jan = new Date(d.getFullYear(), 0, 1);
+        const week = Math.ceil(((d - jan) / 86400000 + jan.getDay() + 1) / 7);
+        // Rotate starting index by week number so events feel fresh
+        const all   = this.EVENTS;
+        const live  = all.filter(e => e.type === 'live');
+        const weekly = all.filter(e => e.type === 'weekly');
+        const li = week % live.length;
+        const wi = week % weekly.length;
+        // Pick 2 live + 1 weekly (or all, just order them)
+        return [
+            live[li],
+            live[(li + 1) % live.length],
+            weekly[wi],
+            weekly[(wi + 1) % weekly.length],
+        ];
+    },
+
+    _timeUntilWeekReset() {
+        const now  = new Date();
+        const next = new Date(now);
+        // Next Monday 00:00
+        const daysUntilMonday = (8 - now.getDay()) % 7 || 7;
+        next.setDate(now.getDate() + daysUntilMonday);
+        next.setHours(0, 0, 0, 0);
+        const diff = next - now;
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        return d > 0 ? `${d}d ${h}h` : `${h}h ${String(m).padStart(2,'0')}m`;
+    },
+
+    // ── UI ────────────────────────────────────────────────
+    open() {
+        audioSys.start();
+        ui.nav('screen-events');
+        this.refreshUI();
+        this._updateHomeBadge();
+        clearInterval(this._timerInterval);
+        this._timerInterval = setInterval(() => this._tickTimers(), 60000);
+    },
+
+    setTab(tab) {
+        this._tab = tab;
+        ['live','weekly','done'].forEach(t => {
+            const el = document.getElementById(`ev-tab-${t}`);
+            if (el) el.classList.toggle('active', t === tab);
+        });
+        this.refreshUI();
+    },
+
+    refreshUI() {
+        const list = document.getElementById('ev-list');
+        if (!list) return;
+
+        const spEl = document.getElementById('ev-season-pts');
+        if (spEl) spEl.textContent = `${this.seasonPoints()} SP`;
+
+        const coinEl = document.getElementById('ev-coins');
+        if (coinEl) coinEl.textContent = state.coins.toLocaleString();
+
+        const active = this._activeEvents();
+        const tab    = this._tab;
+
+        let eventsToShow;
+        if (tab === 'done') {
+            eventsToShow = active.filter(e => this.isCompleted(e.id));
+        } else if (tab === 'weekly') {
+            eventsToShow = active.filter(e => e.type === 'weekly' && !this.isCompleted(e.id));
+        } else {
+            eventsToShow = active.filter(e => e.type === 'live' && !this.isCompleted(e.id));
+        }
+
+        if (eventsToShow.length === 0) {
+            list.innerHTML = `<div class="ev-empty">${tab === 'done' ? '🏅 No completed events yet this week.<br>Go play and earn rewards!' : '✅ All events in this category done!<br>Check the <b>Weekly</b> tab or come back next week.'}</div>`;
+            return;
+        }
+
+        list.innerHTML = eventsToShow.map(ev => this._cardHTML(ev)).join('');
+    },
+
+    _cardHTML(ev) {
+        const done     = this.isCompleted(ev.id);
+        const isMini   = ev.id === 'collector';
+        const progress = isMini ? Math.min(this.miniPlayCount(), ev.goal) : 0;
+        const pct      = isMini ? Math.round((progress / ev.goal) * 100) : (done ? 100 : 0);
+        const timeLeft = this._timeUntilWeekReset();
+
+        return `
+        <div class="ev-card">
+            <div class="ev-card-banner" style="background:${ev.banner}"></div>
+            <div class="ev-card-top">
+                <span class="ev-card-icon">${ev.icon}</span>
+                <div>
+                    <div class="ev-card-title">${ev.title}</div>
+                    <div class="ev-card-type">${ev.type === 'live' ? '🔴 Live' : '📅 Weekly'} · Resets in ${timeLeft}</div>
+                </div>
+            </div>
+            <div class="ev-card-desc">${ev.desc}</div>
+            ${isMini ? `
+            <div class="ev-progress-bar"><div class="ev-progress-fill" style="width:${pct}%;background:${ev.banner}"></div></div>
+            <div class="ev-progress-label">${progress} / ${ev.goal} ${ev.unit}</div>
+            ` : ''}
+            <div class="ev-card-footer">
+                <div class="ev-rewards">
+                    <span class="ev-reward-chip">🪙 ${ev.reward.coins}</span>
+                    <span class="ev-reward-chip" style="color:#c084fc">${ev.reward.sp} SP</span>
+                </div>
+                ${done
+                    ? `<button class="ev-play-btn done" disabled>✅ Done!</button>`
+                    : `<button class="ev-play-btn" onclick="events._playEvent('${ev.id}')">${ev.id === 'collector' ? '🎮 Train' : '⚔️ Play'}</button>`
+                }
+            </div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.28);margin-top:8px">💡 ${ev.levelHint}</div>
+        </div>`;
+    },
+
+    _playEvent(id) {
+        // Route to the right screen
+        if (id === 'collector') {
+            ui.nav('screen-minigames');
+        } else {
+            ui.nav('screen-levels');
+        }
+    },
+
+    _tickTimers() {
+        const timeEl = document.querySelectorAll('.ev-card-type');
+        const t = this._timeUntilWeekReset();
+        timeEl.forEach(el => {
+            el.textContent = el.textContent.replace(/Resets in .+/, `Resets in ${t}`);
+        });
+    },
+
+    _updateHomeBadge() {
+        const active    = this._activeEvents();
+        const remaining = active.filter(e => !this.isCompleted(e.id)).length;
+        const badge     = document.getElementById('ev-home-badge');
+        const sub       = document.getElementById('ev-home-sub');
+        if (badge) {
+            badge.textContent = remaining > 0 ? `${remaining} LEFT` : '✅ DONE';
+            badge.style.background = remaining > 0
+                ? 'linear-gradient(135deg,#6366f1,#8b5cf6)'
+                : 'rgba(74,222,128,.25)';
+        }
+        if (sub) sub.textContent = remaining > 0
+            ? `${remaining} active event${remaining !== 1 ? 's' : ''} — big rewards waiting!`
+            : 'All done this week! Come back Monday.';
+    },
+};
+
+/* ── Hook minigame completions into events ── */
+/* NOTE: patched after minigames is declared — see bottom of file */
+
+/* ── Hook level win into events ── */
+const _origGameOverEvents = game.gameOver.bind(game);
+game.gameOver = async function(win, reason) {
+    await _origGameOverEvents(win, reason);
+    if (win) {
+        const movesUsed   = (levelData[state.levelIdx]?.moves || 20) - state.moves;
+        const maxCascade  = state._lastMaxCascade || 0;
+        const hpLeft      = (typeof playerHP !== 'undefined') ? playerHP.current : 0;
+        const starCount   = state.levelStars[state.levelIdx] || 0;
+        events.onLevelWin({
+            score:      state.score,
+            movesUsed:  movesUsed,
+            maxCascade: maxCascade,
+            stars:      starCount,
+            hpLeft:     hpLeft,
+        });
+    }
+    events._updateHomeBadge();
+};
+
+/* ── Track max cascade in state ── */
+const _origProcessMatchesEvents = game.processMatches.bind(game);
+game.processMatches = async function(matches, cascadeDepth) {
+    if (cascadeDepth > (state._lastMaxCascade || 0)) state._lastMaxCascade = cascadeDepth;
+    return _origProcessMatchesEvents(matches, cascadeDepth);
+};
+
+/* ═══════════════════════════════════════════════════════
    FREE SPIN WHEEL SYSTEM
    • Canvas-drawn wheel with 12 segments
    • 8 Aura Cards (colour-coded, rarity-weighted) + coin prizes
@@ -5684,7 +6149,7 @@ const spinWheel = {
         { id:'crystal',  name:'Crystal Aura',   icon:'💎', color:'#0891b2', glow:'#a5f3fc', rarity:'rare',      css:'aura-active-crystal', desc:'3 Shields + 2× pop score' },
         { id:'nature',   name:'Nature Aura',    icon:'🌿', color:'#16a34a', glow:'#bbf7d0', rarity:'uncommon',  css:'aura-active-nature',  desc:'2× pop score' },
         { id:'galaxy',   name:'Galaxy Aura',    icon:'🌠', color:'#6366f1', glow:'#c7d2fe', rarity:'legendary', css:'aura-active-galaxy',  desc:'7 Shields + 3× pop score' },
-        { id:'blood',    name:'Blood Aura',     icon:'🩸', color:'#9f1239', glow:'#fecdd3', rarity:'rare',      css:'aura-active-blood',   desc:'3 Shields + 2× pop score' },
+        { id:'rose',    name:'Rose Aura',     icon:'🩸', color:'#9f1239', glow:'#fecdd3', rarity:'rare',      css:'aura-active-rose',   desc:'3 Shields + 2× pop score' },
         // ── Wave 3 aura cards ────────────────────────────────
         { id:'storm',    name:'Storm Aura',     icon:'🌪️', color:'#64748b', glow:'#e2e8f0', rarity:'uncommon',  css:'aura-active-storm',   desc:'2× pop score' },
         { id:'ocean',    name:'Ocean Aura',     icon:'🌊', color:'#0369a1', glow:'#bae6fd', rarity:'popular',   css:'aura-active-ocean',   desc:'1 Shield — blocks 1 arena hit' },
@@ -5733,7 +6198,7 @@ const spinWheel = {
             { type:'aura',  id:'shadow',  label:'🌑 Shadow',   color:'#1e1b4b', weight:3  },
             { type:'aura',  id:'cosmic',  label:'🌌 Cosmic',   color:'#7c3aed', weight:3  },
             { type:'aura',  id:'crystal', label:'💎 Crystal',  color:'#0891b2', weight:3  },
-            { type:'aura',  id:'blood',   label:'🩸 Blood',    color:'#9f1239', weight:3  },
+            { type:'aura',  id:'rose',   label:'🌹 Rose',    color:'#9f1239', weight:3  },
             { type:'aura',  id:'volcano', label:'🌋 Volcano',  color:'#c2410c', weight:3  },
             { type:'aura',  id:'venom',   label:'🕷️ Venom',  color:'#581c87', weight:3  },
             { type:'aura',  id:'obsidian',label:'🖤 Obsidian', color:'#18181b', weight:3  },
@@ -5833,29 +6298,28 @@ const spinWheel = {
         }
     },
 
-    // ── Pre-bake static wheel to offscreen canvas (called once) ──
+    // ── Pre-bake static wheel to offscreen canvas (called once per spin) ──
     _bakeWheel() {
-        const size = 300;
-        const off  = document.createElement('canvas');
-        off.width  = size;
-        off.height = size;
-        const ctx  = off.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
+        const size  = 300;
+        const off   = document.createElement('canvas');
+        off.width   = size;
+        off.height  = size;
+        const ctx   = off.getContext('2d');
         const cx = size/2, cy = size/2, R = size/2 - 4;
-        const segs  = this.SEGMENTS;
-        const total = segs.reduce((a,s) => a + s.weight, 0);
+
+        const segs  = this._activeSegs || this.SEGMENTS.slice(0, 5);
+        const N     = segs.length;           // always 5
+        const slice = (Math.PI * 2) / N;     // equal slices
 
         // Outer ring
         const outerGrad = ctx.createRadialGradient(cx,cy,R-8,cx,cy,R+4);
-        outerGrad.addColorStop(0,'rgba(255,255,255,.08)');
-        outerGrad.addColorStop(1,'rgba(255,255,255,.0)');
+        outerGrad.addColorStop(0,'rgba(255,255,255,.12)');
+        outerGrad.addColorStop(1,'rgba(0,0,0,.35)');
         ctx.fillStyle = outerGrad;
         ctx.beginPath(); ctx.arc(cx,cy,R+4,0,Math.PI*2); ctx.fill();
 
-        let angle = 0;
         segs.forEach((seg, i) => {
-            const slice    = (seg.weight / total) * Math.PI * 2;
+            const angle    = i * slice;
             const endAngle = angle + slice;
 
             ctx.beginPath();
@@ -5863,42 +6327,42 @@ const spinWheel = {
             ctx.arc(cx, cy, R, angle, endAngle);
             ctx.closePath();
 
-            const shade = i % 2 === 0 ? seg.color : this._lighten(seg.color, 18);
-            const grad  = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-            grad.addColorStop(0, shade + 'ff');
-            grad.addColorStop(1, shade + 'cc');
+            const col  = seg.color || '#ff80b4';
+            const col2 = this._lighten(col, 22);
+            const grad = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
+            grad.addColorStop(0, col2 + 'ee');
+            grad.addColorStop(1, col  + 'cc');
             ctx.fillStyle = grad;
             ctx.fill();
 
-            ctx.strokeStyle = 'rgba(0,0,0,.25)';
-            ctx.lineWidth   = 1.5;
+            ctx.strokeStyle = 'rgba(255,255,255,.18)';
+            ctx.lineWidth   = 2;
             ctx.stroke();
 
+            // Label
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(angle + slice / 2);
             ctx.textAlign    = 'right';
             ctx.textBaseline = 'middle';
-            ctx.font         = 'bold 12px sans-serif';
+            ctx.font         = 'bold 13px sans-serif';
             ctx.fillStyle    = '#fff';
-            ctx.shadowColor  = 'rgba(0,0,0,.7)';
-            ctx.shadowBlur   = 3;
-            ctx.fillText(seg.label, R - 8, 0);
+            ctx.shadowColor  = 'rgba(0,0,0,.8)';
+            ctx.shadowBlur   = 5;
+            ctx.fillText(seg.label, R - 10, 0);
             ctx.restore();
-
-            angle = endAngle;
         });
 
-        // Centre button (drawn at angle=0, stays fixed visually)
+        // Centre button
         ctx.shadowBlur = 0;
-        const cg = ctx.createRadialGradient(cx-8,cy-8,2,cx,cy,36);
+        const cg = ctx.createRadialGradient(cx-8,cy-8,2,cx,cy,34);
         cg.addColorStop(0,'#fff');
         cg.addColorStop(0.4,'#fbbf24');
         cg.addColorStop(1,'#92400e');
         ctx.beginPath(); ctx.arc(cx,cy,32,0,Math.PI*2);
         ctx.fillStyle = cg; ctx.fill();
         ctx.strokeStyle='rgba(0,0,0,.3)'; ctx.lineWidth=2; ctx.stroke();
-        ctx.font='22px serif';
+        ctx.font='24px serif';
         ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillText('🎰', cx, cy);
 
@@ -5930,9 +6394,44 @@ const spinWheel = {
         return '#' + ((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);
     },
 
-    // ── Pick winning segment (weighted random) ────────────
+    // ── Open the screen ────────────────────────────────────
+    open() {
+        audioSys.start();
+        this._load();
+        this._activeSegs = null; // fresh 5-segment draw each open
+        this._bakedCanvas = null;
+        ui.nav('screen-spin');
+        this._buildActiveSegs(); // pick 5 display segments
+        this._bakeWheel();
+        this._drawWheel(this._currentAngle);
+        this._renderAuraGrid('spin-aura-grid');
+        this._updateSpinBtn();
+        this._startTimer();
+        document.getElementById('spin-coins-disp').textContent = state.coins.toLocaleString();
+    },
+
+    // ── Pick 5 display segments (always equal slice, fresh each spin) ──
+    // Returns array of 5 segment objects. Does NOT include weights — all slices equal.
+    _buildActiveSegs(winner) {
+        const all = this.SEGMENTS;
+        // Shuffle a copy
+        const pool = [...all].sort(() => Math.random() - 0.5);
+        const five = [];
+        // Always include winner if provided
+        if (winner) five.push(winner);
+        for (const s of pool) {
+            if (five.length >= 5) break;
+            if (!winner || s !== winner) five.push(s);
+        }
+        // Shuffle the 5 so winner isn't always first
+        five.sort(() => Math.random() - 0.5);
+        this._activeSegs = five;
+        return five;
+    },
+
+    // ── Pick winning segment (weighted random from full pool) ────────────
     _pickSegment() {
-        const segs = this.SEGMENTS;
+        const segs  = this.SEGMENTS;
         const total = segs.reduce((a,s) => a + s.weight, 0);
         let r = Math.random() * total;
         for (const seg of segs) {
@@ -5949,24 +6448,26 @@ const spinWheel = {
 
         audioSys.sfx('spinStart');
 
-        const segs     = this.SEGMENTS;
-        const total    = segs.reduce((a,s) => a + s.weight, 0);
-        const winner   = this._pickSegment();
+        const winner = this._pickSegment();
         this._pendingPrize = winner;
 
-        // Calculate target angle so winner lands under pointer (top = -π/2)
-        // Find start angle of winner segment
-        let winStart = 0;
-        for (const seg of segs) {
-            if (seg === winner) break;
-            winStart += (seg.weight / total) * Math.PI * 2;
-        }
-        const winMid     = winStart + (winner.weight / total) * Math.PI / 2; // midpoint of winner
-        const spinRounds = 5 + Math.floor(Math.random() * 3); // 5–7 full rotations
-        const targetAngle = this._currentAngle + Math.PI * 2 * spinRounds
-            + ( -Math.PI/2 - this._currentAngle - winMid + Math.PI * 2 * 10 ) % (Math.PI * 2);
+        // Build fresh 5 segments guaranteed to include winner
+        const segs = this._buildActiveSegs(winner);
+        this._bakedCanvas = null;
+        this._bakeWheel();
 
-        const duration = 4000 + Math.random() * 1500;
+        // All 5 segments are equal slices (2π/5 each)
+        const sliceAngle = (Math.PI * 2) / 5;
+        const winIdx     = segs.indexOf(winner);
+        // Angle of winner's midpoint from angle=0
+        const winMid     = winIdx * sliceAngle + sliceAngle / 2;
+        // Spin so winner lands at top pointer (-π/2)
+        const spinRounds = 5 + Math.floor(Math.random() * 3);
+        const targetAngle = this._currentAngle
+            + Math.PI * 2 * spinRounds
+            + ((-Math.PI / 2 - this._currentAngle - winMid) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+
+        const duration   = 3500 + Math.random() * 1000;
         const startAngle = this._currentAngle;
         const startTime  = performance.now();
         let lastTickTime = 0;
@@ -5977,21 +6478,15 @@ const spinWheel = {
         const tick = (now) => {
             const elapsed  = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const eased    = easeOut(progress);
-            const angle    = startAngle + (targetAngle - startAngle) * eased;
+            const angle    = startAngle + (targetAngle - startAngle) * easeOut(progress);
 
             this._drawWheel(angle);
 
-            // Throttled tick SFX — max once per 80ms, only in first 85% of spin
-            if (progress < 0.85) {
-                const normAngle = ((-angle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
-                let cumulative = 0;
-                let segIdx = 0;
-                for (let i = 0; i < segs.length; i++) {
-                    cumulative += (segs[i].weight / total) * Math.PI * 2;
-                    if (normAngle < cumulative) { segIdx = i; break; }
-                }
-                if (segIdx !== lastSegIdx && now - lastTickTime > 80) {
+            // Tick SFX — max once per 120ms
+            if (progress < 0.88 && now - lastTickTime > 120) {
+                const normAngle = ((-angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                const segIdx    = Math.floor(normAngle / sliceAngle) % 5;
+                if (segIdx !== lastSegIdx) {
                     audioSys.sfx('spinTick');
                     lastTickTime = now;
                     lastSegIdx   = segIdx;
@@ -6002,8 +6497,8 @@ const spinWheel = {
                 requestAnimationFrame(tick);
             } else {
                 this._currentAngle = angle % (Math.PI * 2);
-                this._spinning = false;
-                state.spinLastMs = Date.now();
+                this._spinning     = false;
+                state.spinLastMs   = Date.now();
                 this._save();
                 this._showResult(winner);
                 audioSys.sfx('spinLand');
@@ -6063,11 +6558,9 @@ const spinWheel = {
             audioSys.sfx('coin');
             game.floatText && game.floatText(3, 3, `🪙 +${prize.value}`);
         } else {
-            // Award aura card
             if (!state.auraOwned) state.auraOwned = {};
             state.auraOwned[prize.id] = (state.auraOwned[prize.id] || 0) + 1;
             audioSys.sfx('daily');
-            // Auto-equip if first aura ever
             if (!state.auraEquipped) {
                 this.equip(prize.id);
             }
@@ -6081,6 +6574,13 @@ const spinWheel = {
         this._updateHomeAuraBadge();
         document.getElementById('spin-coins-disp').textContent = state.coins.toLocaleString();
         document.getElementById('shop-coins').textContent = state.coins;
+
+        // Fresh 5-segment wheel for next spin
+        this._buildActiveSegs();
+        this._bakedCanvas = null;
+        this._bakeWheel();
+        this._drawWheel(0);
+        this._currentAngle = 0;
     },
 
     _saveMainState() {
@@ -6822,6 +7322,7 @@ ui.initHome = function() {
     _origInitHome();
     clashSys.renderVillage();
     clashSys.updateLeagueBadge();
+    events._updateHomeBadge();
 };
 
 /* ── Patch buildLevelSelect to use war map ── */
@@ -6988,7 +7489,7 @@ const playerHP = {
 
         if (this.current <= 0 && !this._dead) {
             this._dead = true;
-            setTimeout(() => { if (!state.locked) game.gameOver(false); }, 550);
+            setTimeout(() => { if (!state.locked) game.gameOver(false, 'hp'); }, 550);
         }
     },
 
@@ -7376,13 +7877,20 @@ game.attemptSwap = function(a, b) {
 
 /* ── Patch gameOver for Clash result screen ── */
 const _origGameOverClash = game.gameOver.bind(game);
-game.gameOver = async function(win) {
-    // Call clash result rendering after the original handler populates the screen
-    const origFn = _origGameOverClash;
+game.gameOver = async function(win, reason) {
 
     state.locked = true;
     audioSys.stopMusic();
     CrazySDKSafe.gameplayStop();
+
+    // Daily challenge completion hook
+    if (state._isDaily) {
+        dailyChallenge.onComplete(win, state.score);
+        if (win) audioSys.sfx('daily');
+    } else if (win) {
+        audioSys.sfx('levelUp');
+    }
+    state._isDaily = false;
 
     const shouldShowAd = win || (state._loseCount % 2 === 0);
     if (win) state._loseCount = 0;
@@ -7537,6 +8045,15 @@ game.gameOver = async function(win) {
 
         ui.nav('screen-result');
         ui.updateShop();
+
+        // Fire events & daily-challenge hooks
+        if (win || pct > 0) {
+            const movesUsed  = (levelData[state.levelIdx]?.moves || 20) - state.moves;
+            const starCount  = state.levelStars[state.levelIdx] || 0;
+            const hpLeft     = (typeof playerHP !== 'undefined') ? playerHP.current : 0;
+            events.onLevelWin({ score: state.score, movesUsed, maxCascade: state._lastMaxCascade || 0, stars: starCount, hpLeft });
+        }
+        events._updateHomeBadge();
     }, 500);
 };
 
@@ -7741,8 +8258,14 @@ window.onload = async () => {
         console.log('✅ Jelly Poppys - Blast ready');
     }
 
+    function _showOfflineBanner() {
+        try {
+            const el = document.getElementById('sdkStatus');
+            if (el) { el.textContent = '⚠️ Offline mode — progress saved locally'; el.style.color = '#fbbf24'; }
+        } catch(e) {}
+    }
+
     function _applySave(p) {
-        if (!p) return;
         if (p.coins        != null) state.coins        = p.coins;
         if (p.maxUnlocked  != null) state.maxUnlocked  = p.maxUnlocked;
         if (p.inventory    != null) state.inventory    = p.inventory;
@@ -7765,11 +8288,13 @@ window.onload = async () => {
     try {
         updateLoadingStatus('Connecting…', 10);
 
-        // Step 2 — SDK init (max 4.5s, failure is fine)
+        // Step 2 — SDK init (max 2.5s, failure is fine — game works offline)
         let sdkOk = false;
         try { sdkOk = await _t(CrazySDKSafe.init(), 2500); } catch(e) {
             console.warn('[boot] SDK timeout — offline mode');
+            _showOfflineBanner();
         }
+        if (!sdkOk) _showOfflineBanner();
 
         updateLoadingStatus('Loading progress…', 50);
 
@@ -7780,6 +8305,12 @@ window.onload = async () => {
                     CrazySDKSafe.dataGetAsync('jellyPoppysBlast_save'), 1500);
                 if (raw) _applySave(JSON.parse(raw));
             } catch(e) { console.warn('[boot] Cloud save skipped'); }
+
+            // Also restore events/season-points from cloud
+            try {
+                const evRaw = await _t(CrazySDKSafe.dataGetAsync('jpb_events_v2'), 1000);
+                if (evRaw) localStorage.setItem('jpb_events_v2', evRaw);
+            } catch(e) {}
         }
 
         updateLoadingStatus('Ready!', 100);
@@ -7794,6 +8325,7 @@ window.onload = async () => {
 
     } catch(err) {
         console.error('[boot] Error:', err);
+        _showOfflineBanner();
         try { audioSys.init(); ui.updateShop(); ui.buildLevelSelect(); ui.initHome(); } catch(e) {}
     }
 
@@ -7870,6 +8402,14 @@ window.onload = async () => {
                 <div class="mg-card-reward">🪙 1 coin per jelly</div>
             </div>
         </div>
+        <div class="mg-card" onclick="minigames.open('ninja')" style="border-color:rgba(255,80,80,.4);background:rgba(255,50,50,.08)">
+            <div class="mg-card-icon">🥷</div>
+            <div class="mg-card-info">
+                <div class="mg-card-title">Jelly Ninja</div>
+                <div class="mg-card-desc">Slice flying jellies — don't miss or hit the bombs!</div>
+                <div class="mg-card-reward">🪙 Up to 400 coins · NEW</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -7909,6 +8449,7 @@ const minigames = {
         cancelAnimationFrame(this.animFrame);
         this.animFrame = null;
         ui.nav('screen-mgplay');
+        CrazySDKSafe.gameplayStart();
 
         // Size canvas after nav so layout is rendered
         requestAnimationFrame(() => {
@@ -7942,12 +8483,14 @@ const minigames = {
             if (type === 'car')     this.startCar();
             if (type === 'ludo')    this.startLudo();
             if (type === 'hill')    this.startHill();
+            if (type === 'ninja')   this.startNinja();
         });
     },
 
     exit() {
         cancelAnimationFrame(this.animFrame);
         this.animFrame = null;
+        CrazySDKSafe.gameplayStop();
         // Wipe handlers
         if (this.canvas) {
             this.canvas.onclick = this.canvas.onmousemove = this.canvas.ontouchmove =
@@ -7962,7 +8505,7 @@ const minigames = {
         state.coins += amount;
         audioSys.sfx('coin');
         // Save
-        const saveData = { coins:state.coins, maxUnlocked:state.maxUnlocked, inventory:state.inventory, levelStars:state.levelStars, bestScore:state.bestScore, streak:state.streak, lastPlayDate:state.lastPlayDate };
+        const saveData = { coins:state.coins, maxUnlocked:state.maxUnlocked, inventory:state.inventory, levelStars:state.levelStars, bestScore:state.bestScore, streak:state.streak, lastPlayDate:state.lastPlayDate, auraOwned:state.auraOwned, auraEquipped:state.auraEquipped, spinLastMs:state.spinLastMs, elixir:state.elixir };
         CrazySDKSafe.dataSet('jellyPoppysBlast_save', JSON.stringify(saveData));
         document.getElementById('mg-coins').textContent = state.coins;
     },
@@ -9173,8 +9716,407 @@ const minigames = {
     ═══════════════════════════════════════════════════════════ */
     startLudo() { buildLudoGame(this.canvas, this.ctx, ()=>this.exit(), n=>this.awardCoins(n)); },
     startHill() { buildHillGame(this.canvas, this.ctx, ()=>this.exit(), n=>this.awardCoins(n)); },
+    startNinja() { buildNinjaGame(this.canvas, this.ctx, ()=>this.exit(), n=>this.awardCoins(n)); },
 
 };
+
+/* ── Hook minigame completions into events (must be after minigames is declared) ── */
+const _origAwardCoins = minigames.awardCoins.bind(minigames);
+minigames.awardCoins = function(amount) {
+    _origAwardCoins(amount);
+    events.addMiniplay();
+};
+
+/* ═══════════════════════════════════════════════════════
+   JELLY NINJA — Fruit Ninja style canvas game
+   • Swipe/drag to slice flying jellies
+   • 3 lives — lose one per missed jelly or hit bomb
+   • Combos multiply score
+   • Coins awarded at end based on score
+═══════════════════════════════════════════════════════ */
+function buildNinjaGame(canvas, ctx, onQuit, onCoins) {
+
+    document.getElementById('mg-title').textContent = '🥷 Jelly Ninja';
+
+    const W = canvas.width, H = canvas.height;
+    const CX = W / 2;
+
+    const JELLIES = [
+        { icon:'🍬', pts:10, color:'#f472b6' },
+        { icon:'🍭', pts:15, color:'#a855f7' },
+        { icon:'🍊', pts:10, color:'#fb923c' },
+        { icon:'🍋', pts:10, color:'#facc15' },
+        { icon:'🍇', pts:20, color:'#7c3aed' },
+        { icon:'🍓', pts:15, color:'#ef4444' },
+        { icon:'🫐', pts:20, color:'#3b82f6' },
+        { icon:'🍈', pts:25, color:'#4ade80' },
+        { icon:'🍡', pts:30, color:'#e879f9' },
+        { icon:'🧁', pts:35, color:'#fb7185' },
+    ];
+
+    // ── State (reset on restart) ──────────────────────────
+    let fruits, particles, popups, slashTrail;
+    let score, lives, combo, comboTimer;
+    let frameCount, lastSpawnTs, spawnInterval, wave;
+    let animId = null;
+    let gameOver = false;
+    let running  = false;
+
+    // ── Pointer tracking (outside reset — persistent) ─────
+    let px = -1, py = -1, ppx = -1, ppy = -1, slicing = false;
+
+    function reset() {
+        fruits = []; particles = []; popups = []; slashTrail = [];
+        score = 0; lives = 3; combo = 0; comboTimer = 0;
+        frameCount = 0; lastSpawnTs = -9999; spawnInterval = 1400; wave = 0;
+        gameOver = false;
+        document.getElementById('mg-live-score').textContent = '0';
+    }
+
+    // ── Spawn ─────────────────────────────────────────────
+    function spawnFruit(isBomb) {
+        const left  = Math.random() < 0.5;
+        const x     = left ? 30 + Math.random() * W * 0.3
+                           : W - 30 - Math.random() * W * 0.3;
+        const vx    = (CX - x) * (0.007 + Math.random() * 0.007) + (Math.random() - 0.5) * 1.5;
+        const vy    = -(H * 0.020 + Math.random() * H * 0.010);
+        const r     = 24 + Math.random() * 12;
+        const j     = isBomb ? null : JELLIES[Math.floor(Math.random() * JELLIES.length)];
+        return { x, y: H + r + 2, vx, vy, r,
+                 spin:(Math.random()-0.5)*0.1, angle:0,
+                 j, isBomb, dead:false, fadeOut:false, alpha:1 };
+    }
+
+    // ── Slice hit-test: line segment vs circle ────────────
+    function hitTest(x1, y1, x2, y2, cx, cy, cr) {
+        const dx = x2-x1, dy = y2-y1, len2 = dx*dx+dy*dy;
+        if (len2 < 1) return Math.hypot(cx-x1, cy-y1) < cr + 8;
+        const t  = Math.max(0, Math.min(1, ((cx-x1)*dx+(cy-y1)*dy)/len2));
+        const nx = x1+t*dx-cx, ny = y1+t*dy-cy;
+        return nx*nx+ny*ny < (cr+8)*(cr+8);
+    }
+
+    // ── Slice action ──────────────────────────────────────
+    function sliceFruit(f) {
+        if (f.dead || f.fadeOut) return;
+        f.fadeOut = true;
+
+        if (f.isBomb) {
+            lives--;
+            combo = 0; comboTimer = 0;
+            spawnBurst(f.x, f.y, '#ff4422', 16);
+            audioSys.sfx('bad');
+            if (lives <= 0) { lives = 0; endGame(); }
+            return;
+        }
+
+        combo++;
+        comboTimer = 75; // frames before combo resets
+        const mult   = combo >= 5 ? 3 : combo >= 3 ? 2 : 1;
+        const pts    = f.j.pts * mult;
+        score += pts;
+        document.getElementById('mg-live-score').textContent = score;
+        spawnSlice(f, mult);
+        spawnPopup(f.x, f.y - f.r, `+${pts}${mult > 1 ? ' ×'+mult : ''}`);
+        audioSys.sfx(combo >= 3 ? 'multipop' : 'pop');
+    }
+
+    // ── Particles ─────────────────────────────────────────
+    function spawnSlice(f, mult) {
+        const col = f.j.color;
+        for (let i = 0; i < 8 + mult*2; i++) {
+            const a = Math.random()*Math.PI*2, sp = 2+Math.random()*5;
+            particles.push({ x:f.x, y:f.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp-2,
+                r:4+Math.random()*5, color:col, life:1, decay:0.025, type:'dot' });
+        }
+        [-1,1].forEach(s => particles.push({
+            x:f.x, y:f.y, vx:s*(1.5+Math.random()*3), vy:-2-Math.random()*3,
+            r:f.r*0.6, spin:s*0.15, angle:0, icon:f.j.icon,
+            life:1, decay:0.020, type:'half'
+        }));
+    }
+
+    function spawnBurst(x, y, col, n) {
+        for (let i = 0; i < n; i++) {
+            const a = (i/n)*Math.PI*2, sp = 2+Math.random()*6;
+            particles.push({ x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp-1,
+                r:5+Math.random()*8, color:col, life:1, decay:0.022, type:'dot' });
+        }
+    }
+
+    function spawnPopup(x, y, text) {
+        popups.push({ x, y, vy:-1.8, text, life:1, decay:0.020 });
+    }
+
+    // ── Main loop ─────────────────────────────────────────
+    function loop(ts) {
+        if (!running || gameOver) return;
+        animId = requestAnimationFrame(loop);
+        frameCount++;
+
+        // Background
+        ctx.fillStyle = '#100020';
+        ctx.fillRect(0, 0, W, H);
+        const bg = ctx.createLinearGradient(0,0,0,H);
+        bg.addColorStop(0,'#3a005a');
+        bg.addColorStop(1,'#0a0018');
+        ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+        // ── Spawn ────────────────────────────────────────
+        wave = Math.floor(frameCount / 400);
+        spawnInterval = Math.max(550, 1400 - wave * 70);
+        if (ts - lastSpawnTs > spawnInterval) {
+            lastSpawnTs = ts;
+            fruits.push(spawnFruit(Math.random() < 0.10 + wave * 0.01));
+            if (wave >= 2 && Math.random() < 0.3)
+                setTimeout(() => { if (running && !gameOver) fruits.push(spawnFruit(false)); }, 250);
+        }
+
+        // ── Physics & miss detection ──────────────────────
+        const gravity = 0.30;
+        for (let i = fruits.length - 1; i >= 0; i--) {
+            const f = fruits[i];
+            if (f.fadeOut) {
+                f.alpha -= 0.06;
+                if (f.alpha <= 0) { fruits.splice(i,1); }
+                continue;
+            }
+            if (f.dead) { fruits.splice(i,1); continue; }
+
+            f.vy    += gravity;
+            f.x     += f.vx;
+            f.y     += f.vy;
+            f.angle += f.spin;
+
+            // Off screen — miss
+            if (f.y > H + f.r + 10 || f.x < -100 || f.x > W + 100) {
+                f.dead = true;
+                if (!f.isBomb) {
+                    lives--;
+                    combo = 0; comboTimer = 0;
+                    if (lives <= 0) { lives = 0; endGame(); return; }
+                }
+            }
+        }
+
+        // ── Combo timer ───────────────────────────────────
+        if (combo > 0) {
+            comboTimer--;
+            if (comboTimer <= 0) { combo = 0; comboTimer = 0; }
+        }
+
+        // ── Slice detection ───────────────────────────────
+        if (slicing && ppx >= 0 && (px !== ppx || py !== ppy)) {
+            for (const f of fruits) {
+                if (!f.dead && !f.fadeOut) {
+                    if (hitTest(ppx, ppy, px, py, f.x, f.y, f.r)) sliceFruit(f);
+                }
+            }
+        }
+
+        // ── Draw slash trail ──────────────────────────────
+        if (slicing && slashTrail.length > 1) {
+            ctx.save();
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            for (let i = 1; i < slashTrail.length; i++) {
+                const t = i / slashTrail.length;
+                ctx.beginPath();
+                ctx.moveTo(slashTrail[i-1].x, slashTrail[i-1].y);
+                ctx.lineTo(slashTrail[i].x,   slashTrail[i].y);
+                ctx.strokeStyle = `rgba(255,255,200,${t*0.85})`;
+                ctx.lineWidth   = t * 6 + 1;
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        if (!slicing) slashTrail = [];
+        else slashTrail = slashTrail.slice(-20);
+
+        // ── Draw fruits ───────────────────────────────────
+        for (const f of fruits) {
+            ctx.save();
+            ctx.globalAlpha = f.fadeOut ? Math.max(0, f.alpha) : 1;
+            ctx.translate(f.x, f.y);
+            ctx.rotate(f.angle);
+            if (f.isBomb) {
+                const g = ctx.createRadialGradient(0,0,4,0,0,f.r+8);
+                g.addColorStop(0,'rgba(255,100,0,.4)');
+                g.addColorStop(1,'transparent');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(0,0,f.r+8,0,Math.PI*2); ctx.fill();
+                ctx.font = `${f.r*1.5}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('💣', 0, 2);
+            } else {
+                const g = ctx.createRadialGradient(0,0,2,0,0,f.r+4);
+                g.addColorStop(0, f.j.color+'55');
+                g.addColorStop(1,'transparent');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(0,0,f.r+4,0,Math.PI*2); ctx.fill();
+                ctx.font = `${f.r*1.6}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(f.j.icon, 0, 2);
+            }
+            ctx.restore();
+        }
+
+        // ── Draw particles ────────────────────────────────
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx; p.y += p.vy; p.vy += 0.18;
+            p.life -= p.decay;
+            if (p.life <= 0) { particles.splice(i,1); continue; }
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            if (p.type === 'half') {
+                p.angle += p.spin;
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle);
+                ctx.font = `${p.r*1.5}px serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(p.icon, 0, 0);
+            } else {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(0.1, p.r * p.life), 0, Math.PI*2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // ── Draw popups ───────────────────────────────────
+        for (let i = popups.length - 1; i >= 0; i--) {
+            const p = popups[i];
+            p.y += p.vy; p.life -= p.decay;
+            if (p.life <= 0) { popups.splice(i,1); continue; }
+            ctx.save();
+            ctx.globalAlpha = p.life;
+            ctx.font = 'bold 19px sans-serif';
+            ctx.fillStyle = '#fff';
+            ctx.shadowColor = '#f472b6'; ctx.shadowBlur = 8;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(p.text, p.x, p.y);
+            ctx.restore();
+        }
+
+        // ── HUD ───────────────────────────────────────────
+        // Lives
+        ctx.save();
+        ctx.font = '24px serif';
+        ctx.textBaseline = 'top';
+        for (let i = 0; i < 3; i++) {
+            ctx.globalAlpha = i < lives ? 1 : 0.18;
+            ctx.fillText('❤️', 10 + i*30, 10);
+        }
+        ctx.restore();
+
+        // Combo
+        if (combo >= 2) {
+            const pct = comboTimer / 75;
+            ctx.save();
+            ctx.font = `bold ${16+combo}px sans-serif`;
+            ctx.fillStyle = combo >= 5 ? '#fbbf24' : combo >= 3 ? '#f472b6' : '#e2e8f0';
+            ctx.shadowColor = '#000'; ctx.shadowBlur = 8;
+            ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+            ctx.fillText(`${combo}× COMBO!`, W - 10, 10);
+            // Combo bar
+            ctx.fillStyle = 'rgba(255,255,255,.15)';
+            ctx.fillRect(W-110, 34, 100, 5);
+            ctx.fillStyle = combo >= 5 ? '#fbbf24' : '#f472b6';
+            ctx.fillRect(W-110, 34, 100 * pct, 5);
+            ctx.restore();
+        }
+    }
+
+    // ── End game ──────────────────────────────────────────
+    function endGame() {
+        if (gameOver) return;
+        gameOver = true;
+        running  = false;
+        cancelAnimationFrame(animId);
+
+        const coins = Math.min(400, Math.floor(score / 3));
+        onCoins(coins);
+
+        minigames.showOverlay(
+            score >= 400 ? '🥷' : score >= 150 ? '⚔️' : '💀',
+            score >= 400 ? 'Ninja Master!' : score >= 150 ? 'Skilled Ninja!' : 'Needs Training!',
+            `Score: ${score} · 🪙 +${coins}`,
+            () => { reset(); running = true; requestAnimationFrame(loop); },
+            onQuit
+        );
+    }
+
+    // ── Input ─────────────────────────────────────────────
+    function getXY(e) {
+        const r = canvas.getBoundingClientRect();
+        const s = e.touches ? e.touches[0] : e;
+        return [ s.clientX - r.left, s.clientY - r.top ];
+    }
+
+    function onDown(e) {
+        e.preventDefault();
+        const [x,y] = getXY(e);
+        ppx = px = x; ppy = py = y;
+        slicing = true;
+        slashTrail = [{x, y}];
+        if (!running && !gameOver) {
+            // Start the game on first touch
+            reset();
+            running = true;
+            requestAnimationFrame(loop);
+        }
+    }
+    function onMove(e) {
+        e.preventDefault();
+        if (!slicing) return;
+        const [x,y] = getXY(e);
+        ppx = px; ppy = py;
+        px = x; py = y;
+        slashTrail.push({x, y});
+    }
+    function onUp(e) {
+        e.preventDefault();
+        slicing = false;
+        ppx = ppy = -1;
+    }
+
+    canvas.addEventListener('mousedown',  onDown, {passive:false});
+    canvas.addEventListener('mousemove',  onMove, {passive:false});
+    canvas.addEventListener('mouseup',    onUp,   {passive:false});
+    canvas.addEventListener('mouseleave', onUp,   {passive:false});
+    canvas.addEventListener('touchstart', onDown, {passive:false});
+    canvas.addEventListener('touchmove',  onMove, {passive:false});
+    canvas.addEventListener('touchend',   onUp,   {passive:false});
+
+    // ── Draw start screen ─────────────────────────────────
+    ctx.fillStyle = '#100020';
+    ctx.fillRect(0,0,W,H);
+    const sbg = ctx.createLinearGradient(0,0,0,H);
+    sbg.addColorStop(0,'#3a005a'); sbg.addColorStop(1,'#0a0018');
+    ctx.fillStyle = sbg; ctx.fillRect(0,0,W,H);
+
+    ctx.textAlign = 'center';
+    ctx.font = '72px serif';
+    ctx.fillText('🥷', CX, H*0.28);
+
+    ctx.font = `bold ${W < 360 ? 26 : 32}px sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = '#f472b6'; ctx.shadowBlur = 20;
+    ctx.fillText('JELLY NINJA', CX, H*0.48);
+    ctx.shadowBlur = 0;
+
+    ctx.font = '15px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    ctx.fillText('Swipe to slice the jellies!', CX, H*0.58);
+    ctx.fillText('Miss 3 jellies or hit 💣 = Game Over', CX, H*0.65);
+
+    ctx.font = 'bold 17px sans-serif';
+    ctx.fillStyle = '#fbbf24';
+    ctx.shadowColor = 'rgba(251,191,36,.7)'; ctx.shadowBlur = 14;
+    ctx.fillText('SWIPE TO START', CX, H*0.80);
+    ctx.shadowBlur = 0;
+}
 
 /* ═══════════════════════════════════════════════════════
    BEST MEMORIES SYSTEM
@@ -10853,6 +11795,39 @@ minigames.startHill = function() {
                 ✅ Completed today! Come back tomorrow for a new challenge.
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     EVENTS SCREEN
+═══════════════════════════════════════════ -->
+<div id="screen-events" class="screen">
+    <div class="ev-panel">
+        <div class="ev-header">
+            <button class="back-btn" onclick="ui.nav('screen-home')" style="border-color:rgba(255,255,255,.2);color:#fff">← Back</button>
+            <span class="ev-header-title">⚡ Live Events</span>
+            <div class="mg-coin-badge">🪙 <span id="ev-coins">0</span></div>
+        </div>
+
+        <!-- Season pass banner -->
+        <div class="ev-season-banner">
+            <span class="ev-season-icon">🏆</span>
+            <div class="ev-season-text">
+                <div class="ev-season-title">Season Points</div>
+                <div class="ev-season-sub">Complete events to earn season rewards</div>
+            </div>
+            <span class="ev-season-pts" id="ev-season-pts">0 SP</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="ev-tabs">
+            <button class="ev-tab active" id="ev-tab-live"    onclick="events.setTab('live')">🔴 Live</button>
+            <button class="ev-tab"        id="ev-tab-weekly"  onclick="events.setTab('weekly')">📅 Weekly</button>
+            <button class="ev-tab"        id="ev-tab-done"    onclick="events.setTab('done')">✅ Completed</button>
+        </div>
+
+        <!-- Event cards injected here -->
+        <div id="ev-list"></div>
     </div>
 </div>
 
