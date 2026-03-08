@@ -3588,15 +3588,18 @@ const audioSys = {
         }
     },
 
-    /* ── Full mute (music + all SFX) ── */
+    /* ── Full mute — zeroes masterGain so every active node goes silent instantly ── */
     muteAll() {
         this.muted = true;
         this.stopMusic();
+        // Cut the master bus to 0 immediately — kills ALL scheduled audio nodes
+        if (this.masterGain) this.masterGain.gain.setValueAtTime(0, 0);
     },
 
-    /* ── Unmute and resume music if unlocked ── */
+    /* ── Unmute — restore masterGain and resume music ── */
     unmuteAll() {
         this.muted = false;
+        if (this.masterGain) this.masterGain.gain.setValueAtTime(1, 0);
         if (this.audioUnlocked && !this.isPlaying) this.playMusic();
     }
 };
