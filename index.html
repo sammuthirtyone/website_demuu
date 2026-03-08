@@ -3325,6 +3325,7 @@ const audioSys = {
 
     // ── Low-level: play a shaped note ───────────────────────────────────────
     _note(freq, type, dur, vol, startTime, bus, freqEnd) {
+        if (this.muted) return null;
         if (!this.ctx) return null;
         const t   = startTime || this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
@@ -3343,6 +3344,7 @@ const audioSys = {
 
     // ── Low-level: noise burst (for pops/hits) ───────────────────────────────
     _noise(dur, vol, startTime, freqLow, freqHigh) {
+        if (this.muted) return;
         if (!this.ctx) return;
         const t       = startTime || this.ctx.currentTime;
         const sr      = this.ctx.sampleRate;
