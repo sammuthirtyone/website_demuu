@@ -2501,6 +2501,8 @@ html,body{
         <button class="spell-btn" id="btn-shuffle"   onclick="powerups.activate('shuffle')"  ><span class="spell-btn-icon">🔄</span><span class="spell-btn-count">×<span id="sp-shuffle">1</span></span></button>
         <button class="spell-btn" id="btn-cocoteddy" onclick="powerups.activate('cocoteddy')"><span class="spell-btn-icon">🧸</span><span class="spell-btn-count">×<span id="sp-cocoteddy">0</span></span></button>
         <button class="spell-btn" id="btn-candycane" onclick="powerups.activate('candycane')"><span class="spell-btn-icon">🍭</span><span class="spell-btn-count">×<span id="sp-candycane">0</span></span></button>
+        <button class="spell-btn" id="btn-shield-use" onclick="playerHP.useShieldBtn()" title="Use Shield (blocks 1 hit)" style="border-color:rgba(251,191,36,.5)"><span class="spell-btn-icon">🛡️</span><span class="spell-btn-count" id="sp-shield-pips">×0</span></button>
+        <button class="spell-btn" id="btn-extraattack-use" onclick="clashSys.useExtraAttackBtn()" title="Extra Attack (200 dmg)" style="border-color:rgba(239,68,68,.5)"><span class="spell-btn-icon">⚔️</span><span class="spell-btn-count" id="sp-extraattack">×0</span></button>
         <button class="retreat-btn" onclick="game.gameOver(false)">🏳 Retreat</button>
       </div>
 
@@ -2689,10 +2691,10 @@ window.CrazySDKSafe = {
             // Audio mute from platform settings
             try {
                 const s = sdk.game?.settings;
-                if (s?.muteAudio) audioSys.stopMusic();
+                if (s?.muteAudio) audioSys.muteAll();
                 sdk.game?.addSettingsChangeListener(s => {
-                    if (s.muteAudio) audioSys.stopMusic();
-                    else if (!audioSys.isPlaying) audioSys.playMusic();
+                    if (s.muteAudio) audioSys.muteAll();
+                    else audioSys.unmuteAll();
                 });
             } catch(e) {}
 
@@ -3290,6 +3292,7 @@ const audioSys = {
     masterGain: null,
     musicGain: null,
     sfxGain: null,
+    muted: false,   // global mute flag — blocks ALL audio when true
 
     init() {
         if (this.ctx) return;
@@ -3306,6 +3309,7 @@ const audioSys = {
 
     // Call this inside any user gesture to unlock audio and start music
     start() {
+        if (this.muted) return;   // ← respect mute
         this.init();
         if (!this.ctx) return;
         // Resume AudioContext (required after autoplay policy blocks it)
@@ -3365,6 +3369,7 @@ const audioSys = {
 
     // ── SFX ─────────────────────────────────────────────────────────────────
     sfx(name) {
+        if (this.muted) return;   // ← respect mute for ALL sound effects
         this.init();
         if (!this.ctx) return;
         const t = this.ctx.currentTime;
@@ -3581,6 +3586,18 @@ const audioSys = {
             clearTimeout(this.musicNodes._timer);
             this.musicNodes._timer = null;
         }
+    },
+
+    /* ── Full mute (music + all SFX) ── */
+    muteAll() {
+        this.muted = true;
+        this.stopMusic();
+    },
+
+    /* ── Unmute and resume music if unlocked ── */
+    unmuteAll() {
+        this.muted = false;
+        if (this.audioUnlocked && !this.isPlaying) this.playMusic();
     }
 };
 
@@ -3601,7 +3618,7 @@ const state = {
     target: 0,
     levelIdx: 0, 
     maxUnlocked: 1, 
-    inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0 },
+    inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0, extraattack: 0 },
     coins: 1000, 
     activeTool: null,
     freeMove: false,
@@ -3838,6 +3855,12 @@ const ui = {
             const spEl = document.getElementById(`sp-${t}`);
             if (spEl) spEl.textContent = state.inventory[t] || 0;
         });
+        // Update extra attack count in spell bar
+        const eaEl = document.getElementById('sp-extraattack');
+        if (eaEl) eaEl.textContent = '×' + (state.inventory.extraattack || 0);
+        // Update shield pips display in spell bar
+        const shEl = document.getElementById('sp-shield-pips');
+        if (shEl) shEl.textContent = '×' + (playerHP.shields || 0);
     }
 };
 
@@ -5042,18 +5065,11 @@ const market = {
                 ui.updateShop();
                 this.showMsg("🛡️ Shield ready! Next hit blocked.", "#fbbf24");
             } else if (type === 'extraattack') {
-                // Instantly deal 200 damage to the first surviving building
-                const target = clashSys.buildings.find(b => !b.destroyed);
-                if (target) {
-                    clashSys._doDamage(target.id, 200);
-                    audioSys.sfx('win');
-                    ui.updateShop();
-                    this.showMsg("⚔️ Extra Attack dealt 200 damage!", "#ef4444");
-                } else {
-                    // No buildings — refund
-                    state.coins += cost;
-                    this.showMsg("No buildings left to attack!", "#888");
-                }
+                // Stock up extra attacks in inventory for use during battle
+                state.inventory.extraattack = (state.inventory.extraattack || 0) + 1;
+                audioSys.sfx('win');
+                ui.updateShop();
+                this.showMsg("⚔️ Extra Attack stored! Use it in battle.", "#ef4444");
             } else {
                 state.inventory[type]++;
                 audioSys.sfx('win');
@@ -5468,6 +5484,7 @@ const dailyChallenge = {
 // Patch audioSys.sfx to handle the new sounds
 const _origSfx = audioSys.sfx.bind(audioSys);
 audioSys.sfx = function(name) {
+    if (this.muted) return;   // ← respect mute
     // Handle new sounds first
     if (!this.ctx) this.init();
     if (!this.ctx) return;
@@ -6818,10 +6835,12 @@ const clashSys = {
         const name   = theme.names[levelIdx % theme.names.length];
         const buildingIcons = theme.buildings;
 
-        // Scale HP with level
-        const hpScale = 80 + levelIdx * 6;
+        // Scale HP aggressively with level — early levels feel easy, later levels are fortresses
+        const hpBase  = 100 + levelIdx * 18;                       // strong ramp
+        const hpBonus = Math.floor(levelIdx / 10) * 50;            // big jump every 10 levels
+        const hpScale = hpBase + hpBonus;
         this.buildings = buildingIcons.map((icon, i) => ({
-            icon, maxHp: hpScale + i * 20, hp: hpScale + i * 20, destroyed: false, id: i,
+            icon, maxHp: hpScale + i * 40, hp: hpScale + i * 40, destroyed: false, id: i,
         }));
         this._battleStarted = false;
 
@@ -6913,6 +6932,24 @@ const clashSys = {
         const el = document.getElementById('enemy-stars-row');
         if (el) el.textContent = stars;
         return stars;
+    },
+
+    /* ── Extra Attack button in spell bar ── */
+    useExtraAttackBtn() {
+        if (!state.inventory.extraattack || state.inventory.extraattack < 1) {
+            market.showMsg('⚔️ Buy Extra Attacks from Armory!', '#ef4444');
+            return;
+        }
+        const target = this.buildings.find(b => !b.destroyed);
+        if (!target) {
+            market.showMsg('No enemy buildings left!', '#888');
+            return;
+        }
+        state.inventory.extraattack--;
+        this._doDamage(target.id, 200);
+        audioSys.sfx('blast');
+        ui.updateShop();
+        market.showMsg('⚔️ Extra Attack! -200 HP!', '#ef4444');
     },
 
     /* ── Attack a building when candies are matched ─ */
@@ -7373,15 +7410,21 @@ const playerHP = {
         return 500 + Math.floor(idx / 5) * 20;
     },
 
-    /* ── Arena damage per HIT (one hit = one building fires once)
-          50–80 base + level scaling. Feels powerful but survivable   ── */
+    /* ── Arena damage per HIT — scales aggressively with level:
+          Levels 1-10:  ~10-20 dmg per hit (buildings fire per move)
+          Levels 11-30: ~20-50 dmg per hit  
+          Levels 31-60: ~50-100 dmg per hit
+          Levels 60+:   100-200+ dmg per hit — brutal!            ── */
     hitDmg(idx) {
-        return 5 + Math.floor(idx / 15) * 2 + Math.floor(Math.random() * 11);
+        const base   = 8 + Math.floor(idx / 5) * 6;           // steep ramp
+        const bonus  = Math.floor(idx / 20) * 15;              // extra jumps every 20 levels
+        const jitter = Math.floor(Math.random() * (8 + idx));  // randomness grows too
+        return Math.min(base + bonus + jitter, 350);            // cap at 350
     },
 
     /* ── Shields granted by aura rarity ── */
     shieldsForAura(rarity) {
-        return { popular:1, rare:3, legendary:7 }[rarity] || 0;
+        return { popular:5, rare:7, legendary:15 }[rarity] || 0;
     },
 
     /* ── Score multiplier from aura rarity ── */
@@ -7547,6 +7590,16 @@ const playerHP = {
         setTimeout(() => el.remove(), 900);
     },
 
+    /* ── Called from spell bar Shield button during battle ── */
+    useShieldBtn() {
+        if (this.shields > 0) {
+            market.showMsg('🛡️ Shields already active!', '#fbbf24');
+            return;
+        }
+        // Buy a shield on the fly if they have coins, or use a pre-purchased one
+        market.showMsg('🛡️ Buy shields from Armory!', '#fbbf24');
+    },
+
     /* ── Render HP bar + shield pips ── */
     _render() {
         const bar  = document.getElementById('player-hp-bar');
@@ -7573,7 +7626,7 @@ const playerHP = {
         if (txt)  txt.textContent  = this.current;
         if (maxT) maxT.textContent = `/${this.max}`;
 
-        // Shield pips
+        // Shield pips in HP strip
         if (shEl) {
             shEl.innerHTML = '';
             for (let i = 0; i < this.shields; i++) {
@@ -7583,6 +7636,10 @@ const playerHP = {
                 shEl.appendChild(pip);
             }
         }
+
+        // Shield count in spell bar
+        const spShEl = document.getElementById('sp-shield-pips');
+        if (spShEl) spShEl.textContent = '×' + (this.shields || 0);
     }
 };
 
