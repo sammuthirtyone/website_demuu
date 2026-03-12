@@ -3490,7 +3490,7 @@ html,body{
         <div class="screen-header">
             <button class="back-btn" onclick="ui.nav('screen-home')">← Back</button>
             <span class="screen-title">🛒 Power Shop</span>
-            <div class="coin-display">🪙 <span id="shop-coins">1000</span></div>
+            <div class="coin-display">🪙 <span id="shop-coins">0</span></div>
         </div>
         <div class="shop-item" onclick="market.buy('hammer')">
             <div class="shop-item-icon">🔨</div>
@@ -4623,7 +4623,7 @@ const state = {
     levelIdx: 0, 
     maxUnlocked: 1, 
     inventory: { hammer: 1, bomb: 0, shuffle: 1, cocoteddy: 0, candycane: 0, extraattack: 0, bowarrow: 0 },
-    coins: 1000000, 
+    coins: 0, 
     activeTool: null,
     freeMove: false,
     visibleLevels: 9,
@@ -9580,7 +9580,7 @@ window.onload = async () => {
         if (p.charOwned    != null) state.charOwned    = p.charOwned;
         if (p.charEquipped != null) state.charEquipped = p.charEquipped;
         // Always ensure minimum 1,000,000 coins
-        if (state.coins < 1000000) state.coins = 1000000;
+        // coins cheat removed
     }
 
     // Step 1 — Local save (instant, no network)
@@ -9590,11 +9590,11 @@ window.onload = async () => {
     } catch(e) {}
 
     // FORCE coins — overrides anything from save
-    state.coins = 1000000;
+    // coins cheat removed
     try {
         const _sv = localStorage.getItem('jellyPoppysBlast_save');
         const _sd = _sv ? JSON.parse(_sv) : {};
-        _sd.coins = 1000000;
+        // coins cheat removed
         localStorage.setItem('jellyPoppysBlast_save', JSON.stringify(_sd));
     } catch(e) {}
 
