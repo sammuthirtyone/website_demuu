@@ -2748,9 +2748,211 @@ html,body{
         rgba(40,0,80,.5) 100%);
 }
 
+/* ═══════════════════════════════════════════════════
+   THEME ATMOSPHERE LAYER
+═══════════════════════════════════════════════════ */
+#theme-atmosphere {
+    position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+}
+.rain-drop {
+    position:absolute; width:2px; height:18px;
+    background:linear-gradient(180deg,transparent,rgba(150,220,255,0.7));
+    border-radius:2px; animation:rainFall linear infinite;
+}
+@keyframes rainFall {
+    0%  { transform:translateY(-20px) translateX(0); opacity:0.7; }
+    100%{ transform:translateY(110vh) translateX(20px); opacity:0.15; }
+}
+.snow-flake {
+    position:absolute; color:rgba(255,255,255,0.85);
+    animation:snowFall linear infinite;
+}
+@keyframes snowFall {
+    0%  { transform:translateY(-10px) translateX(0) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(110vh) translateX(var(--sx,30px)) rotate(360deg); opacity:0.2; }
+}
+.lava-bubble {
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle,#ffdd00,#ff4400);
+    filter:blur(1px); animation:lavaBubble ease-in-out infinite;
+}
+@keyframes lavaBubble {
+    0%,100%{ transform:scale(1) translateY(0); opacity:0.6; }
+    50%    { transform:scale(1.5) translateY(-20px); opacity:1; }
+}
+.falling-star {
+    position:absolute; width:2px; height:2px; background:#fff;
+    border-radius:50%; box-shadow:0 0 6px 2px rgba(200,150,255,0.9);
+    animation:starTrail linear infinite;
+}
+@keyframes starTrail {
+    0%  { transform:translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(60px,110vh) scale(0.1); opacity:0; }
+}
+.sand-grain {
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:rgba(255,200,80,0.6); animation:sandDrift linear infinite;
+}
+@keyframes sandDrift {
+    0%  { transform:translateX(0) translateY(0) rotate(0deg); opacity:0.7; }
+    100%{ transform:translateX(var(--sd,60px)) translateY(110vh) rotate(360deg); opacity:0; }
+}
+.bubble-rise {
+    position:absolute; border-radius:50%;
+    border:2px solid rgba(100,200,255,0.5);
+    background:rgba(0,150,255,0.08);
+    animation:bubbleRise ease-in infinite;
+}
+@keyframes bubbleRise {
+    0%  { transform:translateY(0) scale(1); opacity:0.8; }
+    100%{ transform:translateY(-110vh) scale(1.3); opacity:0; }
+}
+.petal {
+    position:absolute; font-size:12px;
+    animation:petalFall ease-in-out infinite;
+}
+@keyframes petalFall {
+    0%  { transform:translateY(-10px) translateX(0) rotate(0deg); opacity:0.9; }
+    100%{ transform:translateY(110vh) translateX(var(--px,40px)) rotate(var(--pr,540deg)); opacity:0; }
+}
+.neon-scan {
+    position:fixed; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,rgba(0,255,200,0.5),transparent);
+    pointer-events:none; z-index:0; animation:scanMove 5s linear infinite;
+}
+@keyframes scanMove { 0%{top:-2px} 100%{top:100vh} }
+
+/* ═══════════════════════════════════════════════════
+   GOLDEN TILE
+═══════════════════════════════════════════════════ */
+.tile.golden-tile .tile-inner {
+    background:linear-gradient(135deg,#fff176,#ffd600,#ff8f00,#ffd600) !important;
+    box-shadow:0 0 18px 6px rgba(255,200,0,0.95),0 0 40px 12px rgba(255,140,0,0.5) !important;
+    animation:goldenPulse 0.9s ease-in-out infinite alternate;
+    border:2px solid rgba(255,255,255,0.9) !important;
+}
+@keyframes goldenPulse {
+    0%  { transform:scale(1)    rotate(0deg); }
+    100%{ transform:scale(1.1)  rotate(6deg); }
+}
+
+/* ═══════════════════════════════════════════════════
+   RAINBOW / BONUS TILE
+═══════════════════════════════════════════════════ */
+.tile.bonus-tile .tile-inner {
+    background:linear-gradient(135deg,#ff0080,#ff8800,#ffff00,#00ff80,#0080ff,#8000ff) !important;
+    background-size:300% 300% !important;
+    animation:rainbowShift 1.2s linear infinite;
+    border:2px solid rgba(255,255,255,0.8) !important;
+    box-shadow:0 0 14px 4px rgba(255,100,255,0.8) !important;
+}
+@keyframes rainbowShift {
+    0%  { background-position:0% 50%; filter:hue-rotate(0deg); }
+    100%{ background-position:300% 50%; filter:hue-rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════
+   STREAK MULTIPLIER BADGE
+═══════════════════════════════════════════════════ */
+#streak-multiplier {
+    position:fixed; bottom:95px; right:14px;
+    background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+    border-radius:20px; padding:5px 14px;
+    font-family:'Fredoka One',cursive; font-size:1rem; color:#ffd23f;
+    border:1.5px solid rgba(255,210,63,0.5);
+    z-index:200; pointer-events:none;
+    opacity:0; transition:opacity 0.3s, transform 0.3s; transform:scale(0.8);
+}
+#streak-multiplier.visible { opacity:1; transform:scale(1); }
+#streak-multiplier.pop { animation:multPop 0.3s cubic-bezier(0.175,0.885,0.32,1.4); }
+@keyframes multPop { 0%{transform:scale(1)} 50%{transform:scale(1.45)} 100%{transform:scale(1)} }
+
+/* ═══════════════════════════════════════════════════
+   HOT STREAK BORDER
+═══════════════════════════════════════════════════ */
+#hot-streak-ring {
+    position:fixed; inset:2px; z-index:5; pointer-events:none;
+    border:5px solid transparent; border-radius:10px;
+    background:linear-gradient(#0000,#0000) padding-box,
+               linear-gradient(135deg,#ff4400,#ff8800,#ffcc00,#ff4400) border-box;
+    opacity:0; transition:opacity 0.5s;
+    animation:hotRingPulse 0.7s ease-in-out infinite alternate;
+}
+#hot-streak-ring.active { opacity:1; }
+@keyframes hotRingPulse {
+    0%  { border-width:3px; filter:brightness(1); }
+    100%{ border-width:7px; filter:brightness(1.5); }
+}
+
+/* ═══════════════════════════════════════════════════
+   LEVEL CINEMATIC INTRO
+═══════════════════════════════════════════════════ */
+#level-intro {
+    position:fixed; inset:0; z-index:9995;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0; transition:opacity 0.25s;
+}
+#level-intro.show { opacity:1; }
+#level-intro .li-emoji {
+    font-size:4.5rem;
+    animation:liEmoji 0.6s cubic-bezier(0.175,0.885,0.32,1.4) forwards; transform:scale(0);
+}
+#level-intro .li-name {
+    font-family:'Fredoka One',cursive; font-size:2rem; color:#fff;
+    text-shadow:0 4px 24px rgba(0,0,0,0.6); margin-top:8px;
+    opacity:0; transform:translateY(20px);
+    animation:liUp 0.4s 0.3s ease-out forwards;
+}
+#level-intro .li-num {
+    font-family:'Fredoka One',cursive; font-size:1rem; color:rgba(255,255,255,0.65);
+    margin-top:4px;
+    opacity:0; animation:liUp 0.4s 0.5s ease-out forwards; transform:translateY(10px);
+}
+@keyframes liEmoji {
+    0%  { transform:scale(0) rotate(-15deg); }
+    100%{ transform:scale(1) rotate(0deg); }
+}
+@keyframes liUp {
+    0%  { opacity:0; transform:translateY(20px); }
+    100%{ opacity:1; transform:translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME-TINTED TILE BACKGROUNDS
+═══════════════════════════════════════════════════ */
+[data-theme="jungle"]  .tile-inner { background:linear-gradient(135deg,rgba(60,180,40,0.3),rgba(10,80,0,0.2)) !important; }
+[data-theme="fire"]    .tile-inner { background:linear-gradient(135deg,rgba(255,90,0,0.3),rgba(100,10,0,0.2)) !important; }
+[data-theme="ocean"]   .tile-inner { background:linear-gradient(135deg,rgba(0,140,255,0.3),rgba(0,30,120,0.2)) !important; }
+[data-theme="galaxy"]  .tile-inner { background:linear-gradient(135deg,rgba(140,0,255,0.3),rgba(20,0,70,0.2)) !important; }
+[data-theme="haunted"] .tile-inner { background:linear-gradient(135deg,rgba(110,0,160,0.35),rgba(20,0,40,0.25)) !important; }
+[data-theme="neon"]    .tile-inner { background:linear-gradient(135deg,rgba(0,255,200,0.2),rgba(0,60,100,0.25)) !important; }
+[data-theme="desert"]  .tile-inner { background:linear-gradient(135deg,rgba(255,170,40,0.28),rgba(90,40,0,0.2)) !important; }
+[data-theme="cherry"]  .tile-inner { background:linear-gradient(135deg,rgba(255,130,190,0.3),rgba(160,0,70,0.15)) !important; }
+[data-theme="ice"]     .tile-inner { background:linear-gradient(135deg,rgba(140,225,255,0.35),rgba(0,90,190,0.18)) !important; }
+[data-theme="candy"]   .tile-inner { background:linear-gradient(135deg,rgba(255,100,190,0.3),rgba(190,0,70,0.15)) !important; }
+
+/* smooth board transitions */
+#board-container, #screen-game { transition:background 0.7s; }
+
 </style>
 </head>
 <body>
+
+<!-- ═══ THEME ATMOSPHERE (weather effects) ═══ -->
+<div id="theme-atmosphere"></div>
+
+<!-- ═══ STREAK MULTIPLIER BADGE ═══ -->
+<div id="streak-multiplier">🔥 ×1.0</div>
+
+<!-- ═══ HOT STREAK BORDER RING ═══ -->
+<div id="hot-streak-ring"></div>
+
+<!-- ═══ LEVEL CINEMATIC INTRO ═══ -->
+<div id="level-intro">
+    <div class="li-emoji" id="li-emoji">🍭</div>
+    <div class="li-name"  id="li-name">Candy Land</div>
+    <div class="li-num"   id="li-num">Level 1</div>
+</div>
 
 <!-- ═══ ROTATE TO LANDSCAPE PROMPT ═══ -->
 <div id="rotate-prompt">
@@ -4018,6 +4220,7 @@ const emojis = ['🍇', '🍊', '🥥', '🍭', '🧁', '🍩','🍫','🍬'];
 // Themes cycle every 10 levels
 const themes = [
     {
+        key: 'candy',
         name: 'Candy Land', emoji: '🍭',
         bg:        'linear-gradient(160deg, #ff9de2 0%, #ff5fa0 40%, #ff2d78 100%)',
         board:     'rgba(255,100,160,0.25)',
@@ -4027,112 +4230,216 @@ const themes = [
         tileGlow:  '#ff80c0',
         particles: ['🍭','🍬','💖','✨','🌸'],
         ambient:   ['🍭','🍬','🍡','🧁','💖','🍰'],
+        weather:   'petals',
+        boardShadow: '0 0 40px rgba(255,80,160,0.5)',
     },
     {
+        key: 'jungle',
         name: 'Jungle', emoji: '🌿',
-        bg:        'linear-gradient(160deg, #134e00 0%, #1e8c00 40%, #56c400 100%)',
-        board:     'rgba(0,80,0,0.45)',
-        boardBorder:'rgba(100,220,60,0.4)',
-        panel:     'rgba(20,60,10,0.88)',
-        panelText:  '#c8ffb0',
-        scoreBar:  '#56c400',
+        bg:        'linear-gradient(160deg, #0a2e00 0%, #135200 40%, #1d8a00 70%, #4ab500 100%)',
+        board:     'rgba(0,60,0,0.5)',
+        boardBorder:'rgba(80,200,40,0.45)',
+        panel:     'rgba(10,40,5,0.9)',
+        panelText:  '#b0ffa0',
+        scoreBar:  '#44bb00',
         tileGlow:  '#80ff40',
         particles: ['🌿','🍃','🌴','🦋','✨'],
         ambient:   ['🌿','🍃','🌴','🦜','🐒','🌺'],
+        weather:   'leaves',
+        boardShadow: '0 0 40px rgba(50,200,0,0.4)',
     },
     {
+        key: 'ice',
         name: 'Ice Kingdom', emoji: '❄️',
-        bg:        'linear-gradient(160deg, #a8edff 0%, #38b6e8 40%, #005fa3 100%)',
-        board:     'rgba(0,80,160,0.3)',
-        boardBorder:'rgba(180,240,255,0.6)',
-        panel:     'rgba(220,245,255,0.92)',
+        bg:        'linear-gradient(160deg, #d0f4ff 0%, #5fc8f0 35%, #0080d0 70%, #003f80 100%)',
+        board:     'rgba(0,60,140,0.35)',
+        boardBorder:'rgba(180,240,255,0.65)',
+        panel:     'rgba(210,245,255,0.93)',
         scoreBar:  '#00b4d8',
         tileGlow:  '#80dfff',
         particles: ['❄️','🧊','💎','⛄','✨'],
         ambient:   ['❄️','🧊','⛄','🌨️','💎','🔵'],
+        weather:   'snow',
+        boardShadow: '0 0 50px rgba(0,180,255,0.45)',
     },
     {
+        key: 'fire',
         name: 'Fire Realm', emoji: '🔥',
-        bg:        'linear-gradient(160deg, #1a0000 0%, #8b1a00 40%, #ff4500 80%, #ffd000 100%)',
-        board:     'rgba(120,20,0,0.5)',
-        boardBorder:'rgba(255,120,0,0.6)',
-        panel:     'rgba(40,10,0,0.9)',
+        bg:        'linear-gradient(160deg, #100000 0%, #6b0e00 35%, #cc2200 65%, #ff7700 85%, #ffd000 100%)',
+        board:     'rgba(100,15,0,0.55)',
+        boardBorder:'rgba(255,120,0,0.65)',
+        panel:     'rgba(30,5,0,0.92)',
         panelText:  '#ffcc80',
         scoreBar:  '#ff4500',
         tileGlow:  '#ff8800',
         particles: ['🔥','💥','✨','🌟','⚡'],
         ambient:   ['🔥','💥','🌋','⚡','🌠','🔴'],
+        weather:   'lava',
+        boardShadow: '0 0 60px rgba(255,80,0,0.6)',
     },
     {
+        key: 'ocean',
         name: 'Ocean Deep', emoji: '🌊',
-        bg:        'linear-gradient(160deg, #001a3a 0%, #003580 40%, #0070c9 100%)',
-        board:     'rgba(0,40,120,0.4)',
-        boardBorder:'rgba(0,180,255,0.4)',
-        panel:     'rgba(0,20,60,0.9)',
+        bg:        'linear-gradient(160deg, #000e20 0%, #002860 40%, #005599 70%, #0090d0 100%)',
+        board:     'rgba(0,30,100,0.45)',
+        boardBorder:'rgba(0,180,255,0.45)',
+        panel:     'rgba(0,15,50,0.92)',
         panelText:  '#80d4ff',
         scoreBar:  '#00b4ff',
         tileGlow:  '#00d4ff',
         particles: ['🌊','🐠','💧','🫧','✨'],
         ambient:   ['🌊','🐠','🐙','🦈','🫧','💧'],
+        weather:   'bubbles',
+        boardShadow: '0 0 50px rgba(0,150,255,0.5)',
     },
     {
+        key: 'galaxy',
         name: 'Galaxy', emoji: '🌌',
-        bg:        'linear-gradient(160deg, #000010 0%, #0d0040 40%, #3a0080 80%, #6a00c0 100%)',
-        board:     'rgba(30,0,80,0.5)',
-        boardBorder:'rgba(180,80,255,0.4)',
-        panel:     'rgba(10,0,30,0.92)',
+        bg:        'linear-gradient(160deg, #000008 0%, #080030 35%, #280070 65%, #5000a8 85%, #800060 100%)',
+        board:     'rgba(20,0,70,0.55)',
+        boardBorder:'rgba(180,80,255,0.45)',
+        panel:     'rgba(8,0,28,0.94)',
         panelText:  '#d4a0ff',
         scoreBar:  '#9b00ff',
         tileGlow:  '#cc80ff',
         particles: ['🌟','⭐','💫','✨','🌌'],
         ambient:   ['⭐','🌟','💫','🌌','🪐','☄️'],
+        weather:   'stars',
+        boardShadow: '0 0 60px rgba(150,0,255,0.5)',
     },
     {
+        key: 'haunted',
         name: 'Haunted', emoji: '👻',
-        bg:        'linear-gradient(160deg, #0a000f 0%, #1e0035 40%, #3d0060 100%)',
-        board:     'rgba(40,0,60,0.55)',
-        boardBorder:'rgba(180,0,255,0.35)',
-        panel:     'rgba(15,0,25,0.92)',
+        bg:        'linear-gradient(160deg, #060008 0%, #150022 40%, #300050 70%, #550000 100%)',
+        board:     'rgba(30,0,55,0.6)',
+        boardBorder:'rgba(180,0,255,0.4)',
+        panel:     'rgba(12,0,22,0.94)',
         panelText:  '#e0a0ff',
         scoreBar:  '#9900ff',
         tileGlow:  '#cc00ff',
         particles: ['👻','💀','🕷️','🌙','✨'],
         ambient:   ['👻','💀','🕷️','🦇','🌙','🕸️'],
+        weather:   'bats',
+        boardShadow: '0 0 55px rgba(180,0,255,0.5)',
     },
     {
-        name: 'Desert', emoji: '🏜️',
-        bg:        'linear-gradient(160deg, #7a3800 0%, #c46000 40%, #f5a623 80%, #ffe066 100%)',
-        board:     'rgba(120,60,0,0.4)',
-        boardBorder:'rgba(255,200,80,0.5)',
-        panel:     'rgba(60,20,0,0.9)',
+        key: 'desert',
+        name: 'Desert Storm', emoji: '🏜️',
+        bg:        'linear-gradient(160deg, #4a1c00 0%, #8c3e00 35%, #d97000 65%, #f5b820 85%, #ffe080 100%)',
+        board:     'rgba(100,50,0,0.45)',
+        boardBorder:'rgba(255,200,80,0.55)',
+        panel:     'rgba(50,18,0,0.92)',
         panelText:  '#ffe0a0',
         scoreBar:  '#f5a623',
         tileGlow:  '#ffcc40',
         particles: ['🌵','⭐','✨','🌟','💛'],
         ambient:   ['🌵','🐪','☀️','🏜️','🦂','🌙'],
+        weather:   'sand',
+        boardShadow: '0 0 45px rgba(255,150,0,0.45)',
     },
     {
+        key: 'cherry',
         name: 'Cherry Blossom', emoji: '🌸',
-        bg:        'linear-gradient(160deg, #fff0f8 0%, #ffb6d9 40%, #ff80b4 100%)',
-        board:     'rgba(255,100,160,0.18)',
-        boardBorder:'rgba(255,180,210,0.6)',
-        panel:     'rgba(255,240,250,0.93)',
+        bg:        'linear-gradient(160deg, #ffe8f5 0%, #ffaad4 40%, #ff6eb4 70%, #e8006a 100%)',
+        board:     'rgba(240,80,140,0.2)',
+        boardBorder:'rgba(255,180,215,0.65)',
+        panel:     'rgba(255,235,250,0.95)',
         scoreBar:  '#ff4d9e',
         tileGlow:  '#ff99cc',
         particles: ['🌸','🌺','💮','🎀','✨'],
         ambient:   ['🌸','🌺','🌷','🦋','🎀','💮'],
+        weather:   'petals',
+        boardShadow: '0 0 40px rgba(255,80,150,0.45)',
     },
     {
+        key: 'neon',
         name: 'Neon City', emoji: '🌃',
-        bg:        'linear-gradient(160deg, #000814 0%, #001233 40%, #002366 100%)',
-        board:     'rgba(0,10,40,0.6)',
-        boardBorder:'rgba(0,255,200,0.4)',
-        panel:     'rgba(0,5,20,0.93)',
+        bg:        'linear-gradient(160deg, #000408 0%, #000d20 35%, #001840 65%, #002255 100%)',
+        board:     'rgba(0,8,35,0.65)',
+        boardBorder:'rgba(0,255,200,0.45)',
+        panel:     'rgba(0,4,18,0.95)',
         panelText:  '#00ffcc',
         scoreBar:  '#00ffcc',
         tileGlow:  '#00ffcc',
         particles: ['⚡','💥','🌟','✨','🔵'],
         ambient:   ['🌃','⚡','🔵','🟣','💡','🎆'],
+        weather:   'neon',
+        boardShadow: '0 0 60px rgba(0,255,200,0.4)',
+    },
+    // 5 brand-new themes
+    {
+        key: 'underwater',
+        name: 'Coral Reef', emoji: '🪸',
+        bg:        'linear-gradient(160deg, #001020 0%, #003050 40%, #005080 70%, #007090 100%)',
+        board:     'rgba(0,40,70,0.5)',
+        boardBorder:'rgba(0,220,180,0.45)',
+        panel:     'rgba(0,20,40,0.93)',
+        panelText:  '#80ffe8',
+        scoreBar:  '#00e8b0',
+        tileGlow:  '#00ffd0',
+        particles: ['🪸','🐡','🦀','🦑','✨'],
+        ambient:   ['🪸','🐡','🦀','🦑','🦞','🌊'],
+        weather:   'bubbles',
+        boardShadow: '0 0 50px rgba(0,220,180,0.5)',
+    },
+    {
+        key: 'rainbow',
+        name: 'Rainbow Sky', emoji: '🌈',
+        bg:        'linear-gradient(160deg,#ff4488 0%,#ff8800 20%,#ffee00 40%,#44cc00 60%,#0088ff 80%,#8844ff 100%)',
+        board:     'rgba(255,255,255,0.2)',
+        boardBorder:'rgba(255,255,255,0.7)',
+        panel:     'rgba(255,255,255,0.9)',
+        scoreBar:  'linear-gradient(90deg,#ff4488,#ff8800,#ffee00,#44cc00,#0088ff)',
+        tileGlow:  '#ffffff',
+        particles: ['🌈','☁️','⭐','🌟','💫'],
+        ambient:   ['🌈','☁️','⭐','🌟','💫','🎉'],
+        weather:   'petals',
+        boardShadow: '0 0 50px rgba(200,150,255,0.5)',
+    },
+    {
+        key: 'volcano',
+        name: 'Volcano', emoji: '🌋',
+        bg:        'linear-gradient(160deg,#0a0000 0%,#3a0000 30%,#7a0800 55%,#cc3000 75%,#ff8800 90%,#ffd000 100%)',
+        board:     'rgba(80,5,0,0.6)',
+        boardBorder:'rgba(255,100,0,0.7)',
+        panel:     'rgba(25,2,0,0.93)',
+        panelText:  '#ffc070',
+        scoreBar:  '#ff6600',
+        tileGlow:  '#ff5500',
+        particles: ['🌋','🔥','💥','⚡','🌟'],
+        ambient:   ['🌋','🔥','💥','🫨','🌡️','⚡'],
+        weather:   'lava',
+        boardShadow: '0 0 70px rgba(255,60,0,0.7)',
+    },
+    {
+        key: 'space',
+        name: 'Deep Space', emoji: '🚀',
+        bg:        'linear-gradient(160deg,#000000 0%,#020020 40%,#040040 70%,#080060 100%)',
+        board:     'rgba(4,0,30,0.7)',
+        boardBorder:'rgba(100,140,255,0.35)',
+        panel:     'rgba(2,0,15,0.96)',
+        panelText:  '#a0c0ff',
+        scoreBar:  '#4080ff',
+        tileGlow:  '#6090ff',
+        particles: ['🚀','🛸','⭐','💫','🌠'],
+        ambient:   ['🚀','🛸','🌠','☄️','🛰️','⭐'],
+        weather:   'stars',
+        boardShadow: '0 0 60px rgba(80,120,255,0.5)',
+    },
+    {
+        key: 'enchanted',
+        name: 'Enchanted Forest', emoji: '🧚',
+        bg:        'linear-gradient(160deg,#030f00 0%,#0a2200 30%,#153800 55%,#265000 75%,#3a7000 100%)',
+        board:     'rgba(8,25,0,0.55)',
+        boardBorder:'rgba(120,255,100,0.35)',
+        panel:     'rgba(4,15,0,0.93)',
+        panelText:  '#aaff88',
+        scoreBar:  '#66dd00',
+        tileGlow:  '#88ff44',
+        particles: ['🧚','🍄','🌙','✨','🌿'],
+        ambient:   ['🧚','🍄','🌙','✨','🦋','🌿'],
+        weather:   'leaves',
+        boardShadow: '0 0 55px rgba(100,220,40,0.4)',
     },
 ];
 
@@ -4930,7 +5237,12 @@ const game = {
         if (bc) {
             bc.style.background = t.board;
             bc.style.borderColor = t.boardBorder;
+            if (t.boardShadow) bc.style.boxShadow = t.boardShadow;
         }
+
+        // Apply theme key to grid for CSS tile tinting
+        const gridEl = document.getElementById('grid');
+        if (gridEl && t.key) gridEl.setAttribute('data-theme', t.key);
 
         // Game panel
         const gp = document.querySelector('#screen-game .panel');
@@ -4950,11 +5262,23 @@ const game = {
         // Theme name banner flash
         this.showThemeBanner(t);
 
+        // Start weather atmosphere
+        this.startWeather(t);
+
         // Start ambient floating emojis
         this.startAmbient(t);
 
         // Start audio — this is inside a user gesture so ctx.resume() is guaranteed to work
         audioSys.start();
+
+        // Reset combo streak on new level
+        this._comboStreak = 0;
+        this._comboMultiplier = 1.0;
+        this._movesSinceGolden = 0;
+        const hotRing = document.getElementById('hot-streak-ring');
+        if (hotRing) hotRing.classList.remove('active');
+        const multEl = document.getElementById('streak-multiplier');
+        if (multEl) multEl.classList.remove('visible');
 
         // CrazyGames: gameplay start (safe wrapper)
         CrazySDKSafe.gameplayStart();
@@ -4967,7 +5291,20 @@ const game = {
         ui.updateShop();
         ui.updateObjective();
         this.resetHint();
-        kb.reset(); // clear keyboard cursor on new level
+        kb.reset();
+
+        // Cinematic level intro
+        const intro = document.getElementById('level-intro');
+        if (intro) {
+            document.getElementById('li-emoji').textContent = t.emoji || '🎮';
+            document.getElementById('li-name').textContent  = t.name;
+            document.getElementById('li-num').textContent   = `Level ${idx+1}  •  ${config.obj.label}`;
+            intro.style.background = t.bg + '99';
+            intro.classList.add('show');
+            intro.style.pointerEvents = 'all';
+            intro.onclick = () => { intro.classList.remove('show'); intro.style.pointerEvents='none'; };
+            setTimeout(() => { intro.classList.remove('show'); intro.style.pointerEvents='none'; }, 2200);
+        }
 
         // Tutorial for first 3 levels
         if (idx < 3) setTimeout(() => this.showTutorial(idx), 800);
@@ -5420,17 +5757,36 @@ const game = {
         // Play pop sound — bigger for larger matches
         audioSys.sfx(matches.length >= 5 ? 'multipop' : 'pop');
 
+        // Update combo streak + multiplier
+        game.updateComboStreak(matches.length);
+        const comboMult = game._comboMultiplier || 1.0;
+
+        // Golden tile bonus: if any matched tile was golden, triple its contribution
+        let goldenBonus = 0;
+        for (let m of matches) {
+            const el = domGrid[m.r] ? domGrid[m.r][m.c] : null;
+            if (el && el.dataset.golden === '1') {
+                goldenBonus += 500;
+                el.classList.remove('golden-tile');
+                el.dataset.golden = '';
+                game.floatText(m.r, m.c, '⭐ GOLDEN! +500');
+            }
+        }
+
         // Apply aura score multiplier
         const auraMult = (typeof playerHP !== 'undefined' ? playerHP.scoreMult() : 1);
-        const finalScore = Math.round((baseScore + bonus) * auraMult);
+        const finalScore = Math.round((baseScore + bonus + goldenBonus) * auraMult * comboMult);
         state.score += finalScore;
         ui.updateStats();
         ui.popScore();
         ui.updateObjective();
 
+        // Check to spawn a golden tile
+        game.checkGoldenTile();
+
         const center = matches[Math.floor(matches.length/2)];
-        const label  = auraMult > 1
-            ? `+${finalScore} ×${auraMult}✨`
+        const label  = (comboMult > 1 || auraMult > 1)
+            ? `+${finalScore} ${comboMult > 1 ? '🔥×'+comboMult.toFixed(1) : ''}${auraMult > 1 ? ' ✨×'+auraMult : ''}`
             : `+${finalScore}`;
         if(center) this.floatText(center.r, center.c, label);
 
@@ -5931,15 +6287,131 @@ const game = {
                 el.style.cssText = `
                     position:fixed; font-size:${size}px;
                     left:${startX}vw; bottom:-40px;
-                    pointer-events:none; z-index:0; opacity:0.55;
+                    pointer-events:none; z-index:0; opacity:0.45;
                     animation: ambientFloat ${dur}ms ease-in forwards;
                     --drift:${drift}px;
                 `;
                 document.body.appendChild(el);
                 setTimeout(() => el.remove(), dur + 100);
             }
-        }, 600);
+        }, 700);
     },
+
+    /* ── Weather atmosphere particles ── */
+    startWeather(theme) {
+        const atm = document.getElementById('theme-atmosphere');
+        if (!atm) return;
+        atm.innerHTML = '';
+
+        const type = theme.weather || 'none';
+        const count = { rain:28, snow:22, lava:10, stars:20, bubbles:14, sand:16, petals:12, leaves:12, bats:0, neon:1 }[type] || 0;
+
+        if (type === 'neon') {
+            const scan = document.createElement('div');
+            scan.className = 'neon-scan';
+            atm.appendChild(scan);
+            return;
+        }
+        if (type === 'bats') return; // bats handled as ambient emojis
+
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            const delay = Math.random() * 5;
+            const dur   = 2 + Math.random() * 4;
+            const left  = Math.random() * 100;
+
+            if (type === 'rain') {
+                el.className = 'rain-drop';
+                el.style.cssText = `left:${left}%;top:-20px;animation-duration:${(0.6+Math.random()*0.6).toFixed(2)}s;animation-delay:${delay}s;`;
+            } else if (type === 'snow') {
+                el.className = 'snow-flake';
+                el.textContent = ['❄','❅','❆','*'][Math.floor(Math.random()*4)];
+                el.style.cssText = `left:${left}%;top:-10px;font-size:${10+Math.random()*12}px;animation-duration:${(3+Math.random()*4).toFixed(1)}s;animation-delay:${delay}s;--sx:${(Math.random()-0.5)*60}px;`;
+            } else if (type === 'lava') {
+                el.className = 'lava-bubble';
+                const size = 8 + Math.random() * 20;
+                el.style.cssText = `left:${left}%;bottom:${Math.random()*20}%;width:${size}px;height:${size}px;animation-duration:${(1.5+Math.random()*2).toFixed(1)}s;animation-delay:${delay}s;`;
+            } else if (type === 'stars') {
+                el.className = 'falling-star';
+                el.style.cssText = `left:${left}%;top:-5px;animation-duration:${(2+Math.random()*3).toFixed(1)}s;animation-delay:${delay}s;`;
+            } else if (type === 'bubbles') {
+                el.className = 'bubble-rise';
+                const size = 10 + Math.random() * 25;
+                el.style.cssText = `left:${left}%;bottom:-${size}px;width:${size}px;height:${size}px;animation-duration:${(3+Math.random()*4).toFixed(1)}s;animation-delay:${delay}s;`;
+            } else if (type === 'sand') {
+                el.className = 'sand-grain';
+                el.style.cssText = `left:${left}%;top:-5px;animation-duration:${(2+Math.random()*3).toFixed(1)}s;animation-delay:${delay}s;--sd:${(40+Math.random()*80).toFixed(0)}px;`;
+            } else if (type === 'petals') {
+                el.className = 'petal';
+                el.textContent = theme.key === 'cherry' ? '🌸' : ['✿','❀','✾','꽃'][Math.floor(Math.random()*4)];
+                el.style.cssText = `left:${left}%;top:-10px;animation-duration:${(3+Math.random()*4).toFixed(1)}s;animation-delay:${delay}s;--px:${(Math.random()-0.5)*80}px;--pr:${360+Math.random()*360}deg;`;
+            } else if (type === 'leaves') {
+                el.className = 'petal';
+                el.textContent = ['🍃','🌿','🍀'][Math.floor(Math.random()*3)];
+                el.style.cssText = `left:${left}%;top:-10px;animation-duration:${(3+Math.random()*5).toFixed(1)}s;animation-delay:${delay}s;--px:${(Math.random()-0.5)*60}px;--pr:${270+Math.random()*180}deg;`;
+            }
+            if (el.className) atm.appendChild(el);
+        }
+    },
+
+    /* ── Streak multiplier system ── */
+    _comboStreak: 0,
+    _comboMultiplier: 1.0,
+    updateComboStreak(matchSize) {
+        if (matchSize >= 3) {
+            this._comboStreak++;
+        } else {
+            this._comboStreak = 0;
+        }
+        const mult = this._comboStreak >= 6 ? 3.0
+                   : this._comboStreak >= 4 ? 2.0
+                   : this._comboStreak >= 2 ? 1.5
+                   : 1.0;
+        this._comboMultiplier = mult;
+        const el = document.getElementById('streak-multiplier');
+        const ring = document.getElementById('hot-streak-ring');
+        if (el) {
+            if (mult > 1) {
+                el.textContent = `🔥 ×${mult.toFixed(1)}`;
+                el.classList.add('visible');
+                el.classList.remove('pop');
+                void el.offsetWidth;
+                el.classList.add('pop');
+            } else {
+                el.classList.remove('visible');
+            }
+        }
+        if (ring) {
+            if (this._comboStreak >= 4) ring.classList.add('active');
+            else ring.classList.remove('active');
+        }
+    },
+
+    /* ── Spawn a golden tile randomly (every ~15 moves) ── */
+    _movesSinceGolden: 0,
+    checkGoldenTile() {
+        this._movesSinceGolden = (this._movesSinceGolden || 0) + 1;
+        if (this._movesSinceGolden < 10 + Math.floor(Math.random() * 8)) return;
+        this._movesSinceGolden = 0;
+        // Pick a random active tile
+        const activeCells = [];
+        for (let r = 0; r < cfg.h; r++)
+            for (let c = 0; c < cfg.w; c++)
+                if (grid[r] && grid[r][c] >= 0 && domGrid[r] && domGrid[r][c])
+                    activeCells.push({r,c});
+        if (!activeCells.length) return;
+        const pick = activeCells[Math.floor(Math.random() * activeCells.length)];
+        const tileEl = domGrid[pick.r][pick.c];
+        if (tileEl) {
+            tileEl.classList.add('golden-tile');
+            tileEl.dataset.golden = '1';
+            setTimeout(() => {
+                if (tileEl.parentNode) tileEl.classList.remove('golden-tile');
+                tileEl.dataset.golden = '';
+            }, 8000);
+        }
+    },
+
 };
 
 // Powerups
