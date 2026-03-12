@@ -2918,18 +2918,14 @@ html,body{
 }
 
 /* ═══════════════════════════════════════════════════
-   THEME-TINTED TILE BACKGROUNDS
+   PER-LEVEL TILE TINTING via CSS variables
 ═══════════════════════════════════════════════════ */
-[data-theme="jungle"]  .tile-inner { background:linear-gradient(135deg,rgba(60,180,40,0.3),rgba(10,80,0,0.2)) !important; }
-[data-theme="fire"]    .tile-inner { background:linear-gradient(135deg,rgba(255,90,0,0.3),rgba(100,10,0,0.2)) !important; }
-[data-theme="ocean"]   .tile-inner { background:linear-gradient(135deg,rgba(0,140,255,0.3),rgba(0,30,120,0.2)) !important; }
-[data-theme="galaxy"]  .tile-inner { background:linear-gradient(135deg,rgba(140,0,255,0.3),rgba(20,0,70,0.2)) !important; }
-[data-theme="haunted"] .tile-inner { background:linear-gradient(135deg,rgba(110,0,160,0.35),rgba(20,0,40,0.25)) !important; }
-[data-theme="neon"]    .tile-inner { background:linear-gradient(135deg,rgba(0,255,200,0.2),rgba(0,60,100,0.25)) !important; }
-[data-theme="desert"]  .tile-inner { background:linear-gradient(135deg,rgba(255,170,40,0.28),rgba(90,40,0,0.2)) !important; }
-[data-theme="cherry"]  .tile-inner { background:linear-gradient(135deg,rgba(255,130,190,0.3),rgba(160,0,70,0.15)) !important; }
-[data-theme="ice"]     .tile-inner { background:linear-gradient(135deg,rgba(140,225,255,0.35),rgba(0,90,190,0.18)) !important; }
-[data-theme="candy"]   .tile-inner { background:linear-gradient(135deg,rgba(255,100,190,0.3),rgba(190,0,70,0.15)) !important; }
+#grid .tile-inner {
+    background: linear-gradient(135deg,
+        hsla(var(--lvl-h1,320), var(--lvl-bs,80%), var(--lvl-bl,60%), 0.30) 0%,
+        hsla(var(--lvl-h2,280), var(--lvl-bs,70%), calc(var(--lvl-bl,40%) - 20%), 0.18) 100%
+    ) !important;
+}
 
 /* smooth board transitions */
 #board-container, #screen-game { transition:background 0.7s; }
@@ -4479,12 +4475,120 @@ const shapeOrder = [
 ];
 
 
+/* ─────────────────────────────────────────────────────────────
+   PROCEDURAL PER-LEVEL THEME GENERATOR
+   Every level gets its own unique look — no two levels repeat.
+──────────────────────────────────────────────────────────────*/
+function generateLevelTheme(i) {
+    // Seeded random so themes are deterministic per level
+    const rng = (n => { let s=n*9301+49297; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; })(i*7+13);
+
+    // 30 named world zones — repeats at 300 levels, but visual palette is unique each time
+    const zones = [
+        // zone 0-9: sweet worlds
+        { name:'Candy Land',      emoji:'🍭', weather:'petals',  base:[355,100,70],  dark:[340,90,35]  },
+        { name:'Bubblegum Bay',   emoji:'🫧', weather:'bubbles', base:[310,85,72],   dark:[300,70,40]  },
+        { name:'Lollipop Fields', emoji:'🍬', weather:'petals',  base:[25,100,65],   dark:[20,90,35]   },
+        { name:'Cupcake Peaks',   emoji:'🧁', weather:'petals',  base:[275,80,68],   dark:[265,70,38]  },
+        { name:'Marshmallow Sky', emoji:'☁️', weather:'snow',    base:[200,40,85],   dark:[195,30,60]  },
+        { name:'Toffee Dunes',    emoji:'🍮', weather:'sand',    base:[38,85,60],    dark:[32,75,30]   },
+        { name:'Rainbow Falls',   emoji:'🌈', weather:'petals',  base:[170,70,62],   dark:[160,65,35]  },
+        { name:'Jellybean Jungle',emoji:'🍇', weather:'leaves',  base:[130,75,38],   dark:[120,70,20]  },
+        { name:'Sherbet Shore',   emoji:'🍑', weather:'bubbles', base:[35,90,68],    dark:[28,80,38]   },
+        { name:'Frosting Peaks',  emoji:'🍰', weather:'snow',    base:[220,60,75],   dark:[215,50,48]  },
+        // zone 10-19: nature worlds
+        { name:'Enchanted Forest',emoji:'🧚', weather:'leaves',  base:[140,70,28],   dark:[130,65,14]  },
+        { name:'Cherry Blossom',  emoji:'🌸', weather:'petals',  base:[345,80,72],   dark:[335,70,42]  },
+        { name:'Sunflower Steppe',emoji:'🌻', weather:'sand',    base:[48,95,58],    dark:[44,85,28]   },
+        { name:'Mushroom Grove',  emoji:'🍄', weather:'leaves',  base:[15,75,48],    dark:[10,70,24]   },
+        { name:'Bamboo Valley',   emoji:'🎋', weather:'leaves',  base:[115,65,42],   dark:[108,60,22]  },
+        { name:'Coral Reef',      emoji:'🪸', weather:'bubbles', base:[175,80,48],   dark:[168,75,24]  },
+        { name:'Autumn Woods',    emoji:'🍂', weather:'leaves',  base:[28,80,50],    dark:[22,75,25]   },
+        { name:'Crystal Cavern',  emoji:'💎', weather:'snow',    base:[195,70,55],   dark:[190,60,30]  },
+        { name:'Misty Highlands', emoji:'🌄', weather:'petals',  base:[250,40,58],   dark:[245,35,35]  },
+        { name:'Tidal Lagoon',    emoji:'🌊', weather:'bubbles', base:[195,85,42],   dark:[190,80,22]  },
+        // zone 20-29: extreme worlds
+        { name:'Fire Realm',      emoji:'🔥', weather:'lava',    base:[15,100,50],   dark:[10,95,22]   },
+        { name:'Volcano Peak',    emoji:'🌋', weather:'lava',    base:[8,100,42],    dark:[5,95,18]    },
+        { name:'Ice Kingdom',     emoji:'❄️', weather:'snow',    base:[205,85,68],   dark:[200,80,40]  },
+        { name:'Thunder Plains',  emoji:'⚡', weather:'rain',    base:[258,65,45],   dark:[252,60,22]  },
+        { name:'Desert Storm',    emoji:'🏜️', weather:'sand',    base:[36,90,52],    dark:[30,85,26]   },
+        { name:'Deep Ocean',      emoji:'🌊', weather:'bubbles', base:[210,90,28],   dark:[208,88,14]  },
+        { name:'Galaxy',          emoji:'🌌', weather:'stars',   base:[272,85,38],   dark:[268,80,18]  },
+        { name:'Haunted Rift',    emoji:'👻', weather:'stars',   base:[285,90,28],   dark:[280,85,12]  },
+        { name:'Deep Space',      emoji:'🚀', weather:'stars',   base:[240,80,22],   dark:[236,78,10]  },
+        { name:'Neon City',       emoji:'🌃', weather:'neon',    base:[168,100,50],  dark:[164,95,22]  },
+    ];
+
+    const zoneIdx = (i - 1) % zones.length;
+    const zone = zones[zoneIdx];
+
+    // Shift hue slightly per cycle so repeated zones look different
+    const cycle = Math.floor((i - 1) / zones.length);
+    const hueShift = cycle * 37; // shifts hue 37° per full cycle
+
+    const [bh, bs, bl] = zone.base;
+    const [dh, ds, dl] = zone.dark;
+    const h1 = (bh + hueShift) % 360;
+    const h2 = (dh + hueShift) % 360;
+    const h3 = (bh + hueShift + 20) % 360; // mid-stop
+
+    // Brightness variation per level within zone (±10%)
+    const bv = Math.round(rng() * 14 - 7);
+    const dv = Math.round(rng() * 10 - 5);
+
+    // Compute 3-stop gradient (unique angle per level)
+    const angle = 140 + Math.round(rng() * 40);
+    const bg = `linear-gradient(${angle}deg,
+        hsl(${h2},${ds}%,${Math.max(5,dl+dv)}%) 0%,
+        hsl(${h3},${Math.round(bs*0.9)}%,${Math.round((bl+dl)/2+bv)}%) 45%,
+        hsl(${h1},${bs}%,${Math.min(85,bl+bv)}%) 100%)`;
+
+    // Board uses dark tint of theme colour
+    const boardAlpha = (0.35 + rng() * 0.2).toFixed(2);
+    const board = `hsla(${h2},${ds}%,${Math.max(8,dl-5)}%,${boardAlpha})`;
+    const boardBorder = `hsla(${h1},${bs}%,${Math.min(90,bl+20)}%,${(0.45+rng()*0.2).toFixed(2)})`;
+    const boardShadow = `0 0 ${40+Math.round(rng()*30)}px hsla(${h1},${bs}%,${Math.min(75,bl)}%,0.5)`;
+
+    // Panel: light or dark depending on brightness
+    const isDark = bl < 55;
+    const panelLightness = isDark ? Math.max(4, dl - 8) : Math.min(96, bl + 22);
+    const panelAlpha     = isDark ? 0.92 : 0.91;
+    const panel = `hsla(${h2},${Math.round(ds*0.6)}%,${panelLightness}%,${panelAlpha})`;
+    const panelText = isDark ? `hsl(${h1},${Math.round(bs*0.7)}%,${Math.min(90,bl+35)}%)` : null;
+
+    // Score bar & tile glow
+    const scoreBar = `hsl(${h1},${bs}%,${Math.min(65,bl-5)}%)`;
+    const tileGlow = `hsl(${h1},${bs}%,${Math.min(80,bl+10)}%)`;
+
+    // Ambient emojis from zone + extras
+    const ambient = [...zone.emoji ? [zone.emoji] : [], '✨','🌟','💫'].slice(0,4);
+
+    return {
+        key:         zone.name.toLowerCase().replace(/\s+/g,'-'),
+        name:        zone.name,
+        emoji:       zone.emoji,
+        bg,
+        board,
+        boardBorder,
+        boardShadow,
+        panel,
+        panelText,
+        scoreBar,
+        tileGlow,
+        weather:     zone.weather,
+        ambient,
+        particles:   ['✨','💫','🌟'],
+        _h1: h1, _h2: h2, _bs: bs, _bl: bl,  // store for CSS variable injection
+    };
+}
+
 function buildLevelData() {
     const levels = [];
     const objTypes = ['score','collect','row','ice','cascade','survival'];
 
     for(let i = 1; i <= 300; i++) {
-        const theme  = themes[(i - 1) % themes.length];
+        const theme  = generateLevelTheme(i);
         const shapeName = shapeOrder[(i - 1) % shapeOrder.length];
         const shapeFn   = boardShapes[shapeName];
         const phase  = Math.floor((i - 1) / 50); // 0-5, controls overall difficulty scaling
@@ -5231,6 +5335,14 @@ const game = {
         // Apply full theme
         const t = config.theme;
         document.body.style.background = t.bg;
+
+        // Inject per-level CSS tile color variables
+        if (t._h1 !== undefined) {
+            document.documentElement.style.setProperty('--lvl-h1', t._h1);
+            document.documentElement.style.setProperty('--lvl-h2', t._h2);
+            document.documentElement.style.setProperty('--lvl-bs', t._bs + '%');
+            document.documentElement.style.setProperty('--lvl-bl', t._bl + '%');
+        }
 
         // Board container
         const bc = document.getElementById('board-container');
