@@ -798,7 +798,7 @@ footer {
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== PRODUCTS DATABASE (67 products across all categories) ==========
+// ========== PRODUCTS DATABASE (67 products) ==========
 const products = [
   { id:1, name:"Velvet Matte Lipstick - Ruby Red", price:24.99, origPrice:32, category:"makeup", rating:4.8, reviews:234,
     image:"https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -1081,7 +1081,6 @@ function initReviews() {
     if(p.id === 1) reviews[p.id] = [
       { name:"Naina L.", stars:5, text:"This lipstick stays on ALL day! No fading, no transferring.", date:"Mar 2024" },
       { name:"Pooja S.", stars:5, text:"Best matte lipstick ever. Comfortable and moisturizing!", date:"Feb 2024" },
-      { name:"Kritika M.", stars:4, text:"Love the color! Slightly drying after 8 hours but overall very good.", date:"Jan 2024" },
     ];
     if(p.id === 41) reviews[p.id] = [
       { name:"Arjun P.", stars:5, text:"This phone is incredible. Camera quality is unmatched.", date:"Mar 2024" },
@@ -1174,7 +1173,7 @@ document.getElementById('authSwitch').addEventListener('click',()=>{ authMode=au
 function updateModalUI() { document.getElementById('modalTitle').textContent=authMode==='login'?'Welcome Back 💖':'Join PS Zone ✨'; document.getElementById('authSubmit').textContent=authMode==='login'?'Login':'Sign Up'; document.getElementById('authSwitch').innerHTML=authMode==='login'?"Don't have an account? <b>Sign up</b>":"Already have an account? <b>Login</b>"; document.getElementById('authMsg').textContent=''; }
 document.getElementById('authSubmit').addEventListener('click',()=>{ const email=document.getElementById('authEmail').value.trim(); const pwd=document.getElementById('authPwd').value.trim(); if(!email||!pwd){ document.getElementById('authMsg').textContent='Please fill all fields'; return; } if(authMode==='login'){ const u=users.find(u=>u.email===email&&u.password===pwd); if(!u){ document.getElementById('authMsg').textContent='Invalid credentials'; return; } loggedUser={name:u.name,email:u.email}; } else { if(users.find(u=>u.email===email)){ document.getElementById('authMsg').textContent='Email already registered'; return; } const name=email.split('@')[0]; users.push({name,email,password:pwd}); localStorage.setItem('pszone_users',JSON.stringify(users)); loggedUser={name,email}; } localStorage.setItem('pszone_user',JSON.stringify(loggedUser)); document.getElementById('accountModal').classList.remove('open'); updateAuthUI(); showToast(`💖 Welcome, ${loggedUser.name}!`); });
 
-// ========== FEEDBACK ========== using the provided formsubmit link
+// ========== FEEDBACK - FIXED: using correct FormSubmit endpoint ==========
 document.getElementById('sendFeedbackBtn').addEventListener('click', async ()=>{
   const name = document.getElementById('contactName').value.trim();
   const msg = document.getElementById('contactMsg').value.trim();
@@ -1182,18 +1181,31 @@ document.getElementById('sendFeedbackBtn').addEventListener('click', async ()=>{
   if(!name||!msg) { statusDiv.innerHTML='<span style="color:#e83e8c">Please fill both fields.</span>'; return; }
   statusDiv.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';
   try {
-    const res = await fetch('https://formsubmit.co/el/latuma', {
+    // Use the reliable formsubmit.co endpoint with proper email
+    const response = await fetch('https://formsubmit.co/ajax/sammanlamsal31@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, message: msg, _subject: `PS Zone Feedback from ${name}`, _captcha: 'false' })
+      body: JSON.stringify({
+        name: name,
+        message: msg,
+        _subject: `💌 PS Zone Feedback from ${name}`,
+        _captcha: 'false',
+        _template: 'table'
+      })
     });
-    if(res.ok) {
+    const data = await response.json();
+    if(response.ok && data.success !== false) {
       statusDiv.innerHTML='<span style="color:#2b7a3e">✅ Feedback sent! Thank you 💖</span>';
       document.getElementById('contactName').value='';
       document.getElementById('contactMsg').value='';
       setTimeout(()=>statusDiv.innerHTML='',4000);
-    } else throw new Error();
-  } catch(e) { statusDiv.innerHTML='<span style="color:#c0392b">❌ Failed. Try again later.</span>'; }
+    } else {
+      throw new Error('Server returned error');
+    }
+  } catch(error) {
+    console.error('Feedback error:', error);
+    statusDiv.innerHTML='<span style="color:#c0392b">❌ Failed to send. Please try again later or email directly.</span>';
+  }
 });
 
 // ========== INIT ==========
