@@ -2,578 +2,1203 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>✿ 10 ✿</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;700;800;900&family=Pacifico&family=Space+Mono:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>PS Zone | Makeup · Fashion · Mobiles & More</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;overflow:hidden;touch-action:none;}
-body{min-height:100dvh;position:relative;transition:background 0.7s;}
-
-#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
-
-#scene{
-  width:100vw;height:100dvh;position:relative;
-  display:flex;align-items:center;justify-content:center;z-index:1;
+:root {
+  --pink: #e83e8c;
+  --pink-light: #ff85b3;
+  --pink-pale: #fff0f5;
+  --pink-border: #ffd6e7;
+  --rose: #b5295f;
+  --text: #1a1a2e;
+  --text-muted: #7a6070;
+  --white: #ffffff;
+  --card-bg: #ffffff;
+  --bg: #fdf4f7;
+  --shadow: 0 4px 20px rgba(232,62,140,0.12);
+  --shadow-lg: 0 12px 40px rgba(232,62,140,0.18);
 }
 
-#card{
-  position:relative;z-index:10;
-  width:min(390px,92vw);max-height:94dvh;overflow:hidden;
-  transition:border-radius 0.6s,box-shadow 0.6s,border-color 0.6s,background 0.6s,transform 0.5s cubic-bezier(.34,1.4,.64,1);
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-#stripe{height:8px;background-size:300%;animation:stripeMove 2s linear infinite;}
-@keyframes stripeMove{0%{background-position:0%}100%{background-position:300%}}
-
-#inner{padding:1.2rem 1.4rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:0.8rem;}
-
-#level{
-  align-self:flex-start;font-size:10px;font-weight:900;letter-spacing:2.5px;
-  padding:4px 14px;border-radius:30px;text-transform:uppercase;
-  transition:background 0.5s,color 0.5s,border-color 0.5s;
+/* ========= TOP BAR ========= */
+.top-bar {
+  background: var(--white);
+  padding: 0 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(232,62,140,0.1);
+  border-bottom: 1.5px solid var(--pink-border);
 }
 
-#gif-zone{position:relative;width:100%;display:flex;justify-content:center;}
-#gif-frame{
-  flex-shrink:0;overflow:hidden;
-  width:min(210px,58vw);height:min(210px,58vw);
-  transition:border-radius 0.6s,border-color 0.6s,box-shadow 0.6s;
-}
-#mgif{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.38s;}
-#mgif.out{opacity:0;}
-
-.stk{
-  position:absolute;font-size:clamp(18px,5vw,24px);
-  animation:bob 3s ease-in-out infinite;pointer-events:none;
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,0.15));
-}
-.stk.tl{top:-13px;left:calc(50% - min(105px,29vw) - 16px);animation-delay:0s;}
-.stk.tr{top:-13px;right:calc(50% - min(105px,29vw) - 16px);animation-delay:0.8s;}
-.stk.bl{bottom:-13px;left:calc(50% - min(105px,29vw) - 16px);animation-delay:1.6s;}
-.stk.br{bottom:-13px;right:calc(50% - min(105px,29vw) - 16px);animation-delay:2.4s;}
-@keyframes bob{
-  0%,100%{transform:translateY(0) rotate(-8deg) scale(1);}
-  50%{transform:translateY(-9px) rotate(8deg) scale(1.18);}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #e83e8c 0%, #ff6db5 50%, #ff9cc5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  cursor: pointer;
+  letter-spacing: -0.5px;
 }
 
-#cipher-box{
-  width:100%;border-radius:18px;padding:1rem 1.2rem;min-height:88px;
-  display:flex;align-items:center;justify-content:center;
-  transition:opacity 0.35s,transform 0.35s,background 0.5s,border-color 0.5s;
-  border:1.5px solid;position:relative;overflow:hidden;
-}
-#cipher-box.out{opacity:0;transform:translateY(6px);}
-#cipher-text{line-height:1.9;text-align:center;letter-spacing:0.01em;transition:color 0.5s;}
-
-#progress-wrap{width:100%;display:flex;flex-direction:column;gap:5px;align-items:center;}
-#prog-bar-bg{width:100%;height:5px;border-radius:4px;overflow:hidden;}
-#prog-bar-fill{height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(.34,1.2,.64,1),background 0.5s;}
-#prog-label{font-size:9px;font-weight:900;letter-spacing:2px;transition:color 0.5s;opacity:0.7;}
-
-#btn{
-  border:none;border-radius:50px;padding:0.85rem 2.6rem;
-  font-size:1rem;font-weight:900;letter-spacing:1.5px;cursor:pointer;
-  transition:background 0.5s,box-shadow 0.5s,color 0.5s,border-radius 0.5s,transform 0.15s;
-  position:relative;overflow:hidden;touch-action:manipulation;
-}
-#btn:active{transform:scale(0.92)!important;}
-#btn::before{
-  content:'';position:absolute;top:0;left:-70%;width:50%;height:100%;
-  background:rgba(255,255,255,0.22);transform:skewX(-20deg);
-  animation:shim 2.2s infinite;
-}
-@keyframes shim{0%{left:-70%}100%{left:130%}}
-
-.spk{position:fixed;pointer-events:none;z-index:999;animation:spkOut 0.75s ease-out forwards;}
-@keyframes spkOut{
-  0%{transform:translate(0,0) scale(1.2);opacity:1;}
-  100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.conf{position:fixed;pointer-events:none;z-index:998;animation:confFall linear forwards;}
-@keyframes confFall{
-  0%{transform:translateY(-10px) rotate(0deg) scale(1);opacity:1;}
-  100%{transform:translateY(105vh) rotate(800deg) scale(0.5);opacity:0;}
+.cart-btn, .account-btn {
+  background: var(--pink-pale);
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  padding: 7px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--rose);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cart-btn:hover, .account-btn:hover { background: var(--pink); color: white; border-color: var(--pink); }
+.cart-btn i, .account-btn i { font-size: 0.9rem; }
+.cart-count {
+  background: var(--pink);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
-#portal{
-  position:fixed;z-index:500;pointer-events:none;
-  border-radius:50%;width:100px;height:100px;
-  transform:scale(0);opacity:0;
+/* ========= SEARCH ROW ========= */
+.search-row {
+  background: white;
+  padding: 10px 16px;
+  border-bottom: 1.5px solid var(--pink-border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
-#portal.active{animation:portalIn 0.55s cubic-bezier(.4,0,.2,1) forwards;}
-@keyframes portalIn{
-  0%{transform:scale(0);opacity:0.95;}
-  65%{transform:scale(4);opacity:0.9;}
-  100%{transform:scale(8);opacity:0;}
+.search-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--pink-pale);
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  padding: 0 14px;
+  gap: 8px;
 }
-
-#level-banner{
-  position:fixed;top:0;left:0;right:0;z-index:400;
-  display:flex;align-items:center;justify-content:center;
-  padding:12px;font-size:12px;font-weight:900;letter-spacing:3px;
-  transform:translateY(-100%);pointer-events:none;
-  transition:transform 0.45s cubic-bezier(.34,1.4,.64,1);
-  font-family:'Nunito',sans-serif;
-}
-#level-banner.show{transform:translateY(0);}
-
-#corner-tl,#corner-tr,#corner-bl,#corner-br{
-  position:fixed;font-size:26px;pointer-events:none;z-index:2;
-  animation:cornerPulse 3s ease-in-out infinite;transition:opacity 0.5s;
-}
-#corner-tl{top:14px;left:14px;}
-#corner-tr{top:14px;right:14px;animation-delay:0.75s;}
-#corner-bl{bottom:14px;left:14px;animation-delay:1.5s;}
-#corner-br{bottom:14px;right:14px;animation-delay:2.25s;}
-@keyframes cornerPulse{
-  0%,100%{transform:scale(1) rotate(0deg);}
-  50%{transform:scale(1.25) rotate(12deg);}
+.search-wrap i { color: var(--pink); font-size: 0.9rem; }
+.search-wrap input {
+  border: none; background: transparent;
+  padding: 10px 4px; font-size: 0.9rem;
+  width: 100%; outline: none;
+  font-family: 'DM Sans', sans-serif;
 }
 
-@media(max-height:650px){
-  #inner{gap:0.55rem;padding:0.9rem 1.1rem 1.1rem;}
-  #gif-frame{width:min(160px,48vw);height:min(160px,48vw);}
-  #cipher-box{min-height:70px;}
-  #cipher-text{font-size:0.82rem;line-height:1.7;}
-  #btn{padding:0.7rem 2rem;font-size:0.9rem;}
+/* ========= CATEGORY PILLS ========= */
+.cats-scroll {
+  background: white;
+  padding: 10px 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1.5px solid var(--pink-border);
+  -webkit-overflow-scrolling: touch;
+}
+.cats-scroll::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex-shrink: 0;
+  background: var(--pink-pale);
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--rose);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.cat-pill.active, .cat-pill:hover {
+  background: var(--pink);
+  color: white;
+  border-color: var(--pink);
+}
+
+/* ========= HERO BANNER ========= */
+.hero {
+  background: linear-gradient(135deg, #e83e8c 0%, #ff6db5 60%, #ffb3d1 100%);
+  padding: 24px 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '✨';
+  position: absolute;
+  font-size: 120px;
+  right: -20px;
+  top: -20px;
+  opacity: 0.15;
+}
+.hero-tag {
+  font-size: 0.7rem;
+  background: rgba(255,255,255,0.25);
+  padding: 4px 12px;
+  border-radius: 50px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.hero p { font-size: 0.9rem; opacity: 0.9; margin-bottom: 16px; }
+.hero-btn {
+  background: white;
+  color: var(--pink);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+/* ========= SECTION TITLE ========= */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 20px 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title span { color: var(--pink); }
+
+/* ========= PRODUCTS GRID ========= */
+.container { max-width: 1400px; margin: 0 auto; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 12px 12px;
+}
+
+@media(min-width:480px) { .products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+@media(min-width:640px) { .products-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 16px 16px; } }
+@media(min-width:900px) { .products-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+@media(min-width:1200px) { .products-grid { grid-template-columns: repeat(5, 1fr); } }
+
+.product-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1.5px solid var(--pink-border);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.product-card:active { transform: scale(0.97); }
+@media(hover:hover) { .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); } }
+
+.product-card .wish-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: #ccc;
+  transition: 0.2s;
+}
+.product-card .wish-btn.wished { color: var(--pink); }
+
+.product-img-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f9f0f4;
+}
+.product-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+@media(hover:hover) { .product-card:hover .product-img-wrap img { transform: scale(1.05); } }
+
+.card-info { padding: 10px 10px 12px; }
+.cat-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--pink);
+  margin-bottom: 4px;
+}
+.prod-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 5px;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.prod-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--pink);
+}
+.prod-price .old-price {
+  font-size: 0.72rem;
+  text-decoration: line-through;
+  color: #bbb;
+  font-weight: 400;
+  margin-left: 4px;
+}
+.prod-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+}
+.stars { color: #ffb347; }
+.rating-count { color: var(--text-muted); }
+
+/* ========= DETAIL VIEW ========= */
+#detailView {
+  background: var(--bg);
+  min-height: 100vh;
+}
+.detail-topbar {
+  background: white;
+  padding: 0 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1.5px solid var(--pink-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.back-btn {
+  background: var(--pink-pale);
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  padding: 7px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--rose);
+  cursor: pointer;
+}
+
+.detail-content { padding: 16px; }
+
+.detail-main-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 20px;
+  background: #f9f0f4;
+  display: block;
+}
+.thumb-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.thumb-row::-webkit-scrollbar { display: none; }
+.thumb-img {
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: 0.2s;
+  background: #f9f0f4;
+}
+.thumb-img.active, .thumb-img:hover { border-color: var(--pink); }
+
+.detail-info-box {
+  background: white;
+  border-radius: 20px;
+  padding: 18px 16px;
+  margin-top: 14px;
+  border: 1.5px solid var(--pink-border);
+}
+.detail-category { font-size: 0.7rem; font-weight: 700; color: var(--pink); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.detail-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+.detail-rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.detail-price { font-size: 1.8rem; font-weight: 800; color: var(--pink); margin-bottom: 10px; }
+.detail-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+.add-to-cart {
+  background: var(--pink);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+.add-to-cart:hover { background: var(--rose); }
+
+/* ========= REVIEWS ========= */
+.reviews-box {
+  background: white;
+  border-radius: 20px;
+  padding: 18px 16px;
+  margin-top: 14px;
+  border: 1.5px solid var(--pink-border);
+}
+.reviews-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.review-card {
+  background: var(--pink-pale);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.reviewer-name { font-weight: 700; font-size: 0.85rem; }
+.review-stars { color: #ffb347; font-size: 0.8rem; }
+.review-text { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+.review-date { font-size: 0.7rem; color: #bbb; margin-top: 4px; }
+
+/* ========= WRITE REVIEW ========= */
+.write-review-box {
+  background: white;
+  border-radius: 20px;
+  padding: 18px 16px;
+  margin-top: 14px;
+  border: 1.5px solid var(--pink-border);
+}
+.write-review-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.review-form-group { margin-bottom: 12px; }
+.review-form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--rose); margin-bottom: 5px; }
+.review-form-group input,
+.review-form-group select,
+.review-form-group textarea {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  background: var(--pink-pale);
+  outline: none;
+  transition: 0.2s;
+}
+.review-form-group textarea {
+  border-radius: 16px;
+  resize: none;
+  min-height: 80px;
+}
+.review-form-group input:focus,
+.review-form-group select:focus,
+.review-form-group textarea:focus {
+  border-color: var(--pink);
+  background: white;
+}
+
+/* Star rating picker */
+.star-picker { display: flex; gap: 8px; margin-bottom: 12px; }
+.star-picker .star {
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #ddd;
+  transition: 0.15s;
+}
+.star-picker .star.active { color: #ffb347; }
+
+.submit-review-btn {
+  background: var(--pink);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  transition: 0.2s;
+}
+.submit-review-btn:hover { background: var(--rose); }
+
+/* ========= MODAL ========= */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.25s;
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal-sheet {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 28px 28px 0 0;
+  padding: 28px 24px 40px;
+  transform: translateY(100%);
+  transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+.modal-sheet h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 20px; color: var(--rose); }
+.modal-sheet input {
+  width: 100%;
+  padding: 13px 18px;
+  margin-bottom: 12px;
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  background: var(--pink-pale);
+  outline: none;
+}
+.modal-sheet input:focus { border-color: var(--pink); }
+.modal-submit {
+  background: var(--pink);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.modal-switch { text-align: center; font-size: 0.85rem; color: var(--pink); cursor: pointer; }
+.modal-close {
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #aaa;
+  background: none; border: none;
+}
+.modal-sheet { position: relative; }
+.modal-msg { font-size: 0.8rem; text-align: center; color: var(--pink); margin-top: 8px; }
+
+/* ========= CONTACT ========= */
+.contact-section {
+  background: white;
+  border-radius: 20px;
+  margin: 16px;
+  padding: 20px 16px;
+  border: 1.5px solid var(--pink-border);
+}
+.contact-section h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 6px; color: var(--rose); }
+.contact-section p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; }
+.contact-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--pink-border);
+  border-radius: 50px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  background: var(--pink-pale);
+  outline: none;
+  margin-bottom: 10px;
+}
+.contact-input:focus { border-color: var(--pink); }
+.contact-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--pink-border);
+  border-radius: 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  background: var(--pink-pale);
+  outline: none;
+  resize: none;
+  min-height: 90px;
+  margin-bottom: 10px;
+}
+.contact-btn {
+  background: var(--pink);
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+}
+
+/* ========= TOAST ========= */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1a1a2e;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 300;
+  transition: 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ========= FOOTER ========= */
+footer {
+  text-align: center;
+  padding: 20px 16px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1.5px solid var(--pink-border);
+  margin-top: 10px;
+}
+
+/* ========= UTILITY ========= */
+.hidden { display: none !important; }
+
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+}
+.empty-state i { font-size: 2.5rem; color: var(--pink-border); margin-bottom: 12px; display: block; }
+
+@media(min-width: 768px) {
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .hero h1 { font-size: 2.4rem; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div id="portal"></div>
-<div id="level-banner"></div>
-<div id="corner-tl"></div>
-<div id="corner-tr"></div>
-<div id="corner-bl"></div>
-<div id="corner-br"></div>
-
-<div id="scene">
-  <div id="card">
-    <div id="stripe"></div>
-    <div id="inner">
-      <div id="level">stage 01 / 30</div>
-      <div id="gif-zone">
-        <span class="stk tl" id="s0">🌷</span>
-        <span class="stk tr" id="s1">✨</span>
-        <span class="stk bl" id="s2">🐾</span>
-        <span class="stk br" id="s3">🌸</span>
-        <div id="gif-frame"><img id="mgif" src="" alt=""/></div>
-      </div>
-      <div id="cipher-box"><div id="cipher-text"></div></div>
-      <div id="progress-wrap">
-        <div id="prog-bar-bg"><div id="prog-bar-fill" style="width:3.3%"></div></div>
-        <div id="prog-label">LEVEL 1 OF 30</div>
-      </div>
-      <button id="btn" onclick="next()">lnjv &#8594;</button>
-    </div>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo" id="homeLogo">PS Zone</div>
+  <div class="top-right">
+    <div id="userGreeting" class="hidden" style="font-size:0.78rem;font-weight:600;color:var(--rose);background:var(--pink-pale);padding:6px 12px;border-radius:50px;border:1.5px solid var(--pink-border);"></div>
+    <button class="account-btn" id="accountBtn"><i class="fas fa-user-circle"></i> <span id="accountBtnText">Login</span></button>
   </div>
 </div>
 
+<!-- SEARCH -->
+<div class="search-row">
+  <div class="search-wrap">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="Search lipstick, dress, iPhone, bag...">
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="cats-scroll" id="catScroll">
+  <div class="cat-pill active" data-cat="all">🛍 All</div>
+  <div class="cat-pill" data-cat="makeup">💄 Makeup</div>
+  <div class="cat-pill" data-cat="skincare">🌿 Skincare</div>
+  <div class="cat-pill" data-cat="clothes">👗 Clothes</div>
+  <div class="cat-pill" data-cat="shoes">👠 Shoes</div>
+  <div class="cat-pill" data-cat="accessories">👜 Accessories</div>
+  <div class="cat-pill" data-cat="mobile">📱 Mobiles</div>
+  <div class="cat-pill" data-cat="electronics">💻 Electronics</div>
+  <div class="cat-pill" data-cat="fragrance">🌸 Fragrance</div>
+  <div class="cat-pill" data-cat="haircare">💇 Haircare</div>
+  <div class="cat-pill" data-cat="jewelry">💍 Jewelry</div>
+  <div class="cat-pill" data-cat="fitness">🏋 Fitness</div>
+</div>
+
+<!-- HOMEPAGE VIEW -->
+<div id="homepageView">
+  <div class="hero" id="heroBanner">
+    <div class="hero-tag">✨ New Arrivals</div>
+    <h1>Glow up.<br>Level up.</h1>
+    <p>Your one-stop for beauty, fashion & tech.</p>
+    <button class="hero-btn" onclick="document.getElementById('searchInput').focus()">Shop Now →</button>
+  </div>
+
+  <div class="container">
+    <div class="section-title">Trending <span>Now</span> 🔥</div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- Contact Us -->
+  <div class="contact-section">
+    <h3>💌 Contact Us</h3>
+    <p>Share your feedback or reach out — we'd love to hear from you!</p>
+    <input type="text" class="contact-input" id="contactName" placeholder="Your name *">
+    <textarea class="contact-textarea" id="contactMsg" placeholder="Write your message..."></textarea>
+    <button class="contact-btn" id="sendFeedbackBtn"><i class="fas fa-paper-plane"></i> Send Feedback</button>
+    <div id="feedbackStatus" style="font-size:0.8rem;margin-top:10px;"></div>
+  </div>
+
+  <footer>🌸 PS Zone – Beauty, Fashion & Tech | Made with love</footer>
+</div>
+
+<!-- DETAIL VIEW -->
+<div id="detailView" class="hidden">
+  <div class="detail-topbar">
+    <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back</button>
+    <span style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--rose);">Product Detail</span>
+  </div>
+  <div class="detail-content">
+    <div class="detail-grid" id="detailGrid">
+      <div>
+        <img id="detailMainImg" class="detail-main-img" src="" alt="">
+        <div class="thumb-row" id="thumbRow"></div>
+      </div>
+      <div>
+        <div class="detail-info-box">
+          <div class="detail-category" id="detailCat"></div>
+          <div class="detail-title" id="detailTitle"></div>
+          <div class="detail-rating-row">
+            <span class="stars" id="detailStars"></span>
+            <span style="font-size:0.75rem;color:var(--text-muted);" id="detailRatingCount"></span>
+          </div>
+          <div class="detail-price" id="detailPrice"></div>
+          <div class="detail-desc" id="detailDesc"></div>
+          <button class="add-to-cart" id="addToCartBtn"><i class="fas fa-shopping-bag"></i> Add to Bag</button>
+        </div>
+
+        <div class="reviews-box">
+          <h3>⭐ Customer Reviews</h3>
+          <div id="reviewsList"></div>
+        </div>
+
+        <div class="write-review-box">
+          <h3>✍️ Write a Review</h3>
+          <div class="review-form-group">
+            <label>Your Name</label>
+            <input type="text" id="reviewName" placeholder="Enter your name">
+          </div>
+          <div class="review-form-group">
+            <label>Rating</label>
+            <div class="star-picker" id="starPicker">
+              <span class="star" data-val="1">★</span>
+              <span class="star" data-val="2">★</span>
+              <span class="star" data-val="3">★</span>
+              <span class="star" data-val="4">★</span>
+              <span class="star" data-val="5">★</span>
+            </div>
+          </div>
+          <div class="review-form-group">
+            <label>Your Review</label>
+            <textarea id="reviewText" placeholder="Share your experience with this product..."></textarea>
+          </div>
+          <button class="submit-review-btn" id="submitReviewBtn"><i class="fas fa-paper-plane"></i> Submit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>🌸 PS Zone – Beauty, Fashion & Tech | Made with love</footer>
+</div>
+
+<!-- Account Modal -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal-sheet">
+    <button class="modal-close" id="closeModal">&times;</button>
+    <h3 id="modalTitle">Welcome Back 💖</h3>
+    <input type="email" id="authEmail" placeholder="Email address">
+    <input type="password" id="authPwd" placeholder="Password">
+    <button class="modal-submit" id="authSubmit">Login</button>
+    <div class="modal-switch" id="authSwitch">Don't have an account? <b>Sign up</b></div>
+    <div class="modal-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
-const THEMES = [
-  {
-    name:"🌸 SAKURA WORLD",labelText:"sakura",portalCol:"#f48fb1",
-    cardBg:"rgba(255,240,248,0.97)",cardBorder:"#f8bbd0",cardRadius:"32px",
-    cardShadow:"0 12px 60px rgba(233,30,140,0.18)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#f48fb1,#e91e8c,#f8bbd0,#f48fb1)",
-    levelBg:"#fce4ec",levelColor:"#b5006e",levelBorder:"#f8bbd0",
-    cipherBg:"rgba(255,245,249,0.98)",cipherBorder:"#f8bbd0",cipherColor:"#8b0057",
-    cipherFont:"'Playfair Display',serif",cipherSize:"0.92rem",
-    btnBg:"linear-gradient(135deg,#f06292,#e91e8c)",btnColor:"#fff",
-    btnShadow:"0 6px 24px rgba(233,30,140,0.38)",btnRadius:"50px",
-    progBg:"rgba(233,30,140,0.13)",progFill:"linear-gradient(90deg,#f48fb1,#e91e8c)",progLabel:"#e91e8c",
-    bannerBg:"linear-gradient(90deg,#f8bbd0,#f48fb1)",bannerColor:"#8b0057",
-    bodyBg:"linear-gradient(135deg,#fff5f9 0%,#fce4ec 100%)",
-    particleCols:["#f8bbd0","#f48fb1","#fce4ec","rgba(248,187,208,0.5)"],
-    corners:["🌷","🌸","🌷","🌸"],gifRadius:"20px",
-  },
-  {
-    name:"⭐ STAR ZONE",labelText:"cosmic",portalCol:"#1a1a5e",
-    cardBg:"rgba(10,10,35,0.97)",cardBorder:"#ffd700",cardRadius:"8px",
-    cardShadow:"0 0 40px rgba(255,215,0,0.25),0 0 80px rgba(100,50,200,0.2)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#ffd700,#fff,#ffd700,#ffd700)",
-    levelBg:"rgba(255,215,0,0.12)",levelColor:"#ffd700",levelBorder:"#ffd700",
-    cipherBg:"rgba(255,255,255,0.04)",cipherBorder:"rgba(255,215,0,0.25)",cipherColor:"#fff8dc",
-    cipherFont:"'Space Mono',monospace",cipherSize:"0.8rem",
-    btnBg:"linear-gradient(135deg,#ffd700,#ff8c00)",btnColor:"#0a0a23",
-    btnShadow:"0 6px 30px rgba(255,215,0,0.45)",btnRadius:"6px",
-    progBg:"rgba(255,215,0,0.08)",progFill:"linear-gradient(90deg,#ffd700,#ff8c00)",progLabel:"#ffd700",
-    bannerBg:"linear-gradient(90deg,#0a0a23,#1a1a5e)",bannerColor:"#ffd700",
-    bodyBg:"radial-gradient(ellipse at 50% 50%,#0d0d2b 0%,#050510 100%)",
-    particleCols:["#ffd700","#fff8dc","rgba(255,215,0,0.4)","#fffacd"],
-    corners:["⭐","🌟","💫","✨"],gifRadius:"8px",
-  },
-  {
-    name:"🍬 CANDY LAND",labelText:"sweet",portalCol:"#ff4db8",
-    cardBg:"rgba(255,252,240,0.98)",cardBorder:"#ff4db8",cardRadius:"40px",
-    cardShadow:"8px 8px 0 #ff4db8,0 0 40px rgba(255,77,184,0.15)",cardTilt:1.5,
-    stripe:"linear-gradient(90deg,#ff4db8,#00e5a0,#ff4db8,#ff4db8)",
-    levelBg:"#fff0fa",levelColor:"#cc007a",levelBorder:"#ff4db8",
-    cipherBg:"rgba(255,240,250,0.9)",cipherBorder:"#b2f5d5",cipherColor:"#7a0050",
-    cipherFont:"'Dancing Script',cursive",cipherSize:"1.08rem",
-    btnBg:"linear-gradient(135deg,#ff4db8,#ff007f)",btnColor:"#fff",
-    btnShadow:"4px 4px 0 #b2f5d5",btnRadius:"40px",
-    progBg:"rgba(178,245,213,0.35)",progFill:"linear-gradient(90deg,#ff4db8,#00e5a0)",progLabel:"#ff4db8",
-    bannerBg:"linear-gradient(90deg,#ff4db8,#00e5a0)",bannerColor:"#fff",
-    bodyBg:"linear-gradient(135deg,#fffaed 0%,#fff0fa 100%)",
-    particleCols:["#ff4db8","#b2f5d5","#fffaed","rgba(255,77,184,0.4)"],
-    corners:["🍬","🍭","🎀","💗"],gifRadius:"50%",
-  },
-  {
-    name:"🌅 SUNSET MODE",labelText:"retro",portalCol:"#ff6b35",
-    cardBg:"rgba(255,252,240,0.98)",cardBorder:"#ff6b35",cardRadius:"16px",
-    cardShadow:"6px 6px 0 #ff6b35",cardTilt:-1,
-    stripe:"linear-gradient(90deg,#ff6b35,#ffd23f,#ff6b35,#ff6b35)",
-    levelBg:"#fff3e0",levelColor:"#e53d00",levelBorder:"#ff6b35",
-    cipherBg:"rgba(255,252,240,0.95)",cipherBorder:"#ffd23f",cipherColor:"#7a2500",
-    cipherFont:"'Pacifico',cursive",cipherSize:"0.78rem",
-    btnBg:"linear-gradient(135deg,#ff6b35,#e53d00)",btnColor:"#ffd23f",
-    btnShadow:"4px 4px 0 #7a2500",btnRadius:"8px",
-    progBg:"rgba(255,107,53,0.13)",progFill:"linear-gradient(90deg,#ffd23f,#ff6b35)",progLabel:"#ff6b35",
-    bannerBg:"linear-gradient(90deg,#ff6b35,#ffd23f)",bannerColor:"#7a2500",
-    bodyBg:"linear-gradient(180deg,#ff9a56 0%,#ffd23f 100%)",
-    particleCols:["#ff6b35","#ffd23f","rgba(255,107,53,0.4)","#ffe0b2"],
-    corners:["🌅","☀️","🌻","🔆"],gifRadius:"12px",
-  },
-  {
-    name:"🌌 GALAXY HEART",labelText:"galaxy",portalCol:"#2d1b69",
-    cardBg:"rgba(20,8,40,0.97)",cardBorder:"#c77dff",cardRadius:"24px",
-    cardShadow:"0 0 30px rgba(199,125,255,0.3),0 0 70px rgba(255,107,184,0.15)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#c77dff,#ff6bb8,#c77dff,#c77dff)",
-    levelBg:"rgba(199,125,255,0.1)",levelColor:"#e0aaff",levelBorder:"#c77dff",
-    cipherBg:"rgba(255,255,255,0.04)",cipherBorder:"rgba(199,125,255,0.25)",cipherColor:"#f8d7ff",
-    cipherFont:"'Playfair Display',serif",cipherSize:"0.9rem",
-    btnBg:"linear-gradient(135deg,#c77dff,#7b2ff7)",btnColor:"#fff",
-    btnShadow:"0 6px 30px rgba(199,125,255,0.4)",btnRadius:"50px",
-    progBg:"rgba(199,125,255,0.1)",progFill:"linear-gradient(90deg,#c77dff,#ff6bb8)",progLabel:"#c77dff",
-    bannerBg:"linear-gradient(90deg,#140828,#2d1b69)",bannerColor:"#e0aaff",
-    bodyBg:"radial-gradient(ellipse at 30% 40%,#2d1b69 0%,#140828 60%,#0d0020 100%)",
-    particleCols:["#c77dff","#ff6bb8","rgba(199,125,255,0.4)","#e0aaff"],
-    corners:["💜","🌌","✨","💫"],gifRadius:"24px",
-  },
-  {
-    name:"🌿 GARDEN WORLD",labelText:"fresh",portalCol:"#00c896",
-    cardBg:"rgba(240,255,248,0.98)",cardBorder:"#00c896",cardRadius:"28px",
-    cardShadow:"0 8px 40px rgba(0,200,150,0.2)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#00c896,#80ffd4,#00c896,#00c896)",
-    levelBg:"rgba(0,200,150,0.1)",levelColor:"#00876a",levelBorder:"#00c896",
-    cipherBg:"rgba(240,255,248,0.97)",cipherBorder:"#b2f5e2",cipherColor:"#005244",
-    cipherFont:"'Dancing Script',cursive",cipherSize:"1.05rem",
-    btnBg:"linear-gradient(135deg,#00c896,#00a878)",btnColor:"#fff",
-    btnShadow:"0 6px 24px rgba(0,200,150,0.38)",btnRadius:"50px",
-    progBg:"rgba(0,200,150,0.1)",progFill:"linear-gradient(90deg,#80ffd4,#00c896)",progLabel:"#00a878",
-    bannerBg:"linear-gradient(90deg,#b2f5e2,#00c896)",bannerColor:"#005244",
-    bodyBg:"linear-gradient(135deg,#e8fff5 0%,#f0fff8 100%)",
-    particleCols:["#00c896","#b2f5e2","rgba(0,200,150,0.3)","#e8fff5"],
-    corners:["🌿","🍃","🌱","✿"],gifRadius:"20px",
-  },
-  {
-    name:"❤️‍🔥 FIRE HEART",labelText:"fire",portalCol:"#d50000",
-    cardBg:"rgba(25,5,5,0.97)",cardBorder:"#ff1744",cardRadius:"12px",
-    cardShadow:"0 0 40px rgba(255,23,68,0.4),0 0 80px rgba(255,23,68,0.1)",cardTilt:-2,
-    stripe:"linear-gradient(90deg,#ff1744,#ff6d00,#ff1744,#ff1744)",
-    levelBg:"rgba(255,23,68,0.1)",levelColor:"#ff6d00",levelBorder:"#ff1744",
-    cipherBg:"rgba(255,255,255,0.04)",cipherBorder:"rgba(255,23,68,0.3)",cipherColor:"#ffcdd2",
-    cipherFont:"'Space Mono',monospace",cipherSize:"0.8rem",
-    btnBg:"linear-gradient(135deg,#ff1744,#d50000)",btnColor:"#fff",
-    btnShadow:"0 6px 30px rgba(255,23,68,0.5)",btnRadius:"4px",
-    progBg:"rgba(255,23,68,0.08)",progFill:"linear-gradient(90deg,#ff6d00,#ff1744)",progLabel:"#ff1744",
-    bannerBg:"linear-gradient(90deg,#190505,#3d0000)",bannerColor:"#ff6d00",
-    bodyBg:"radial-gradient(ellipse at 50% 100%,#3d0000 0%,#190505 100%)",
-    particleCols:["#ff1744","#ff6d00","rgba(255,23,68,0.5)","#ffcdd2"],
-    corners:["❤️‍🔥","🔥","❤️‍🔥","🔥"],gifRadius:"8px",
-  },
-  {
-    name:"🌊 OCEAN DREAM",labelText:"ocean",portalCol:"#01579b",
-    cardBg:"rgba(2,30,50,0.97)",cardBorder:"#00bcd4",cardRadius:"20px",
-    cardShadow:"0 0 50px rgba(0,188,212,0.25)",cardTilt:1,
-    stripe:"linear-gradient(90deg,#00bcd4,#80deea,#00bcd4,#00bcd4)",
-    levelBg:"rgba(0,188,212,0.1)",levelColor:"#80deea",levelBorder:"#00bcd4",
-    cipherBg:"rgba(255,255,255,0.04)",cipherBorder:"rgba(0,188,212,0.25)",cipherColor:"#e0f7fa",
-    cipherFont:"'Playfair Display',serif",cipherSize:"0.9rem",
-    btnBg:"linear-gradient(135deg,#00bcd4,#0097a7)",btnColor:"#fff",
-    btnShadow:"0 6px 30px rgba(0,188,212,0.4)",btnRadius:"50px",
-    progBg:"rgba(0,188,212,0.1)",progFill:"linear-gradient(90deg,#80deea,#00bcd4)",progLabel:"#00bcd4",
-    bannerBg:"linear-gradient(90deg,#021e32,#01579b)",bannerColor:"#80deea",
-    bodyBg:"radial-gradient(ellipse at 50% 0%,#01579b 0%,#021e32 100%)",
-    particleCols:["#00bcd4","#80deea","rgba(0,188,212,0.4)","#e0f7fa"],
-    corners:["🌊","🐚","💙","🌊"],gifRadius:"16px",
-  },
-  {
-    name:"💜 LAVENDER SKY",labelText:"dreamy",portalCol:"#9c6fde",
-    cardBg:"rgba(250,245,255,0.98)",cardBorder:"#9c6fde",cardRadius:"32px",
-    cardShadow:"0 10px 50px rgba(156,111,222,0.2)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#9c6fde,#d4aaff,#9c6fde,#9c6fde)",
-    levelBg:"rgba(156,111,222,0.1)",levelColor:"#6a1b9a",levelBorder:"#ce93d8",
-    cipherBg:"rgba(250,245,255,0.97)",cipherBorder:"#e1bee7",cipherColor:"#4a148c",
-    cipherFont:"'Dancing Script',cursive",cipherSize:"1.05rem",
-    btnBg:"linear-gradient(135deg,#9c6fde,#7b2ff7)",btnColor:"#fff",
-    btnShadow:"0 6px 28px rgba(156,111,222,0.4)",btnRadius:"50px",
-    progBg:"rgba(156,111,222,0.1)",progFill:"linear-gradient(90deg,#d4aaff,#9c6fde)",progLabel:"#9c6fde",
-    bannerBg:"linear-gradient(90deg,#e8d5ff,#d4aaff)",bannerColor:"#4a148c",
-    bodyBg:"linear-gradient(135deg,#f5edff 0%,#ede7f6 100%)",
-    particleCols:["#ce93d8","#d4aaff","rgba(156,111,222,0.3)","#f5edff"],
-    corners:["💜","🦋","✿","💫"],gifRadius:"32px",
-  },
-  {
-    name:"💎 NEON CITY",labelText:"cyber",portalCol:"#0d0d30",
-    cardBg:"rgba(5,5,20,0.97)",cardBorder:"#ff00aa",cardRadius:"4px",
-    cardShadow:"0 0 20px #ff00aa,0 0 60px rgba(255,0,170,0.3),inset 0 0 20px rgba(0,255,213,0.05)",cardTilt:0,
-    stripe:"linear-gradient(90deg,#ff00aa,#00ffd5,#ff00aa,#ff00aa)",
-    levelBg:"rgba(255,0,170,0.08)",levelColor:"#00ffd5",levelBorder:"#ff00aa",
-    cipherBg:"rgba(0,255,213,0.03)",cipherBorder:"rgba(0,255,213,0.2)",cipherColor:"#00ffd5",
-    cipherFont:"'Space Mono',monospace",cipherSize:"0.78rem",
-    btnBg:"linear-gradient(135deg,#ff00aa,#cc0088)",btnColor:"#00ffd5",
-    btnShadow:"0 0 20px #ff00aa,0 4px 30px rgba(255,0,170,0.5)",btnRadius:"2px",
-    progBg:"rgba(255,0,170,0.08)",progFill:"linear-gradient(90deg,#00ffd5,#ff00aa)",progLabel:"#ff00aa",
-    bannerBg:"linear-gradient(90deg,#050514,#0d0d30)",bannerColor:"#00ffd5",
-    bodyBg:"radial-gradient(ellipse at 50% 50%,#0d0d30 0%,#050514 100%)",
-    particleCols:["#ff00aa","#00ffd5","rgba(255,0,170,0.5)","rgba(0,255,213,0.4)"],
-    corners:["💎","⚡","💎","⚡"],gifRadius:"2px",
-  },
+// ========== PRODUCTS DATABASE (67 products across all categories) ==========
+const products = [
+  { id:1, name:"Velvet Matte Lipstick - Ruby Red", price:24.99, origPrice:32, category:"makeup", rating:4.8, reviews:234,
+    image:"https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/3373738/pexels-photo-3373738.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Long-lasting matte formula with intense pigmentation. Enriched with Vitamin E. Stays up to 16 hours. Cruelty-free." },
+  { id:2, name:"Luminous Silk Foundation SPF 15", price:42.00, origPrice:55, category:"makeup", rating:4.7, reviews:189,
+    image:"https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3785146/pexels-photo-3785146.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Buildable medium-to-full coverage with a natural dewy finish. Suitable for all skin types. 40 shades available." },
+  { id:3, name:"Sunset Eyeshadow Palette - 18 Shades", price:38.99, origPrice:50, category:"makeup", rating:4.9, reviews:412,
+    image:"https://images.pexels.com/photos/2697787/pexels-photo-2697787.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2693644/pexels-photo-2693644.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/2827400/pexels-photo-2827400.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"18 highly pigmented warm-toned shades. Ultra-blendable formula. Matte, shimmer & glitter finishes." },
+  { id:4, name:"Lash Drama Volumizing Mascara", price:18.50, origPrice:22, category:"makeup", rating:4.6, reviews:301,
+    image:"https://images.pexels.com/photos/3621234/pexels-photo-3621234.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Dramatic volume & curl. Smudge-proof formula. Buildable layers. Easy to remove with warm water." },
+  { id:5, name:"Peachy Cream Blush - Coral Flush", price:16.99, origPrice:20, category:"makeup", rating:4.5, reviews:178,
+    image:"https://images.pexels.com/photos/4006353/pexels-photo-4006353.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3997373/pexels-photo-3997373.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Dewy cream blush that melts into skin. Gives a natural sun-kissed flush that lasts all day." },
+  { id:6, name:"Glass Skin Highlighter - Moonlit", price:22.30, origPrice:28, category:"makeup", rating:4.8, reviews:256,
+    image:"https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Pearl-infused highlighter for a blinding, glass-skin effect. Buildable intensity for everyday or glam looks." },
+  { id:7, name:"Full Cover HD Concealer", price:14.99, origPrice:18, category:"makeup", rating:4.7, reviews:334,
+    image:"https://images.pexels.com/photos/3780683/pexels-photo-3780683.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3758457/pexels-photo-3758457.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"High-coverage concealer that's crease-resistant. Covers dark circles, blemishes & redness. Skin-loving formula." },
+  { id:8, name:"Matte Liquid Lipstick Set (6 Shades)", price:34.99, origPrice:45, category:"makeup", rating:4.8, reviews:445,
+    image:"https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/3763149/pexels-photo-3763149.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"6 stunning transfer-proof matte shades. From nudes to bold reds. Long-wearing, comfortable formula." },
+  { id:9, name:"Brow Sculpting Pencil - Dark Brown", price:12.99, origPrice:16, category:"makeup", rating:4.6, reviews:198,
+    image:"https://images.pexels.com/photos/4348404/pexels-photo-4348404.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Micro-precision tip for natural hair-like strokes. Spoolie brush included. Waterproof & long-lasting." },
+  { id:10, name:"Setting Spray - 24H Lock", price:19.99, origPrice:25, category:"makeup", rating:4.7, reviews:267,
+    image:"https://images.pexels.com/photos/3785095/pexels-photo-3785095.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Sets makeup for up to 24 hours. Weightless mist formula. Keeps skin looking fresh and dewy all day." },
+  { id:11, name:"Pore Minimizing Primer", price:15.99, origPrice:20, category:"makeup", rating:4.5, reviews:223,
+    image:"https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3997373/pexels-photo-3997373.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Blurs pores and fine lines instantly. Extends makeup wear. Velvety-smooth finish without clogging pores." },
+  { id:12, name:"Waterproof Eyeliner Pen", price:10.99, origPrice:14, category:"makeup", rating:4.8, reviews:512,
+    image:"https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3621234/pexels-photo-3621234.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Ultra-fine tip for precise lines. Waterproof & smudge-proof formula. Perfect for wings and precise liner." },
+  { id:13, name:"Vitamin C Brightening Serum", price:35.00, origPrice:45, category:"skincare", rating:4.9, reviews:567,
+    image:"https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3785095/pexels-photo-3785095.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"15% Vitamin C + Hyaluronic Acid. Fades dark spots, boosts radiance, protects against UV damage." },
+  { id:14, name:"Hyaluronic Acid Face Moisturizer", price:28.00, origPrice:36, category:"skincare", rating:4.8, reviews:389,
+    image:"https://images.pexels.com/photos/3997373/pexels-photo-3997373.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Intense 72-hour hydration. Plumps fine lines, restores skin barrier. Suitable for all skin types." },
+  { id:15, name:"Retinol Night Cream", price:48.00, origPrice:60, category:"skincare", rating:4.7, reviews:234,
+    image:"https://images.pexels.com/photos/3785146/pexels-photo-3785146.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"0.3% Retinol with Niacinamide. Reduces wrinkles & pigmentation overnight. Dermatologist-tested formula." },
+  { id:16, name:"SPF 50+ Sunscreen Gel", price:22.00, origPrice:28, category:"skincare", rating:4.9, reviews:678,
+    image:"https://images.pexels.com/photos/3997386/pexels-photo-3997386.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3785095/pexels-photo-3785095.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Broad spectrum PA++++ protection. Lightweight gel formula, no white cast. Water-resistant for 80 minutes." },
+  { id:17, name:"Clay Detox Face Mask", price:18.50, origPrice:24, category:"skincare", rating:4.6, reviews:312,
+    image:"https://images.pexels.com/photos/4006353/pexels-photo-4006353.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3997373/pexels-photo-3997373.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Kaolin & Bentonite clay blend. Deep-cleans pores, removes blackheads, controls sebum." },
+  { id:18, name:"Rose Water Toner Mist", price:15.99, origPrice:20, category:"skincare", rating:4.7, reviews:445,
+    image:"https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Pure Bulgarian rose water. Balances skin pH, refreshes & hydrates. Use as toner or setting mist." },
+  { id:19, name:"Vintage Oversized Denim Jacket", price:59.90, origPrice:80, category:"clothes", rating:4.7, reviews:234,
+    image:"https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3622624/pexels-photo-3622624.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/2681751/pexels-photo-2681751.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"100% cotton denim, classic oversized fit. Stone-washed for vintage look. Perfect for layering." },
+  { id:20, name:"Flowy Floral Midi Dress", price:45.00, origPrice:60, category:"clothes", rating:4.8, reviews:389,
+    image:"https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Lightweight chiffon fabric. V-neck, adjustable straps. Perfect for summer days and beach outings." },
+  { id:21, name:"Essential Premium Cotton Tee", price:19.99, origPrice:26, category:"clothes", rating:4.6, reviews:567,
+    image:"https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1126993/pexels-photo-1126993.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"100% ring-spun cotton. Ultra-soft & breathable. Classic relaxed fit, pre-shrunk fabric." },
+  { id:22, name:"High-Waist Wide Leg Trousers", price:52.00, origPrice:68, category:"clothes", rating:4.7, reviews:278,
+    image:"https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Flowy wide-leg silhouette. Elastic waistband, side pockets. Work or casual, effortlessly chic." },
+  { id:23, name:"Wool Cable-Knit Sweater", price:67.00, origPrice:85, category:"clothes", rating:4.8, reviews:312,
+    image:"https://images.pexels.com/photos/45982/pexels-photo-45982.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Merino wool blend. Cozy cable-knit pattern. Relaxed fit for effortless winter styling." },
+  { id:24, name:"Oversized Graphic Hoodie", price:54.99, origPrice:70, category:"clothes", rating:4.6, reviews:445,
+    image:"https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/45982/pexels-photo-45982.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Heavy cotton fleece, kangaroo pocket. Bold front graphic. Streetwear staple for all seasons." },
+  { id:25, name:"Satin Slip Mini Dress", price:48.00, origPrice:62, category:"clothes", rating:4.7, reviews:234,
+    image:"https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Silky satin finish. Adjustable spaghetti straps, midi/mini length. Perfect for evening events." },
+  { id:26, name:"Crop Top & Skirt Co-ord Set", price:68.00, origPrice:88, category:"clothes", rating:4.8, reviews:367,
+    image:"https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Matching crop top and midi skirt. Pastel tones. Perfect for brunches, dates & social events." },
+  { id:27, name:"Silk Satin Pajama Set", price:79.00, origPrice:99, category:"clothes", rating:4.9, reviews:289,
+    image:"https://images.pexels.com/photos/1126993/pexels-photo-1126993.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Luxurious satin pajama set. Breathable, temperature-regulating fabric. Included: top + pants." },
+  { id:28, name:"Linen Summer Blazer", price:85.00, origPrice:110, category:"clothes", rating:4.7, reviews:156,
+    image:"https://images.pexels.com/photos/769733/pexels-photo-769733.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Pure linen construction. Relaxed single-button silhouette. Elevated, breezy summer professional wear." },
+  { id:29, name:"Strappy Block Heel Sandals", price:68.00, origPrice:88, category:"shoes", rating:4.7, reviews:234,
+    image:"https://images.pexels.com/photos/1032110/pexels-photo-1032110.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/1467861/pexels-photo-1467861.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"3-inch block heel for comfort. Adjustable ankle strap. Faux suede upper, cushioned insole." },
+  { id:30, name:"Classic White Sneakers", price:72.99, origPrice:95, category:"shoes", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1032110/pexels-photo-1032110.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Leather upper, padded collar. Platform sole for extra height. Timeless design goes with everything." },
+  { id:31, name:"Pointed Toe Kitten Heels", price:58.00, origPrice:75, category:"shoes", rating:4.6, reviews:189,
+    image:"https://images.pexels.com/photos/1467861/pexels-photo-1467861.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Elegant pointed toe, 2-inch kitten heel. Patent faux leather. Effortlessly chic for any occasion." },
+  { id:32, name:"Chunky Platform Loafers", price:82.00, origPrice:105, category:"shoes", rating:4.7, reviews:312,
+    image:"https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1032110/pexels-photo-1032110.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Chunky platform sole, gold buckle detail. Slip-on style, leather lining. Office to weekend ready." },
+  { id:33, name:"Canvas Slip-On Espadrilles", price:38.00, origPrice:50, category:"shoes", rating:4.5, reviews:223,
+    image:"https://images.pexels.com/photos/1032110/pexels-photo-1032110.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Lightweight canvas upper. Rope jute sole. Breathable & comfortable for summer days." },
+  { id:34, name:"Leather Tote Bag - Tan", price:89.00, origPrice:115, category:"accessories", rating:4.8, reviews:389,
+    image:"https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/2081199/pexels-photo-2081199.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Genuine pebbled leather. Roomy interior with zip pocket. Magnetic closure, detachable strap." },
+  { id:35, name:"Mini Quilted Chain Bag", price:65.00, origPrice:85, category:"accessories", rating:4.7, reviews:312,
+    image:"https://images.pexels.com/photos/2081199/pexels-photo-2081199.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Quilted faux leather. Gold chain strap, zip closure. Fits phone, cards & essentials. Multiple colors." },
+  { id:36, name:"Silk Scarf - Floral Print", price:34.50, origPrice:45, category:"accessories", rating:4.6, reviews:178,
+    image:"https://images.pexels.com/photos/5705090/pexels-photo-5705090.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/5705091/pexels-photo-5705091.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"100% mulberry silk. Artisan floral print. Wear as headscarf, bag accessory or neck tie." },
+  { id:37, name:"Aviator Sunglasses - Gold", price:49.99, origPrice:65, category:"accessories", rating:4.7, reviews:445,
+    image:"https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1362558/pexels-photo-1362558.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"UV400 polarized lenses. Gold metal frame. Classic aviator shape, unisex design." },
+  { id:38, name:"Pearl Hair Clip Set (4 pcs)", price:18.99, origPrice:25, category:"accessories", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/1322945/pexels-photo-1322945.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3622624/pexels-photo-3622624.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Set of 4 pearl-embellished hair clips. Strong hold, gentle on hair. Perfect for half-up styles." },
+  { id:39, name:"Noise Cancelling Wireless Earbuds", price:89.99, origPrice:120, category:"accessories", rating:4.7, reviews:334,
+    image:"https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3780683/pexels-photo-3780683.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/8330059/pexels-photo-8330059.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Active noise cancellation, 30hr battery. IPX5 water resistant. Custom EQ via app. Crystal clear sound." },
+  { id:40, name:"Apple Watch Series 9 (45mm)", price:429.00, origPrice:499, category:"accessories", rating:4.9, reviews:678,
+    image:"https://images.pexels.com/photos/393047/pexels-photo-393047.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/267394/pexels-photo-267394.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"S9 chip, always-on display. Advanced health sensors - heart rate, SpO2, crash detection." },
+  { id:41, name:"iPhone 15 Pro Max - 256GB", price:1199.00, origPrice:1299, category:"mobile", rating:4.9, reviews:892,
+    image:"https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"A17 Pro chip, Titanium body, 48MP camera system. ProMotion 120Hz display. USB-C." },
+  { id:42, name:"Samsung Galaxy S24 Ultra", price:1099.00, origPrice:1199, category:"mobile", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"200MP camera, built-in S Pen, 5000mAh battery. Snapdragon 8 Gen 3. AI-powered Galaxy features." },
+  { id:43, name:"Google Pixel 8 Pro - 128GB", price:699.00, origPrice:799, category:"mobile", rating:4.7, reviews:389,
+    image:"https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Tensor G3 chip, Magic Eraser & Photo Unblur. 7 years of OS updates. Pure Android experience." },
+  { id:44, name:"OnePlus 12 - 256GB", price:799.00, origPrice:899, category:"mobile", rating:4.7, reviews:312,
+    image:"https://images.pexels.com/photos/267394/pexels-photo-267394.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Snapdragon 8 Gen 3, Hasselblad camera tuning. 100W SuperVOOC, 50W wireless charging." },
+  { id:45, name:"Xiaomi 14 Ultra", price:849.00, origPrice:999, category:"mobile", rating:4.8, reviews:234,
+    image:"https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/267394/pexels-photo-267394.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Leica quad camera system. 1-inch Sony sensor. 90W wired + 80W wireless charging. 6.73\" LTPO display." },
+  { id:46, name:"iPhone 15 - 128GB", price:799.00, origPrice:899, category:"mobile", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/788946/pexels-photo-788946.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"A16 Bionic chip, Dynamic Island, 48MP main camera. All-day battery, USB-C charging." },
+  { id:47, name:"MacBook Air M3 - 13\"", price:1099.00, origPrice:1299, category:"electronics", rating:4.9, reviews:445,
+    image:"https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/812264/pexels-photo-812264.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/4498482/pexels-photo-4498482.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"M3 chip, 8GB RAM, 256GB SSD. Fanless design, 18-hour battery. Liquid Retina display." },
+  { id:48, name:"iPad Pro 11\" M4", price:799.00, origPrice:999, category:"electronics", rating:4.8, reviews:312,
+    image:"https://images.pexels.com/photos/812264/pexels-photo-812264.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"M4 chip, Ultra Retina XDR display. 5G capable, 10-hour battery. Compatible with Apple Pencil Pro." },
+  { id:49, name:"Sony WH-1000XM5 Headphones", price:299.00, origPrice:399, category:"electronics", rating:4.9, reviews:789,
+    image:"https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3394651/pexels-photo-3394651.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Industry-leading noise cancellation. 30-hour battery, fast charging. Crystal clear call quality." },
+  { id:50, name:"Portable Bluetooth Speaker", price:79.99, origPrice:100, category:"electronics", rating:4.7, reviews:445,
+    image:"https://images.pexels.com/photos/1279107/pexels-photo-1279107.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1279106/pexels-photo-1279106.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"360° surround sound, IP67 waterproof. 24-hour playtime. USB-C charging, connect two for stereo." },
+  { id:51, name:"Kindle Paperwhite (16GB)", price:139.00, origPrice:170, category:"electronics", rating:4.8, reviews:678,
+    image:"https://images.pexels.com/photos/4498482/pexels-photo-4498482.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"6.8\" glare-free display. 10 weeks battery life. Adjustable warm light. Waterproof (IPX8)." },
+  { id:52, name:"Chanel No. 5 EDP - 50ml", price:139.00, origPrice:165, category:"fragrance", rating:4.9, reviews:567,
+    image:"https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/1557652/pexels-photo-1557652.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Iconic floral aldehydic. Notes of May rose, jasmine & sandalwood. The world's most iconic fragrance." },
+  { id:53, name:"Jo Malone Peony & Blush Suede", price:158.00, origPrice:190, category:"fragrance", rating:4.8, reviews:312,
+    image:"https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"100ml Eau de Cologne. Luscious peony, red apple & suede. Light, versatile & utterly feminine." },
+  { id:54, name:"Dior Miss Dior Blooming Bouquet", price:95.00, origPrice:120, category:"fragrance", rating:4.7, reviews:445,
+    image:"https://images.pexels.com/photos/1557652/pexels-photo-1557652.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"50ml EDT. Fresh peony & white musk. Light, romantic & irresistibly feminine." },
+  { id:55, name:"Victoria's Secret Bombshell", price:58.00, origPrice:72, category:"fragrance", rating:4.6, reviews:678,
+    image:"https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1557652/pexels-photo-1557652.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"50ml EDP. Blooms of passion fruit, Shangri-la peony & vanilla orchid. Playful, sexy & fun." },
+  { id:56, name:"Dyson Supersonic Hair Dryer", price:389.00, origPrice:449, category:"haircare", rating:4.9, reviews:789,
+    image:"https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3992876/pexels-photo-3992876.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/3993450/pexels-photo-3993450.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Intelligent heat control. Prevents extreme heat damage. 5 magnetic attachments included. 3 speed, 4 heat settings." },
+  { id:57, name:"Argan Oil Hair Serum", price:28.00, origPrice:36, category:"haircare", rating:4.8, reviews:445,
+    image:"https://images.pexels.com/photos/3992876/pexels-photo-3992876.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Pure Moroccan argan oil blend. Eliminates frizz, adds shine. Heat protectant up to 230°C." },
+  { id:58, name:"Keratin Hair Mask - Deep Repair", price:22.00, origPrice:30, category:"haircare", rating:4.7, reviews:312,
+    image:"https://images.pexels.com/photos/3993450/pexels-photo-3993450.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3992876/pexels-photo-3992876.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Intensive keratin repair mask. Restores damaged, brittle hair. Leave-in for 10 min. Salon-quality results." },
+  { id:59, name:"GHD Platinum+ Straightener", price:249.00, origPrice:300, category:"haircare", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/3992876/pexels-photo-3992876.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Predictive smart technology. Ultra-zone plates, optimal 185°C styling temperature. Auto sleep mode." },
+  { id:60, name:"Gold Vermeil Layered Necklace Set", price:58.00, origPrice:75, category:"jewelry", rating:4.8, reviews:445,
+    image:"https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1721937/pexels-photo-1721937.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/1458687/pexels-photo-1458687.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Set of 3 layering necklaces in 18K gold vermeil. Tarnish-resistant, hypoallergenic. Adjustable 16-18\"." },
+  { id:61, name:"Diamond Stud Earrings (0.5ct)", price:199.00, origPrice:250, category:"jewelry", rating:4.9, reviews:312,
+    image:"https://images.pexels.com/photos/1721937/pexels-photo-1721937.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"0.5ct total weight, I color, SI clarity. 14K white gold setting. Comes with GIA certificate." },
+  { id:62, name:"Evil Eye Bracelet - Gold", price:32.00, origPrice:42, category:"jewelry", rating:4.7, reviews:567,
+    image:"https://images.pexels.com/photos/1458687/pexels-photo-1458687.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Enamel evil eye charm, 14K gold filled chain. Adjustable with lobster clasp. Protective & stylish." },
+  { id:63, name:"Pearl Drop Earrings", price:45.00, origPrice:58, category:"jewelry", rating:4.8, reviews:289,
+    image:"https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/1721937/pexels-photo-1721937.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Freshwater cultured pearl drops, 8-9mm. Sterling silver ear wires. Classic & elegant for any occasion." },
+  { id:64, name:"Yoga Mat - Extra Thick 6mm", price:39.99, origPrice:52, category:"fitness", rating:4.7, reviews:445,
+    image:"https://images.pexels.com/photos/4397833/pexels-photo-4397833.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=300","https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Non-slip surface, 6mm extra cushioning. Eco-friendly TPE material. Alignment lines, carry strap included." },
+  { id:65, name:"Resistance Bands Set (5 pcs)", price:24.99, origPrice:35, category:"fitness", rating:4.8, reviews:678,
+    image:"https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4397833/pexels-photo-4397833.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"5 resistance levels from 10-50lbs. Natural latex, anti-snap. Home gym, PT & physiotherapy use." },
+  { id:66, name:"Wireless Fitness Tracker Watch", price:79.00, origPrice:99, category:"fitness", rating:4.6, reviews:334,
+    image:"https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4397833/pexels-photo-4397833.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Heart rate, SpO2, sleep tracking. 7-day battery, 5ATM waterproof. 100+ sports modes, GPS tracking." },
+  { id:67, name:"Stainless Steel Water Bottle 1L", price:32.00, origPrice:42, category:"fitness", rating:4.8, reviews:567,
+    image:"https://images.pexels.com/photos/4397833/pexels-photo-4397833.jpeg?auto=compress&cs=tinysrgb&w=600",
+    thumbs:["https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=300"],
+    desc:"Double-wall vacuum insulation. Keeps cold 24hr, hot 12hr. BPA-free, leak-proof flip lid." },
 ];
 
-const slides = [
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGY2eWFvenFpemg4eWVjajhwYjE5emJzbHE2Mzd5ZngzMGg1ZmUweCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/Q66dCIgxnb4uzEYDqS/giphy.gif",text:"10 dslvch fovc bsa pqenpgb?! Nxneb gpb fovc bsa oh db rpxseovn gpb. Cpuub plloxnehpeb, db qsxn",stk:["🌷","✨","🐾","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGY2eWFvenFpemg4eWVjajhwYjE5emJzbHE2Mzd5ZngzMGg1ZmUweCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/5eFtKFqu5D34WNno9u/giphy.gif",text:"10 dslvch sr bsa dpzoli db cnpev eptn… odpioln fcpv rsenxne foqq gs",stk:["🌷","🎀","✨","🌷"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGY2eWFvenFpemg4eWVjajhwYjE5emJzbHE2Mzd5ZngzMGg1ZmUweCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/9V5fArpd99fLoemwn3/giphy.gif",text:"10 dslvch ol plg bsa hvoqq dpzn dn fnpz ol vcn zlnnh… bsa'en gplinesah, bsa zlsf vcpv?",stk:["🌸","🌷","🐾","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGY2eWFvenFpemg4eWVjajhwYjE5emJzbHE2Mzd5ZngzMGg1ZmUweCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/4Ztytt2s2Cr7XyTI1z/giphy.gif",text:"10 dslvch sr ah plg db rpxseovn vcoli oh hvoqq… bsa ol db pedh",stk:["✨","🌷","🎀","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bGY2eWFvenFpemg4eWVjajhwYjE5emJzbHE2Mzd5ZngzMGg1ZmUweCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/QlQdLBS70XJcZY1fLF/giphy.gif",text:"Nxneb dsdnlv fovc bsa oh dpiot. Cpuub 10-dslvc plloxnehpeb, db hfnnv cnpev!",stk:["🌷","🐾","🌸","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bDlsN2Z0Zzl0ZjZzN3Nod281cGF6YnUycncxZTQ2bTZ3eDBrNGMwZiZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/jst0dxUybUkdH9yTyB/giphy.gif",text:"10 dslvch sr bsa… plg O hvoqq tpl'v hvsu vcolzoli pmsav bsae hdoqn",stk:["🌷","✨","🌸","🐾"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MGR5anBqNnJlM2pwamthdjdybGRtcXpnZTVpbHZ5YWY0YWFxZjdnZyZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/K5SrNFyE1BhPZ86tR3/giphy.gif",text:"10 dslvch ol plg O hvoqq inv mavvnerqonh nxneb vodn O hnn bsa. Csf gs bsa gs vcpv?!",stk:["🦋","🌷","✨","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aGNleDhneWYxNHV3MGk1ajBmc2dtY3F4aWl4d3lmODNvYjNoNGl6YyZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/52EZxXpG5hCMPstrV0/giphy.gif",text:"O'd hvpevoli vs vcolz 10 dslvch ohl'v nlsaic… qnv'h dpzn ov p qornvodn",stk:["🌷","🐾","🎀","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aGNleDhneWYxNHV3MGk1ajBmc2dtY3F4aWl4d3lmODNvYjNoNGl6YyZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/h20IwOYYJgCMbj4uaD/giphy.gif",text:"Csf oh ov ushhomqn vcpv 10 dslvch fovc bsa rnnqh qozn vcn mnhv genpd nxne?",stk:["✨","🌷","🌸","🐾"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/KB1GG8B346PxkRwc6B/giphy.gif",text:"10 dslvch vsinvcne… plg db cnpev hvoqq hzouh p mnpv fcnl bsa'en lnpe",stk:["🌷","✨","🐾","🎀"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/1BeoHHs5ID6M1L95WT/giphy.gif",text:"Bsa'en vcn enhsol db gdqn hponlvohv rola ov cpeg vs nvpv. Bsa'en pq O nxne lnng",stk:["🌷","🌸","✨","🎀"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/sRHOAgD3AA1DnFTR25/giphy.gif",text:"Bsae volab rnnv… vcn tanvnhv vcoli O'xn nxne hnnel. Gsls'v vcnb znnu db cnpev fped?",stk:["🐾","🌷","✨","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/9Ji1tn7DMHcT7FBaXT/giphy.gif",text:"Bsa dpzn db cnevh ins nxneb vodn bsa qpaic. Vcplz bsa rse mpoli db gph",stk:["🌷","🌸","🐾","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/WNlsQiGMU387hn7UZQ/giphy.gif",text:"10 dslvch, 10,000 hdoqnh, plg p doqqosl qovvqn vcplzh. Cpuub plloxnehpeb, db dpha. Bsaeh, pqfpbh 🌷",stk:["🌷","🌷","🌷","🌷"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/TFUhSMPFJG7fPAiLpQ/giphy.gif",text:"Bsa'en db rpxseovn pggotvosl… 10 dslvch qpvne, O'd hvoqq csszng",stk:["💗","🌷","✨","🎀"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emlsMDFpMjRkbHZ4dmNyMzlkZ2psNTB4b2xsa3VkM3ZxZGU2ZG84diZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/fjxupFeOlzwRnhKT0b/giphy.gif",text:"10 dslvch sr csqgoli bsae cplg… qnv'h lnxne qnv is",stk:["🌷","🌸","🐾","💕"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ZXF5ZTdwMXpjaW9sYnFlZnVxZzR5ZmNuNGJvanB4ZW85MGFkZDN2MCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/VGiQCokc0t04tE7b1P/giphy.gif",text:"Csf gog O inv hs qatzb vs hunlg 10 dslvch fovc hsdnsln vcoh oeenhohvomqn?",stk:["✨","🎀","🌷","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ZXF5ZTdwMXpjaW9sYnFlZnVxZzR5ZmNuNGJvanB4ZW85MGFkZDN2MCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/KdB5DnYdadrJMWP6Rz/giphy.gif",text:"10 dslvch sr ah, plg bsa hvoqq dpzn dn mqahc qozn p vnnlpine",stk:["🌷","💗","✨","🐾"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Y2dtOTM1dWVnN21qb2MydnJnZjV0a2M3Y3N1cjZucGdxNmZndHl2ayZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/Y0qksysK1dJhDuufPL/giphy.gif",text:"10 dslvch ol plg O hvoqq tpl'v hvsu vcolzoli pmsav bsa… gplinesah, mpmn",stk:["🌸","🌷","💕","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3emo2bnh6MGpmb2UzaWN0bHV3ajExM2ptMm44Nm5sc2ppb3lrZmFmbSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/JOXQyt01t7HEL9Qh0u/giphy.gif",text:"10 dslvch sr dpiot, dohtconr, plg bsa mnoli db pmhsqavn rpxseovn",stk:["🎀","🌷","🌸","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MTNsbW85dXdoZzd6bm5qNjZmcDBobzFzMm1uczcxa3NlaTE2a3l5NCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/TGRdtTG0hxhNSagXX0/giphy.gif",text:"O lnxne mnqonxng ol rsenxne… alvoq 10 dslvch fovc bsa hcsfng dn fcpv ov rnnqh qozn",stk:["✨","🌷","💗","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MTNsbW85dXdoZzd6bm5qNjZmcDBobzFzMm1uczcxa3NlaTE2a3l5NCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/VI9K4t2FhjiVo9KFAZ/giphy.gif",text:"Bsa'en db hprn uqptn, db cpuuolnhh, db nxnebvcoli… 10 dslvch plg tsalvoli",stk:["🌷","🐾","✨","💕"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MTNsbW85dXdoZzd6bm5qNjZmcDBobzFzMm1uczcxa3NlaTE2a3l5NCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/WRjTx1a02OCwaDO1FR/giphy.gif",text:"10 dslvch sr qpaicvne, qsxn, plg bsa dpzoli db fseqg meoicvne nxneb gpb",stk:["🌸","🌷","🎀","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MTNsbW85dXdoZzd6bm5qNjZmcDBobzFzMm1uczcxa3NlaTE2a3l5NCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/hqUAciv1wgVtzHoqW7/giphy.gif",text:"Bsa dpzn db cnpev hdoqn… 10 dslvch qpvne, ov hvoqq mnpvh slqb rse bsa",stk:["💗","✨","🌷","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MWh0dzZ1YXVvd3JlcGM0a2VlYTdrZGR5dWlhZjRkMjF1YngzNzlwNSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/L2ec9HGkVlmO78cGBJ/giphy.gif",text:"O lnxne zlnf qsxn tsaqg rnnq vcoh hfnnv… vcplz bsa rse 10 dslvch sr bsa",stk:["🌷","💕","🐾","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MWh0dzZ1YXVvd3JlcGM0a2VlYTdrZGR5dWlhZjRkMjF1YngzNzlwNSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/5br3typKkA5Jk2XmEX/giphy.gif",text:"10 dslvch gsfl, rsenxne vs is… O tpl'v fpov rse nxneb dsdnlv fovc bsa",stk:["✨","🌷","🌸","🎀"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NG9vZHpkdmU4MW9lOGpiY3c3YWx0eDlkcm9oa2t2MG92YnQ3cm94MCZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/RJu2hjJzuyaIRywkll/giphy.gif",text:"Bsa'en db cnpev'h csdn, db hfnnvnhv pggotvosl… 10 dslvch plg O'd bsaeh",stk:["🌷","💗","✨","🌸"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bjUyd3Fzc3luanVvb3V4OHcwY2h2NHZjYzB5eHN3bmtpaHl1MjdseSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/kz6RCAqhv5jLKk4tyO/giphy.gif",text:"O gogl'v zlsf qsxn tsaqg rnnq vcoh unerntv… 10 dslvch sr bsa uesxnh ov",stk:["🐾","🌷","💕","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bjUyd3Fzc3luanVvb3V4OHcwY2h2NHZjYzB5eHN3bmtpaHl1MjdseSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/WQI6C6EvAew3h75oiW/giphy.gif",text:"Fn pen dnplv rse nptcsvcne. Hs qnv ah vcplz Isg rse meolioli ah vsinvcne. Cpuub 10vc dslvc plloxnehpeb vs ah, plg raevcne",stk:["🌷","🌸","🎀","✨"]},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eGNtcmQ3MWZmM2JreGNjYWIzdGpkY3ppcHYwNWN6czllbG0yNDRtNSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/LRqgisOZG1GqeD9zrc/giphy.gif",text:"o qsxn bsa vss datc , o pd rsenxne bsaeh ,bsa sfl dn ,bsa sfl bsae dpha o pd vsvpqqb bsaeh cpuub 10 dslvch",stk:["🌷","💗","🌷","💗"],final:true},
-  {gif:"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bjUyd3Fzc3luanVvb3V4OHcwY2h2NHZjYzB5eHN3bmtpaHl1MjdseSZlcD12MV9zdGlja2Vyc19yZWxhdGVkJmN0PXM/TLaz4SmlaIc0VljH6I/giphy.gif",text:"10 dslvch, 10,000 hdoqnh, plg p doqqosl qovvqn vcplzh. Cpuub plloxnehpeb 🌷 bsaeh pqfpbh",stk:["🌷","🌷","🌷","🌷"],final:true},
-];
-
-const N = slides.length;
-let cur = 0, themeIdx = 0, isAnimating = false, touchStartX = 0;
-
-const card     = document.getElementById('card');
-const cBox     = document.getElementById('cipher-box');
-const cText    = document.getElementById('cipher-text');
-const levelEl  = document.getElementById('level');
-const btn      = document.getElementById('btn');
-const mainGif  = document.getElementById('mgif');
-const stks     = ['s0','s1','s2','s3'].map(id=>document.getElementById(id));
-const portal   = document.getElementById('portal');
-const banner   = document.getElementById('level-banner');
-const progFill = document.getElementById('prog-bar-fill');
-const progBgEl = document.getElementById('prog-bar-bg');
-const progLabel= document.getElementById('prog-label');
-const corners  = ['corner-tl','corner-tr','corner-bl','corner-br'].map(id=>document.getElementById(id));
-const gifFrame = document.getElementById('gif-frame');
-const stripe   = document.getElementById('stripe');
-
-// ── CANVAS ──
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let activeTheme = THEMES[0];
-
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resizeCanvas();
-window.addEventListener('resize',resizeCanvas);
-
-class Particle {
-  constructor(t){
-    this.x = Math.random()*canvas.width;
-    this.y = canvas.height + 20 + Math.random()*canvas.height;
-    this.size = 5+Math.random()*12;
-    this.speed = 0.5+Math.random()*1.2;
-    this.col = t.particleCols[Math.floor(Math.random()*t.particleCols.length)];
-    this.dx = (Math.random()-0.5)*0.7;
-    this.rot = Math.random()*360;
-    this.rotS = (Math.random()-0.5)*2;
-    this.life = 0;
-    this.maxLife = 280+Math.random()*220;
-    this.maxOp = 0.12+Math.random()*0.15;
-    this.op = 0;
-    this.shape = Math.random()>0.45?'circle':'rect';
-  }
-  update(){
-    this.y-=this.speed; this.x+=this.dx; this.rot+=this.rotS; this.life++;
-    const p=this.life/this.maxLife;
-    this.op = p<0.1?(p/0.1)*this.maxOp:p>0.85?((1-p)/0.15)*this.maxOp:this.maxOp;
-    return this.life<this.maxLife;
-  }
-  draw(){
-    ctx.save();ctx.globalAlpha=this.op;ctx.fillStyle=this.col;
-    ctx.translate(this.x,this.y);ctx.rotate(this.rot*Math.PI/180);
-    if(this.shape==='circle'){ctx.beginPath();ctx.arc(0,0,this.size/2,0,Math.PI*2);ctx.fill();}
-    else ctx.fillRect(-this.size/2,-this.size/3,this.size,this.size*0.65);
-    ctx.restore();
-  }
-}
-
-function initParticles(t){
-  particles=[];
-  for(let i=0;i<45;i++){
-    const p=new Particle(t);
-    p.y=Math.random()*canvas.height;
-    p.life=Math.floor(Math.random()*p.maxLife);
-    particles.push(p);
-  }
-}
-
-(function loop(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(Math.random()<0.14) particles.push(new Particle(activeTheme));
-  particles=particles.filter(p=>{const a=p.update();if(a)p.draw();return a;});
-  requestAnimationFrame(loop);
-})();
-
-// ── APPLY THEME ──
-function applyTheme(t){
-  activeTheme = t;
-  document.body.style.background = t.bodyBg;
-  card.style.background   = t.cardBg;
-  card.style.border        = `2px solid ${t.cardBorder}`;
-  card.style.borderRadius  = t.cardRadius;
-  card.style.boxShadow     = t.cardShadow;
-  card.style.transform     = t.cardTilt ? `rotate(${t.cardTilt}deg)` : 'rotate(0deg)';
-  stripe.style.background  = t.stripe;
-  stripe.style.backgroundSize = '300%';
-  levelEl.style.background  = t.levelBg;
-  levelEl.style.color       = t.levelColor;
-  levelEl.style.border      = `1.5px solid ${t.levelBorder}`;
-  cBox.style.background     = t.cipherBg;
-  cBox.style.borderColor    = t.cipherBorder;
-  cText.style.color         = t.cipherColor;
-  cText.style.fontFamily    = t.cipherFont;
-  cText.style.fontSize      = t.cipherSize;
-  btn.style.background      = t.btnBg;
-  btn.style.color           = t.btnColor;
-  btn.style.boxShadow       = t.btnShadow;
-  btn.style.borderRadius    = t.btnRadius;
-  progBgEl.style.background = t.progBg;
-  progFill.style.background = t.progFill;
-  progLabel.style.color     = t.progLabel;
-  banner.style.background   = t.bannerBg;
-  banner.style.color        = t.bannerColor;
-  corners.forEach((c,i)=>{c.textContent=t.corners[i]||'✨';});
-  gifFrame.style.borderRadius = t.gifRadius;
-  gifFrame.style.border     = `3px solid ${t.cardBorder}`;
-  gifFrame.style.boxShadow  = `0 4px 24px ${t.particleCols[0]}88`;
-  initParticles(t);
-}
-
-// ── PORTAL ──
-function triggerPortal(t, cb){
-  const r=btn.getBoundingClientRect();
-  const cx=r.left+r.width/2, cy=r.top+r.height/2;
-  portal.style.cssText=`position:fixed;left:${cx-50}px;top:${cy-50}px;width:100px;height:100px;border-radius:50%;background:${t.portalCol};z-index:500;pointer-events:none;`;
-  portal.classList.remove('active');
-  void portal.offsetWidth;
-  portal.classList.add('active');
-  setTimeout(cb, 190);
-}
-
-// ── BANNER ──
-function flashBanner(t, idx){
-  banner.textContent = t.name + '  ·  stage '+(idx+1);
-  banner.classList.add('show');
-  setTimeout(()=>banner.classList.remove('show'), 1900);
-}
-
-// ── LOAD SLIDE ──
-function loadSlide(idx){
-  const s=slides[idx], t=THEMES[themeIdx];
-  mainGif.classList.add('out');
-  cBox.classList.add('out');
-  setTimeout(()=>{
-    mainGif.src = s.gif;
-    cText.textContent = s.text;
-    stks.forEach((el,i)=>el.textContent=s.stk[i]);
-    levelEl.textContent='stage '+String(idx+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
-    btn.innerHTML = s.final ? '🌷 db dpha 🌷' : 'nrjv &#8594;';
-    progFill.style.width = ((idx+1)/N*100).toFixed(1)+'%';
-    progLabel.textContent = `stage ${idx+1} / ${N}  ·  ${t.labelText} world`;
-    mainGif.classList.remove('out');
-    cBox.classList.remove('out');
-    if(s.final) spawnConfetti();
-    isAnimating=false;
-  },350);
-}
-
-// ── NEXT ──
-function next(){
-  if(isAnimating) return;
-  isAnimating=true;
-  spawnSparks();
-  let n;
-  do{n=Math.floor(Math.random()*THEMES.length);}while(n===themeIdx&&THEMES.length>1);
-  themeIdx=n;
-  const t=THEMES[themeIdx];
-  triggerPortal(t,()=>{
-    cur=cur<N-1?cur+1:0;
-    applyTheme(t);
-    flashBanner(t,cur);
-    loadSlide(cur);
+// ========== REVIEWS STORE ==========
+let reviews = {};
+function initReviews() {
+  products.forEach(p => {
+    reviews[p.id] = [
+      { name:"Priya S.", stars:5, text:"Absolutely love this! Quality is amazing and delivery was super fast. 100% recommend!", date:"Mar 2024" },
+      { name:"Ananya K.", stars:4, text:"Really happy with this product. Looks exactly like the pictures!", date:"Feb 2024" },
+    ];
+    if(p.id === 1) reviews[p.id] = [
+      { name:"Naina L.", stars:5, text:"This lipstick stays on ALL day! No fading, no transferring.", date:"Mar 2024" },
+      { name:"Pooja S.", stars:5, text:"Best matte lipstick ever. Comfortable and moisturizing!", date:"Feb 2024" },
+      { name:"Kritika M.", stars:4, text:"Love the color! Slightly drying after 8 hours but overall very good.", date:"Jan 2024" },
+    ];
+    if(p.id === 41) reviews[p.id] = [
+      { name:"Arjun P.", stars:5, text:"This phone is incredible. Camera quality is unmatched.", date:"Mar 2024" },
+      { name:"Rahul S.", stars:5, text:"Best iPhone ever. The Pro camera system is a game changer.", date:"Feb 2024" },
+    ];
   });
 }
+initReviews();
 
-// ── SPARKS ──
-function spawnSparks(){
-  const r=btn.getBoundingClientRect();
-  const cx=r.left+r.width/2, cy=r.top+r.height/2;
-  const t=THEMES[themeIdx];
-  const cols=[...t.particleCols,'#fff'];
-  for(let i=0;i<20;i++){
-    const sp=document.createElement('div');
-    const a=Math.random()*360,d=50+Math.random()*70,sz=3+Math.random()*10,rad=a*Math.PI/180;
-    sp.style.cssText=`position:fixed;left:${cx}px;top:${cy}px;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${Math.random()>.5?'50%':'3px'};pointer-events:none;z-index:999;--dx:${Math.cos(rad)*d}px;--dy:${Math.sin(rad)*d}px;animation:spkOut .75s ease-out forwards;`;
-    document.body.appendChild(sp);
-    setTimeout(()=>sp.remove(),900);
-  }
+// ========== STATE ==========
+let currentCat = 'all';
+let searchQ = '';
+let currentProduct = null;
+let selectedStars = 5;
+let cart = JSON.parse(localStorage.getItem('pszone_cart') || '[]');
+let wishlist = JSON.parse(localStorage.getItem('pszone_wish') || '[]');
+let loggedUser = JSON.parse(localStorage.getItem('pszone_user') || 'null');
+let users = JSON.parse(localStorage.getItem('pszone_users') || '[]');
+let authMode = 'login';
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function starsHTML(n) { let h=''; for(let i=1;i<=5;i++) h+= i<=n ? '★' : '☆'; return h; }
+function catLabel(c) {
+  const m={makeup:'💄 Makeup',skincare:'🌿 Skincare',clothes:'👗 Clothes',shoes:'👠 Shoes',accessories:'👜 Accessories',mobile:'📱 Mobile',electronics:'💻 Electronics',fragrance:'🌸 Fragrance',haircare:'💇 Haircare',jewelry:'💍 Jewelry',fitness:'🏋 Fitness'};
+  return m[c]||c;
 }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
-// ── CONFETTI ──
-function spawnConfetti(){
-  const cols=['#f48fb1','#e91e8c','#ffd700','#c77dff','#00ffd5','#ff4db8','#ff6b35','#fff','#80ffd4'];
-  for(let i=0;i<80;i++){
-    setTimeout(()=>{
-      const c=document.createElement('div');
-      const sz=5+Math.random()*9,dur=2+Math.random()*2.5;
-      c.style.cssText=`position:fixed;left:${Math.random()*100}vw;top:-10px;width:${sz}px;height:${sz*(.4+Math.random()*.8)}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};pointer-events:none;z-index:998;animation:confFall ${dur}s linear forwards;`;
-      document.body.appendChild(c);
-      setTimeout(()=>c.remove(),(dur+.2)*1000);
-    },i*40);
-  }
+function renderHomepage() {
+  const filtered = products.filter(p=>{
+    const catOk = currentCat==='all' || p.category===currentCat;
+    const q=searchQ.toLowerCase();
+    const searchOk = !q || p.name.toLowerCase().includes(q) || p.category.includes(q);
+    return catOk && searchOk;
+  });
+  const grid = document.getElementById('productsGrid');
+  if(filtered.length===0) { grid.innerHTML=`<div class="empty-state"><i class="fas fa-search"></i><div>No products found</div></div>`; return; }
+  const titleEl = document.querySelector('.section-title');
+  if(currentCat!=='all') titleEl.innerHTML = `${catLabel(currentCat)} <span>Collection</span>`;
+  else if(searchQ) titleEl.innerHTML = `Results for <span>"${esc(searchQ)}"</span> (${filtered.length})`;
+  else titleEl.innerHTML = `Trending <span>Now</span> 🔥`;
+  grid.innerHTML = filtered.map(p=>{
+    const wished = wishlist.includes(p.id);
+    return `<div class="product-card" onclick="openDetail(${p.id})">
+      <button class="wish-btn ${wished?'wished':''}" onclick="toggleWish(event,${p.id})"><i class="fas fa-heart"></i></button>
+      <div class="product-img-wrap"><img src="${p.image}" alt="${esc(p.name)}" loading="lazy" onerror="this.src='https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg?auto=compress&cs=tinysrgb&w=400'"></div>
+      <div class="card-info"><div class="cat-badge">${catLabel(p.category)}</div><div class="prod-name">${esc(p.name)}</div><div class="prod-price">$${p.price.toFixed(2)}<span class="old-price">$${p.origPrice}</span></div><div class="prod-rating"><span class="stars">${starsHTML(Math.round(p.rating))}</span><span class="rating-count">(${p.reviews})</span></div></div>
+    </div>`;
+  }).join('');
 }
+function toggleWish(e,id) { e.stopPropagation(); if(wishlist.includes(id)) { wishlist=wishlist.filter(x=>x!==id); e.currentTarget.classList.remove('wished'); showToast('Removed from wishlist'); } else { wishlist.push(id); e.currentTarget.classList.add('wished'); showToast('💖 Added to wishlist!'); } localStorage.setItem('pszone_wish',JSON.stringify(wishlist)); }
 
-// ── SWIPE ──
-document.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
-document.addEventListener('touchend',e=>{if(Math.abs(e.changedTouches[0].clientX-touchStartX)>55)next();},{passive:true});
+function openDetail(id) {
+  currentProduct = products.find(p=>p.id===id);
+  if(!currentProduct) return;
+  const p = currentProduct;
+  document.getElementById('detailMainImg').src = p.image;
+  document.getElementById('detailCat').textContent = catLabel(p.category);
+  document.getElementById('detailTitle').textContent = p.name;
+  document.getElementById('detailStars').textContent = starsHTML(Math.round(p.rating)) + ' ' + p.rating;
+  document.getElementById('detailRatingCount').textContent = `(${p.reviews} reviews)`;
+  document.getElementById('detailPrice').innerHTML = `$${p.price.toFixed(2)} <span style="font-size:1rem;font-weight:400;text-decoration:line-through;color:#bbb;">$${p.origPrice}</span>`;
+  document.getElementById('detailDesc').textContent = p.desc;
+  const thumbRow = document.getElementById('thumbRow');
+  const allImgs = [p.image, ...(p.thumbs||[])];
+  thumbRow.innerHTML = allImgs.map((src,i)=>`<img class="thumb-img${i===0?' active':''}" src="${src}" alt="thumb" onerror="this.src='https://images.pexels.com/photos/3762875/pexels-photo-3762875.jpeg?auto=compress&cs=tinysrgb&w=300'" onclick="switchImg('${src}',this)">`).join('');
+  renderReviews(id);
+  resetStarPicker();
+  document.getElementById('homepageView').classList.add('hidden');
+  document.getElementById('detailView').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function switchImg(src,el) { document.getElementById('detailMainImg').src=src; document.querySelectorAll('.thumb-img').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+function renderReviews(id) { const revs=reviews[id]||[]; const list=document.getElementById('reviewsList'); if(!revs.length) { list.innerHTML='<p style="color:var(--text-muted);font-size:0.85rem;">No reviews yet. Be the first to review!</p>'; return; } list.innerHTML=revs.map(r=>`<div class="review-card"><div class="review-header"><span class="reviewer-name"><i class="fas fa-user-circle" style="color:var(--pink);margin-right:5px;"></i>${esc(r.name)}</span><span class="review-stars">${starsHTML(r.stars)}</span></div><div class="review-text">${esc(r.text)}</div><div class="review-date">${r.date}</div></div>`).join(''); }
+function resetStarPicker() { selectedStars=5; document.querySelectorAll('.star-picker .star').forEach(s=>{ s.classList.toggle('active', parseInt(s.dataset.val)<=5); }); }
+document.getElementById('starPicker').addEventListener('click', e=>{ if(!e.target.classList.contains('star')) return; selectedStars=parseInt(e.target.dataset.val); document.querySelectorAll('.star-picker .star').forEach(s=>{ s.classList.toggle('active', parseInt(s.dataset.val)<=selectedStars); }); });
+document.getElementById('submitReviewBtn').addEventListener('click',()=>{ if(!currentProduct) return; const name=document.getElementById('reviewName').value.trim(); const text=document.getElementById('reviewText').value.trim(); if(!name||!text){ showToast('Please fill name & review!'); return; } if(!reviews[currentProduct.id]) reviews[currentProduct.id]=[]; reviews[currentProduct.id].unshift({name,stars:selectedStars,text,date:'Just now'}); renderReviews(currentProduct.id); document.getElementById('reviewName').value=''; document.getElementById('reviewText').value=''; resetStarPicker(); showToast('✅ Review submitted!'); });
+document.getElementById('addToCartBtn').addEventListener('click',()=>{ if(currentProduct){ cart.push(currentProduct.id); localStorage.setItem('pszone_cart',JSON.stringify(cart)); showToast('🛍 Added to bag!'); } });
+document.getElementById('backBtn').addEventListener('click',()=>{ document.getElementById('homepageView').classList.remove('hidden'); document.getElementById('detailView').classList.add('hidden'); window.scrollTo({top:0,behavior:'smooth'}); });
+document.getElementById('homeLogo').addEventListener('click',()=>{ document.getElementById('homepageView').classList.remove('hidden'); document.getElementById('detailView').classList.add('hidden'); currentCat='all'; searchQ=''; document.getElementById('searchInput').value=''; document.querySelectorAll('.cat-pill').forEach(p=>p.classList.toggle('active',p.dataset.cat==='all')); renderHomepage(); window.scrollTo({top:0,behavior:'smooth'}); });
+document.getElementById('searchInput').addEventListener('input',e=>{ searchQ=e.target.value; if(!document.getElementById('homepageView').classList.contains('hidden')) renderHomepage(); });
+document.querySelectorAll('.cat-pill').forEach(pill=>{ pill.addEventListener('click',()=>{ document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active')); pill.classList.add('active'); currentCat=pill.dataset.cat; document.getElementById('homepageView').classList.remove('hidden'); document.getElementById('detailView').classList.add('hidden'); renderHomepage(); window.scrollTo({top:0,behavior:'smooth'}); }); });
 
-// ── INIT ──
-applyTheme(THEMES[0]);
-loadSlide(0);
+// ========== ACCOUNT SYSTEM ==========
+function updateAuthUI() { if(loggedUser) { document.getElementById('userGreeting').textContent=`Hi, ${loggedUser.name} 💖`; document.getElementById('userGreeting').classList.remove('hidden'); document.getElementById('accountBtnText').textContent='Logout'; } else { document.getElementById('userGreeting').classList.add('hidden'); document.getElementById('accountBtnText').textContent='Login'; } }
+document.getElementById('accountBtn').addEventListener('click',()=>{ if(loggedUser) { loggedUser=null; localStorage.removeItem('pszone_user'); updateAuthUI(); showToast('Logged out'); return; } document.getElementById('accountModal').classList.add('open'); authMode='login'; updateModalUI(); });
+document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('accountModal').classList.remove('open'));
+document.getElementById('accountModal').addEventListener('click',e=>{ if(e.target.id==='accountModal') e.target.classList.remove('open'); });
+document.getElementById('authSwitch').addEventListener('click',()=>{ authMode=authMode==='login'?'signup':'login'; updateModalUI(); });
+function updateModalUI() { document.getElementById('modalTitle').textContent=authMode==='login'?'Welcome Back 💖':'Join PS Zone ✨'; document.getElementById('authSubmit').textContent=authMode==='login'?'Login':'Sign Up'; document.getElementById('authSwitch').innerHTML=authMode==='login'?"Don't have an account? <b>Sign up</b>":"Already have an account? <b>Login</b>"; document.getElementById('authMsg').textContent=''; }
+document.getElementById('authSubmit').addEventListener('click',()=>{ const email=document.getElementById('authEmail').value.trim(); const pwd=document.getElementById('authPwd').value.trim(); if(!email||!pwd){ document.getElementById('authMsg').textContent='Please fill all fields'; return; } if(authMode==='login'){ const u=users.find(u=>u.email===email&&u.password===pwd); if(!u){ document.getElementById('authMsg').textContent='Invalid credentials'; return; } loggedUser={name:u.name,email:u.email}; } else { if(users.find(u=>u.email===email)){ document.getElementById('authMsg').textContent='Email already registered'; return; } const name=email.split('@')[0]; users.push({name,email,password:pwd}); localStorage.setItem('pszone_users',JSON.stringify(users)); loggedUser={name,email}; } localStorage.setItem('pszone_user',JSON.stringify(loggedUser)); document.getElementById('accountModal').classList.remove('open'); updateAuthUI(); showToast(`💖 Welcome, ${loggedUser.name}!`); });
+
+// ========== FEEDBACK ========== using the provided formsubmit link
+document.getElementById('sendFeedbackBtn').addEventListener('click', async ()=>{
+  const name = document.getElementById('contactName').value.trim();
+  const msg = document.getElementById('contactMsg').value.trim();
+  const statusDiv = document.getElementById('feedbackStatus');
+  if(!name||!msg) { statusDiv.innerHTML='<span style="color:#e83e8c">Please fill both fields.</span>'; return; }
+  statusDiv.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sending...';
+  try {
+    const res = await fetch('https://formsubmit.co/el/latuma', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, message: msg, _subject: `PS Zone Feedback from ${name}`, _captcha: 'false' })
+    });
+    if(res.ok) {
+      statusDiv.innerHTML='<span style="color:#2b7a3e">✅ Feedback sent! Thank you 💖</span>';
+      document.getElementById('contactName').value='';
+      document.getElementById('contactMsg').value='';
+      setTimeout(()=>statusDiv.innerHTML='',4000);
+    } else throw new Error();
+  } catch(e) { statusDiv.innerHTML='<span style="color:#c0392b">❌ Failed. Try again later.</span>'; }
+});
+
+// ========== INIT ==========
+updateAuthUI();
+renderHomepage();
 </script>
 </body>
 </html>
